@@ -22,7 +22,8 @@ export default function Home() {
   const [pedido, setPedido] = useState("");
   const [entrega, setEntrega] = useState("");
 
-  const [pdf, setPdf] = useState<any>(null);
+  // LINK PDF
+  const [pdfLink, setPdfLink] = useState("");
 
   const [busca, setBusca] = useState("");
   const [fichas, setFichas] = useState<any[]>([]);
@@ -34,12 +35,6 @@ export default function Home() {
       return;
     }
 
-    let pdfUrl = "";
-
-    if (pdf) {
-      pdfUrl = URL.createObjectURL(pdf);
-    }
-
     try {
 
       await addDoc(collection(db, "fichas"), {
@@ -49,7 +44,7 @@ export default function Home() {
         costureiro2,
         pedido,
         entrega,
-        pdfUrl,
+        pdfLink,
         criadoEm: new Date(),
       });
 
@@ -63,10 +58,12 @@ export default function Home() {
       setCostureiro2("");
       setPedido("");
       setEntrega("");
-      setPdf(null);
+      setPdfLink("");
 
     } catch (error) {
+
       console.log(error);
+
       alert("Erro ao salvar");
     }
   }
@@ -78,17 +75,21 @@ export default function Home() {
     const lista: any[] = [];
 
     querySnapshot.forEach((doc) => {
+
       lista.push({
         id: doc.id,
         ...doc.data(),
       });
+
     });
 
     setFichas(lista);
   }
 
   useEffect(() => {
+
     carregarFichas();
+
   }, []);
 
   const fichasFiltradas = fichas.filter((ficha) =>
@@ -110,6 +111,70 @@ export default function Home() {
             onChange={(e) => setBusca(e.target.value)}
             className="w-full bg-zinc-900 border border-zinc-600 rounded-2xl p-4 mb-2 text-white placeholder-zinc-500"
           />
+
+          {/* RESULTADOS */}
+          {busca && (
+
+            <div className="mt-4 space-y-3">
+
+              {fichasFiltradas.length > 0 ? (
+
+                fichasFiltradas.map((ficha) => (
+
+                  <div
+                    key={ficha.id}
+                    className="border border-zinc-700 bg-zinc-900 rounded-2xl p-4"
+                  >
+
+                    <h2 className="font-bold text-lg text-white">
+                      {ficha.cliente}
+                    </h2>
+
+                    <p className="text-zinc-300">
+                      Vendedor: {ficha.vendedor}
+                    </p>
+
+                    <p className="text-zinc-300">
+                      Costureiro 1: {ficha.costureiro1}
+                    </p>
+
+                    <p className="text-zinc-300">
+                      Costureiro 2: {ficha.costureiro2}
+                    </p>
+
+                    <p className="text-zinc-300">
+                      Pedido: {ficha.pedido}
+                    </p>
+
+                    <p className="text-zinc-300">
+                      Entrega: {ficha.entrega}
+                    </p>
+
+                    {ficha.pdfLink && (
+                      <a
+                        href={ficha.pdfLink}
+                        target="_blank"
+                        className="block mt-3 bg-green-600 hover:bg-green-700 transition text-center rounded-2xl p-3 font-bold"
+                      >
+                        VER PDF
+                      </a>
+                    )}
+
+                  </div>
+
+                ))
+
+              ) : (
+
+                <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-4 text-center text-zinc-400">
+                  Nenhum cliente encontrado
+                </div>
+
+              )}
+
+            </div>
+
+          )}
 
         </div>
 
@@ -159,6 +224,7 @@ export default function Home() {
             />
 
             <div>
+
               <label className="text-sm text-zinc-400">
                 Data do Pedido
               </label>
@@ -169,9 +235,11 @@ export default function Home() {
                 onChange={(e) => setPedido(e.target.value)}
                 className="w-full bg-zinc-900 border border-zinc-600 rounded-2xl p-4 text-white"
               />
+
             </div>
 
             <div>
+
               <label className="text-sm text-zinc-400">
                 Data da Entrega
               </label>
@@ -182,19 +250,24 @@ export default function Home() {
                 onChange={(e) => setEntrega(e.target.value)}
                 className="w-full bg-zinc-900 border border-zinc-600 rounded-2xl p-4 text-white"
               />
+
             </div>
 
+            {/* LINK PDF */}
             <div>
+
               <label className="text-sm text-zinc-400">
-                Anexar PDF da Ficha
+                Link do PDF
               </label>
 
               <input
-                type="file"
-                accept="application/pdf"
-                onChange={(e) => setPdf(e.target.files?.[0])}
-                className="w-full bg-zinc-900 border border-zinc-600 rounded-2xl p-3 text-white"
+                type="text"
+                placeholder="Cole aqui o link do PDF"
+                value={pdfLink}
+                onChange={(e) => setPdfLink(e.target.value)}
+                className="w-full bg-zinc-900 border border-zinc-600 rounded-2xl p-4 text-white placeholder-zinc-500"
               />
+
             </div>
 
             <button
@@ -203,58 +276,6 @@ export default function Home() {
             >
               SALVAR FICHA
             </button>
-
-          </div>
-        </div>
-
-        {/* LISTA */}
-        <div className="bg-zinc-800 rounded-3xl shadow-2xl p-5 border border-zinc-700">
-
-          <div className="space-y-3">
-
-            {fichasFiltradas.map((ficha) => (
-
-              <div
-                key={ficha.id}
-                className="border border-zinc-700 bg-zinc-900 rounded-2xl p-4"
-              >
-                <h2 className="font-bold text-lg text-white">
-                  {ficha.cliente}
-                </h2>
-
-                <p className="text-zinc-300">
-                  Vendedor: {ficha.vendedor}
-                </p>
-
-                <p className="text-zinc-300">
-                  Costureiro 1: {ficha.costureiro1}
-                </p>
-
-                <p className="text-zinc-300">
-                  Costureiro 2: {ficha.costureiro2}
-                </p>
-
-                <p className="text-zinc-300">
-                  Pedido: {ficha.pedido}
-                </p>
-
-                <p className="text-zinc-300">
-                  Entrega: {ficha.entrega}
-                </p>
-
-                {ficha.pdfUrl && (
-                  <a
-                    href={ficha.pdfUrl}
-                    target="_blank"
-                    className="block mt-3 bg-green-600 hover:bg-green-700 transition text-center rounded-2xl p-3 font-bold"
-                  >
-                    VER PDF
-                  </a>
-                )}
-
-              </div>
-
-            ))}
 
           </div>
 
