@@ -231,7 +231,7 @@ function StatusToggle({
                       </p>
 
                       <p className="text-zinc-300 mt-2">
-                        Pedido: {ficha.pedido}
+                        Pedido: {new Date(ficha.pedido).toLocaleDateString("pt-BR")}
                       </p>
 
                     </div>
@@ -243,7 +243,7 @@ function StatusToggle({
                       </p>
 
                       <p className="text-zinc-300 mt-2">
-                        Entrega: {ficha.entrega}
+                        Entrega: {new Date(ficha.entrega).toLocaleDateString("pt-BR")}
                       </p>
 
                     </div>
