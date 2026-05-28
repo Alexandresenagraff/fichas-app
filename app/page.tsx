@@ -167,7 +167,7 @@ function StatusToggle({
 
         <button
           onClick={onClick}
-          className={`w-28 h-12 rounded-xl transition relative ${
+          className={`w-24 h-10 rounded-xl transition relative ${
             ativo
               ? "bg-zinc-500"
               : "bg-zinc-500"
@@ -175,9 +175,9 @@ function StatusToggle({
         >
 
           <div
-            className={`absolute top-1 w-10 h-10 rounded-lg transition-all ${
+            className={`absolute top-1 w-8 h-8 rounded-lg transition-all ${
               ativo
-                ? "bg-lime-400 left-16"
+                ? "bg-lime-400 left-14"
                 : "bg-red-500 left-1"
             }`}
           />
