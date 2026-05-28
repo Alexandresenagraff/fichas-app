@@ -345,7 +345,7 @@ function StatusToggle({
                       />
 
                       <StatusToggle
-                        label="ENTREGUE"
+                        label="ENTREG"
                         ativo={ficha.entregue}
                         onClick={() =>
                           alterarStatus(
