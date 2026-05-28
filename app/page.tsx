@@ -51,6 +51,7 @@ export default function Home() {
         exportacao: false,
         impressao: false,
         prensa: false,
+        corte: false,
         costura: false,
         conferencia: false,
         entregue: false,
@@ -340,6 +341,18 @@ export default function Home() {
                             ficha.id,
                             "prensa",
                             ficha.prensa
+                          )
+                        }
+                      />
+
+                      <StatusToggle
+                        label="CORTE"
+                        ativo={ficha.corte}
+                        onClick={() =>
+                          alterarStatus(
+                            ficha.id,
+                            "corte",
+                            ficha.corte
                           )
                         }
                       />
