@@ -281,7 +281,7 @@ export default function Home() {
                     <div className="space-y-2">
 
                       <StatusToggle
-                        label="VENDA"
+                        label="VENDA FEITA"
                         ativo={ficha.venda}
                         onClick={() =>
                           alterarStatus(
@@ -305,7 +305,7 @@ export default function Home() {
                       />
 
                       <StatusToggle
-                        label="EXPORT."
+                        label="EXPORTANDO"
                         ativo={ficha.exportacao}
                         onClick={() =>
                           alterarStatus(
@@ -317,7 +317,7 @@ export default function Home() {
                       />
 
                       <StatusToggle
-                        label="IMPRE."
+                        label="IMPRESSÃO"
                         ativo={ficha.impressao}
                         onClick={() =>
                           alterarStatus(
@@ -333,7 +333,7 @@ export default function Home() {
                     <div className="space-y-2">
 
                       <StatusToggle
-                        label="PRENSA"
+                        label="NA PRENSA"
                         ativo={ficha.prensa}
                         onClick={() =>
                           alterarStatus(
@@ -345,7 +345,7 @@ export default function Home() {
                       />
 
                       <StatusToggle
-                        label="COSTURA"
+                        label="NA COSTURA"
                         ativo={ficha.costura}
                         onClick={() =>
                           alterarStatus(
@@ -357,7 +357,7 @@ export default function Home() {
                       />
 
                       <StatusToggle
-                        label="CONFER."
+                        label="CONFERÊNCIA/RECEPÇÃO"
                         ativo={ficha.conferencia}
                         onClick={() =>
                           alterarStatus(
@@ -369,7 +369,7 @@ export default function Home() {
                       />
 
                       <StatusToggle
-                        label="ENTREG."
+                        label="ENTREGUE/ENVIADO"
                         ativo={ficha.entregue}
                         onClick={() =>
                           alterarStatus(
