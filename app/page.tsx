@@ -103,7 +103,11 @@ export default function Home() {
     }
   }
 
-  async function alterarStatus(id, campo, valorAtual) {
+  async function alterarStatus(
+  id: string,
+  campo: string,
+  valorAtual: boolean
+) {
 
     try {
 
