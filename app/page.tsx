@@ -360,18 +360,16 @@ function StatusToggle({
 
                   </div>
 
-                  {/* PDF */}
-                  {ficha.pdfLink && (
-
-                    <a
-                      href={ficha.pdfLink}
-                      target="_blank"
-                      className="block mt-5 bg-green-600 hover:bg-green-700 transition text-center rounded-2xl p-4 font-bold"
-                    >
-                      VER PDF
-                    </a>
-
-                  )}
+              {/* PDF */}
+{ficha.pdfLink && (
+  <a
+    href={ficha.pdfLink}
+    target="_blank"
+    className="block mt-5 bg-green-600 hover:bg-green-700 transition text-center rounded-2xl p-4 font-bold"
+  >
+    VER PDF
+  </a>
+)}
 
                 </div>
 
