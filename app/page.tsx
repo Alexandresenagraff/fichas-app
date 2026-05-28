@@ -143,11 +143,15 @@ export default function Home() {
       )
     : [];
 
-  function StatusToggle({
-    label,
-    ativo,
-    onClick,
-  }) {
+function StatusToggle({
+  label,
+  ativo,
+  onClick,
+}: {
+  label: string;
+  ativo: boolean;
+  onClick: () => void;
+}) {
 
     return (
 
