@@ -19,8 +19,8 @@ export default function Home() {
 
   const [cliente, setCliente] = useState("");
   const [vendedor, setVendedor] = useState("");
-  const [costureiro1, setCostureiro1] = useState("");
-  const [costureiro2, setCostureiro2] = useState("");
+  const [observacao, setObservacao] = useState("");
+  const [designer, setDesigner] = useState("");
   const [pedido, setPedido] = useState("");
   const [entrega, setEntrega] = useState("");
   const [pdfLink, setPdfLink] = useState("");
@@ -40,8 +40,8 @@ export default function Home() {
       await addDoc(collection(db, "fichas"), {
         cliente,
         vendedor,
-        costureiro1,
-        costureiro2,
+        observacao,
+        designer,
         pedido,
         entrega,
         pdfLink,
@@ -64,8 +64,8 @@ export default function Home() {
 
       setCliente("");
       setVendedor("");
-      setCostureiro1("");
-      setCostureiro2("");
+      setObservacao("");
+      setDesigner("");
       setPedido("");
       setEntrega("");
       setPdfLink("");
@@ -104,10 +104,10 @@ export default function Home() {
   }
 
   async function alterarStatus(
-  id: string,
-  campo: string,
-  valorAtual: boolean
-) {
+    id: string,
+    campo: string,
+    valorAtual: boolean
+  ) {
 
     try {
 
@@ -147,63 +147,59 @@ export default function Home() {
       )
     : [];
 
-function StatusToggle({
-  label,
-  ativo,
-  onClick,
-}: {
-  label: string;
-  ativo: boolean;
-  onClick: () => void;
-}) {
-
+  function StatusToggle({
+    label,
+    ativo,
+    onClick,
+  }: {
+    label: string;
+    ativo: boolean;
+    onClick: () => void;
+  }) {
     return (
 
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2">
 
-        <span className="text-white text-xl">
+        <span className="text-sm font-medium text-white">
           {label}
         </span>
 
         <button
           onClick={onClick}
-          className={`w-24 h-10 rounded-xl transition relative ${
-            ativo
-              ? "bg-zinc-500"
-              : "bg-zinc-500"
-          }`}
+          role="switch"
+          aria-checked={ativo}
+          className="relative w-8 h-4 bg-zinc-700 rounded-full"
         >
 
           <div
-            className={`absolute top-1 w-8 h-8 rounded-lg transition-all ${
+            className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${
               ativo
-                ? "bg-lime-400 left-14"
-                : "bg-red-500 left-1"
+                ? "translate-x-4 bg-lime-400"
+                : "translate-x-1 bg-red-500"
             }`}
           />
 
         </button>
 
       </div>
-
     );
   }
 
   return (
 
-    <main className="min-h-screen bg-zinc-950 p-3 text-white">
+    <main className="min-h-screen bg-black p-3 text-white">
 
       <div className="max-w-md mx-auto">
 
         {/* PESQUISA */}
-        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-5 mb-5 border border-zinc-700">
+        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-4 mb-5 border border-zinc-800">
 
           <input
             type="text"
             placeholder="🔎 Pesquisar Cliente"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="w-full bg-zinc-950 border border-zinc-700 rounded-2xl p-4 text-white placeholder-zinc-500"
+            className="w-full bg-black border border-zinc-700 rounded-2xl p-3 text-sm text-white placeholder-zinc-500 outline-none"
           />
 
         </div>
@@ -219,31 +215,60 @@ function StatusToggle({
 
                 <div
                   key={ficha.id}
-                  className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5"
+                  className="bg-zinc-950 border border-zinc-800 rounded-3xl p-4 shadow-xl"
                 >
 
-                  <div className="grid grid-cols-2 gap-4 mb-5">
+                  {/* TOPO */}
+                  <div className="grid grid-cols-2 gap-3 mb-4">
 
                     <div>
 
-                      <p className="text-3xl font-bold">
+                      <p className="text-2xl font-bold break-words leading-tight">
                         {ficha.cliente}
                       </p>
 
-                      <p className="text-zinc-300 mt-2">
-                        Pedido: {new Date(ficha.pedido).toLocaleDateString("pt-BR")}
+                      <p className="text-zinc-400 text-sm mt-2">
+                        Observação:
+                      </p>
+
+                      <p className="text-sm break-words">
+                        {ficha.observacao || "-"}
+                      </p>
+
+                      <p className="text-zinc-400 text-sm mt-2">
+                        Designer:
+                      </p>
+
+                      <p className="text-sm break-words">
+                        {ficha.designer || "-"}
                       </p>
 
                     </div>
 
                     <div>
 
-                      <p className="text-xl">
-                        Vendedor: {ficha.vendedor}
+                      <p className="text-lg font-medium leading-tight">
+                        Vendedor:
                       </p>
 
-                      <p className="text-zinc-300 mt-2">
-                        Entrega: {new Date(ficha.entrega).toLocaleDateString("pt-BR")}
+                      <p className="text-xl font-semibold break-words">
+                        {ficha.vendedor}
+                      </p>
+
+                      <p className="text-zinc-400 text-sm mt-2">
+                        Pedido:
+                      </p>
+
+                      <p className="text-sm">
+                        {ficha.pedido || "-"}
+                      </p>
+
+                      <p className="text-zinc-400 text-sm mt-2">
+                        Entrega:
+                      </p>
+
+                      <p className="text-sm">
+                        {ficha.entrega || "-"}
                       </p>
 
                     </div>
@@ -251,10 +276,9 @@ function StatusToggle({
                   </div>
 
                   {/* STATUS */}
+                  <div className="flex flex-col gap-2">
 
-                  <div className="grid grid-cols-2 gap-4">
-
-                    <div>
+                    <div className="space-y-2">
 
                       <StatusToggle
                         label="VENDA"
@@ -281,7 +305,7 @@ function StatusToggle({
                       />
 
                       <StatusToggle
-                        label="EXPOR."
+                        label="EXPORT."
                         ativo={ficha.exportacao}
                         onClick={() =>
                           alterarStatus(
@@ -306,7 +330,7 @@ function StatusToggle({
 
                     </div>
 
-                    <div>
+                    <div className="space-y-2">
 
                       <StatusToggle
                         label="PRENSA"
@@ -321,7 +345,7 @@ function StatusToggle({
                       />
 
                       <StatusToggle
-                        label="COSTU."
+                        label="COSTURA"
                         ativo={ficha.costura}
                         onClick={() =>
                           alterarStatus(
@@ -345,7 +369,7 @@ function StatusToggle({
                       />
 
                       <StatusToggle
-                        label="ENTREG"
+                        label="ENTREG."
                         ativo={ficha.entregue}
                         onClick={() =>
                           alterarStatus(
@@ -360,16 +384,18 @@ function StatusToggle({
 
                   </div>
 
-              {/* PDF */}
-{ficha.pdfLink && (
-  <a
-    href={ficha.pdfLink}
-    target="_blank"
-    className="block mt-5 bg-green-600 hover:bg-green-700 transition text-center rounded-2xl p-4 font-bold"
-  >
-    VER PDF
-  </a>
-)}
+                  {/* PDF */}
+                  {ficha.pdfLink && (
+
+                    <a
+                      href={ficha.pdfLink}
+                      target="_blank"
+                      className="block mt-5 bg-green-600 hover:bg-green-700 transition text-center rounded-2xl p-3 text-sm font-bold"
+                    >
+                      VER PDF
+                    </a>
+
+                  )}
 
                 </div>
 
@@ -388,7 +414,7 @@ function StatusToggle({
         )}
 
         {/* FORMULÁRIO */}
-        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-5 mt-5 border border-zinc-700">
+        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-5 mt-5 border border-zinc-800">
 
           <h1 className="text-4xl font-bold text-center mb-1">
             FICHAS
@@ -405,7 +431,7 @@ function StatusToggle({
               placeholder="Nome do Cliente"
               value={cliente}
               onChange={(e) => setCliente(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-700 rounded-2xl p-4"
+              className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
             />
 
             <input
@@ -413,23 +439,23 @@ function StatusToggle({
               placeholder="Nome do Vendedor"
               value={vendedor}
               onChange={(e) => setVendedor(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-700 rounded-2xl p-4"
+              className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
             />
 
             <input
               type="text"
-              placeholder="Costureiro 1"
-              value={costureiro1}
-              onChange={(e) => setCostureiro1(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-700 rounded-2xl p-4"
+              placeholder="Observação"
+              value={observacao}
+              onChange={(e) => setObservacao(e.target.value)}
+              className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
             />
 
             <input
               type="text"
-              placeholder="Costureiro 2"
-              value={costureiro2}
-              onChange={(e) => setCostureiro2(e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-700 rounded-2xl p-4"
+              placeholder="Designer"
+              value={designer}
+              onChange={(e) => setDesigner(e.target.value)}
+              className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
             />
 
             <div>
@@ -442,7 +468,7 @@ function StatusToggle({
                 type="date"
                 value={pedido}
                 onChange={(e) => setPedido(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-700 rounded-2xl p-4"
+                className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
               />
 
             </div>
@@ -457,7 +483,7 @@ function StatusToggle({
                 type="date"
                 value={entrega}
                 onChange={(e) => setEntrega(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-700 rounded-2xl p-4"
+                className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
               />
 
             </div>
@@ -473,14 +499,14 @@ function StatusToggle({
                 placeholder="Cole aqui o link do PDF"
                 value={pdfLink}
                 onChange={(e) => setPdfLink(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-700 rounded-2xl p-4"
+                className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
               />
 
             </div>
 
             <button
               onClick={salvarFicha}
-              className="w-full bg-blue-600 hover:bg-blue-700 transition rounded-2xl p-4 font-bold"
+              className="w-full bg-blue-600 hover:bg-blue-700 transition rounded-2xl p-3 font-bold"
             >
               SALVAR FICHA
             </button>
