@@ -86,45 +86,49 @@ export default function Home() {
     }
   }
 
-  async function pesquisarFichas(nome: string) {
+ async function pesquisarFichas(nome: string) {
 
-    if (!nome.trim()) {
-      setFichas([]);
-      return;
-    }
+  if (!nome.trim()) {
+    setFichas([]);
+    return;
+  }
 
-    try {
+  try {
 
-      const fichasRef = collection(db, "fichas");
+    const fichasRef = collection(db, "fichas");
 
-      const q = query(
-        fichasRef,
-        where("cliente", ">=", nome),
-        where("cliente", "<=", nome + "\uf8ff")
-      );
+    const querySnapshot = await getDocs(fichasRef);
 
-      const querySnapshot = await getDocs(q);
+    const lista: any[] = [];
 
-      const lista: any[] = [];
+    querySnapshot.forEach((item) => {
 
-      querySnapshot.forEach((item) => {
+      const dados = item.data();
+
+      if (
+        dados.cliente
+          ?.toLowerCase()
+          .includes(nome.toLowerCase())
+      ) {
 
         lista.push({
           id: item.id,
-          ...item.data(),
+          ...dados,
         });
 
-      });
+      }
 
-      setFichas(lista);
+    });
 
-    } catch (error) {
+    setFichas(lista);
 
-      console.log(error);
+  } catch (error) {
 
-      alert("Erro ao pesquisar fichas");
-    }
+    console.log(error);
+
+    alert("Erro ao pesquisar fichas");
   }
+}
 
   async function alterarStatus(
     id: string,
