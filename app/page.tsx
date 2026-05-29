@@ -168,7 +168,11 @@ export default function Home() {
 
       <div className="flex items-center justify-between w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2">
 
-        <span className="text-sm font-medium text-white">
+        <span className={`text-sm font-medium transition-all ${
+          ativo
+            ? "text-lime-400"
+            : "text-white"
+        }`}>
           {label}
         </span>
 
@@ -289,7 +293,7 @@ export default function Home() {
                     <div className="space-y-2">
 
                       <StatusToggle
-                        label="VENDA FEITA"
+                        label={ficha.venda ? "VENDA FEITA" : "VENDA"}
                         ativo={ficha.venda}
                         onClick={() =>
                           alterarStatus(
@@ -301,7 +305,7 @@ export default function Home() {
                       />
 
                       <StatusToggle
-                        label="ARTE"
+                        label={ficha.arte ? "ARTE CONCLUÍDA" : "ARTE"}
                         ativo={ficha.arte}
                         onClick={() =>
                           alterarStatus(
@@ -313,7 +317,7 @@ export default function Home() {
                       />
 
                       <StatusToggle
-                        label="EXPORTANDO"
+                        label={ficha.exportacao ? "EXPORTADO" : "EXPORTANDO"}
                         ativo={ficha.exportacao}
                         onClick={() =>
                           alterarStatus(
@@ -325,7 +329,7 @@ export default function Home() {
                       />
 
                       <StatusToggle
-                        label="IMPRESSÃO"
+                        label={ficha.impressao ? "IMPRESSO" : "IMPRESSÃO"}
                         ativo={ficha.impressao}
                         onClick={() =>
                           alterarStatus(
@@ -341,7 +345,7 @@ export default function Home() {
                     <div className="space-y-2">
 
                       <StatusToggle
-                        label="NA PRENSA"
+                        label={ficha.prensa ? "PRENSAGEM CONCLUÍDA" : "NA PRENSA"}
                         ativo={ficha.prensa}
                         onClick={() =>
                           alterarStatus(
@@ -353,7 +357,7 @@ export default function Home() {
                       />
 
                       <StatusToggle
-                        label="CORTE"
+                        label={ficha.corte ? "CORTADO" : "CORTE"}
                         ativo={ficha.corte}
                         onClick={() =>
                           alterarStatus(
@@ -367,7 +371,7 @@ export default function Home() {
                       <div className="space-y-2">
 
                         <StatusToggle
-                          label="NA COSTURA"
+                          label={ficha.costura ? "COSTURA CONCLUÍDA" : "NA COSTURA"}
                           ativo={ficha.costura}
                           onClick={() =>
                             alterarStatus(
@@ -413,7 +417,11 @@ export default function Home() {
                       </div>
 
                       <StatusToggle
-                        label="CONFERÊNCIA/RECEPÇÃO"
+                        label={
+                          ficha.conferencia
+                            ? "CONFERIDO E EMBALADO"
+                            : "CONFERÊNCIA/RECEPÇÃO"
+                        }
                         ativo={ficha.conferencia}
                         onClick={() =>
                           alterarStatus(
@@ -427,7 +435,7 @@ export default function Home() {
                       <div className="space-y-2">
 
                         <StatusToggle
-                          label="ENTREGA"
+                          label={ficha.entregaStatus ? "ENTREGUE" : "ENTREGA"}
                           ativo={ficha.entregaStatus}
                           onClick={() =>
                             alterarStatus(
