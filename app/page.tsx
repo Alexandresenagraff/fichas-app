@@ -10,6 +10,7 @@ import {
   addDoc,
   getDocs,
   updateDoc,
+  deleteDoc,
   doc,
 } from "firebase/firestore";
 
@@ -165,6 +166,32 @@ export default function Home() {
     }
   }
 
+  async function excluirFicha(id: string) {
+
+    const confirmar = window.confirm(
+      "Deseja mesmo excluir esta ficha?"
+    );
+
+    if (!confirmar) return;
+
+    try {
+
+      await deleteDoc(doc(db, "fichas", id));
+
+      setFichas((prev) =>
+        prev.filter((item) => item.id !== id)
+      );
+
+      alert("Ficha excluída com sucesso!");
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Erro ao excluir ficha");
+    }
+  }
+
   useEffect(() => {
 
     carregarFichas();
@@ -255,7 +282,7 @@ export default function Home() {
                 >
 
                   {/* TOPO */}
-                  <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="flex justify-between items-start gap-3 mb-4">
 
                     <div>
 
@@ -281,15 +308,44 @@ export default function Home() {
 
                     </div>
 
-                    <div>
+                    <div className="flex-1">
 
-                      <p className="text-lg font-medium leading-tight">
-                        Vendedor:
-                      </p>
+                      <div className="flex justify-between items-start">
 
-                      <p className="text-xl font-semibold break-words">
-                        {ficha.vendedor}
-                      </p>
+                        <div>
+
+                          <p className="text-lg font-medium leading-tight">
+                            Vendedor:
+                          </p>
+
+                          <p className="text-xl font-semibold break-words">
+                            {ficha.vendedor}
+                          </p>
+
+                        </div>
+
+                        <button
+                          onClick={() => excluirFicha(ficha.id)}
+                          className="text-white hover:text-red-500 transition"
+                          title="Excluir ficha"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-7 h-7"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h8"
+                            />
+                          </svg>
+                        </button>
+
+                      </div>
 
                       <p className="text-zinc-400 text-sm mt-2">
                         Pedido:
