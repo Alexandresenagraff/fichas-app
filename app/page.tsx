@@ -58,7 +58,10 @@ export default function Home() {
         costureiroCelina: false,
 
         conferencia: false,
-        entregue: false,
+
+        entregaStatus: false,
+        envio: false,
+        retirada: false,
 
         criadoEm: new Date(),
       });
@@ -421,17 +424,53 @@ export default function Home() {
                         }
                       />
 
-                      <StatusToggle
-                        label="ENTREGUE/ENVIADO"
-                        ativo={ficha.entregue}
-                        onClick={() =>
-                          alterarStatus(
-                            ficha.id,
-                            "entregue",
-                            ficha.entregue
-                          )
-                        }
-                      />
+                      <div className="space-y-2">
+
+                        <StatusToggle
+                          label="ENTREGA"
+                          ativo={ficha.entregaStatus}
+                          onClick={() =>
+                            alterarStatus(
+                              ficha.id,
+                              "entregaStatus",
+                              ficha.entregaStatus
+                            )
+                          }
+                        />
+
+                        {ficha.entregaStatus && (
+
+                          <div className="ml-4 pl-3 border-l border-zinc-700 space-y-2">
+
+                            <StatusToggle
+                              label="ENVIO"
+                              ativo={ficha.envio}
+                              onClick={() =>
+                                alterarStatus(
+                                  ficha.id,
+                                  "envio",
+                                  ficha.envio
+                                )
+                              }
+                            />
+
+                            <StatusToggle
+                              label="RETIRADA"
+                              ativo={ficha.retirada}
+                              onClick={() =>
+                                alterarStatus(
+                                  ficha.id,
+                                  "retirada",
+                                  ficha.retirada
+                                )
+                              }
+                            />
+
+                          </div>
+
+                        )}
+
+                      </div>
 
                     </div>
 
