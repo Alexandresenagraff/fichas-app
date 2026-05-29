@@ -12,6 +12,8 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  query,
+  where,
 } from "firebase/firestore";
 
 const db = getFirestore(app);
@@ -69,8 +71,6 @@ export default function Home() {
 
       alert("Ficha salva!");
 
-      carregarFichas();
-
       setCliente("");
       setVendedor("");
       setObservacao("");
@@ -86,11 +86,24 @@ export default function Home() {
     }
   }
 
-  async function carregarFichas() {
+  async function pesquisarFichas(nome: string) {
+
+    if (!nome.trim()) {
+      setFichas([]);
+      return;
+    }
 
     try {
 
-      const querySnapshot = await getDocs(collection(db, "fichas"));
+      const fichasRef = collection(db, "fichas");
+
+      const q = query(
+        fichasRef,
+        where("cliente", ">=", nome),
+        where("cliente", "<=", nome + "\uf8ff")
+      );
+
+      const querySnapshot = await getDocs(q);
 
       const lista: any[] = [];
 
@@ -108,6 +121,8 @@ export default function Home() {
     } catch (error) {
 
       console.log(error);
+
+      alert("Erro ao pesquisar fichas");
     }
   }
 
@@ -154,7 +169,13 @@ export default function Home() {
         pdfLink: link,
       });
 
-      carregarFichas();
+      setFichas((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? { ...item, pdfLink: link }
+            : item
+        )
+      );
 
       alert("PDF salvo!");
 
@@ -194,17 +215,9 @@ export default function Home() {
 
   useEffect(() => {
 
-    carregarFichas();
+    setFichas([]);
 
   }, []);
-
-  const fichasFiltradas = busca
-    ? fichas.filter((ficha) =>
-        ficha.cliente
-          ?.toLowerCase()
-          .includes(busca.toLowerCase())
-      )
-    : [];
 
   function StatusToggle({
     label,
@@ -261,7 +274,10 @@ export default function Home() {
             type="text"
             placeholder="🔎 Pesquisar Cliente"
             value={busca}
-            onChange={(e) => setBusca(e.target.value)}
+            onChange={(e) => {
+              setBusca(e.target.value);
+              pesquisarFichas(e.target.value);
+            }}
             className="w-full bg-black border border-zinc-700 rounded-2xl p-3 text-sm text-white placeholder-zinc-500 outline-none"
           />
 
@@ -272,9 +288,9 @@ export default function Home() {
 
           <div className="space-y-4">
 
-            {fichasFiltradas.length > 0 ? (
+            {fichas.length > 0 ? (
 
-              fichasFiltradas.map((ficha) => (
+              fichas.map((ficha) => (
 
                 <div
                   key={ficha.id}
