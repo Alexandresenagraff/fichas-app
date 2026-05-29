@@ -301,91 +301,103 @@ export default function Home() {
                   className="bg-zinc-950 border border-zinc-800 rounded-3xl p-4 shadow-xl"
                 >
 
-                  {/* TOPO */}
-                  <div className="flex justify-between items-start gap-3 mb-4">
+  {/* TOPO */}
+<div className="mb-5">
 
-                    <div>
+  {/* NOME + LIXEIRA */}
+  <div className="flex justify-between items-start gap-3 mb-3">
 
-                      <p className="text-2xl font-bold break-words leading-tight">
-                        {ficha.cliente}
-                      </p>
+    <p className="text-2xl font-bold break-words leading-tight flex-1 uppercase">
+      {ficha.cliente}
+    </p>
 
-                      <p className="text-zinc-400 text-sm mt-2">
-                        Observação:
-                      </p>
+    <button
+      onClick={() => excluirFicha(ficha.id)}
+      className="text-white hover:text-red-500 transition flex-shrink-0"
+      title="Excluir ficha"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-7 h-7"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h8"
+        />
+      </svg>
+    </button>
 
-                      <p className="text-sm break-words">
-                        {ficha.observacao || "-"}
-                      </p>
+  </div>
 
-                      <p className="text-zinc-400 text-sm mt-2">
-                        Designer:
-                      </p>
+  {/* DATAS */}
+  <div className="grid grid-cols-2 gap-4 mb-4">
 
-                      <p className="text-sm break-words">
-                        {ficha.designer || "-"}
-                      </p>
+    <div>
+      <p className="text-zinc-400 text-sm">
+        Pedido:
+      </p>
 
-                    </div>
+      <p className="text-base font-semibold">
+        {ficha.pedido || "-"}
+      </p>
+    </div>
 
-                    <div className="flex-1">
+    <div>
+      <p className="text-zinc-400 text-sm">
+        Entrega:
+      </p>
 
-                      <div className="flex justify-between items-start">
+      <p className="text-base font-semibold">
+        {ficha.entrega || "-"}
+      </p>
+    </div>
 
-                        <div>
+  </div>
 
-                          <p className="text-lg font-medium leading-tight">
-                            Vendedor:
-                          </p>
+  {/* OBSERVAÇÃO */}
+  <div className="mb-4">
 
-                          <p className="text-xl font-semibold break-words">
-                            {ficha.vendedor}
-                          </p>
+    <p className="text-zinc-400 text-sm">
+      Observação:
+    </p>
 
-                        </div>
+    <p className="text-sm break-words">
+      {ficha.observacao || "-"}
+    </p>
 
-                        <button
-                          onClick={() => excluirFicha(ficha.id)}
-                          className="text-white hover:text-red-500 transition"
-                          title="Excluir ficha"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="w-7 h-7"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth={2}
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3m-7 0h8"
-                            />
-                          </svg>
-                        </button>
+  </div>
 
-                      </div>
+  {/* VENDEDOR + DESIGNER */}
+  <div className="grid grid-cols-2 gap-4">
 
-                      <p className="text-zinc-400 text-sm mt-2">
-                        Pedido:
-                      </p>
+    <div>
+      <p className="text-zinc-400 text-sm">
+        Vendedor:
+      </p>
 
-                      <p className="text-sm">
-                        {ficha.pedido || "-"}
-                      </p>
+      <p className="text-lg font-bold break-words uppercase">
+        {ficha.vendedor || "-"}
+      </p>
+    </div>
 
-                      <p className="text-zinc-400 text-sm mt-2">
-                        Entrega:
-                      </p>
+    <div>
+      <p className="text-zinc-400 text-sm">
+        Designer:
+      </p>
 
-                      <p className="text-sm">
-                        {ficha.entrega || "-"}
-                      </p>
+      <p className="text-lg font-bold break-words">
+        {ficha.designer || "-"}
+      </p>
+    </div>
 
-                    </div>
+  </div>
 
-                  </div>
+</div>
 
                   {/* STATUS */}
                   {/* STATUS */}
