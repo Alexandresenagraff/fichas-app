@@ -384,7 +384,56 @@ export default function Home() {
                   </div>
 
                   {/* STATUS */}
-                  <div className="flex flex-col gap-2">
+                  {/* STATUS */}
+<div className="flex flex-col gap-2">
+
+  {/* BARRA DE PROGRESSO */}
+  {(() => {
+
+    const etapas = [
+      ficha.venda,
+      ficha.arte,
+      ficha.exportacao,
+      ficha.impressao,
+      ficha.prensa,
+      ficha.corte,
+      ficha.costura,
+      ficha.conferencia,
+      ficha.entregaStatus,
+    ];
+
+    const concluidas = etapas.filter(Boolean).length;
+
+    const porcentagem = Math.round(
+      (concluidas / etapas.length) * 100
+    );
+
+    return (
+
+      <div className="mb-2">
+
+        <div className="relative w-full h-8 bg-black border-2 border-blue-700 rounded-full overflow-hidden shadow-[0_0_10px_rgba(37,99,235,0.5)]">
+
+          <div
+            className="h-full rounded-full transition-all duration-500"
+            style={{
+              width: `${porcentagem}%`,
+              background:
+                "linear-gradient(to right, #f59e0b, #fde047)",
+            }}
+          />
+
+          <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-lg">
+            {porcentagem}%
+          </div>
+
+        </div>
+
+      </div>
+
+    );
+
+  })()}
 
                     <div className="space-y-2">
 
