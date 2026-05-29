@@ -23,7 +23,6 @@ export default function Home() {
   const [designer, setDesigner] = useState("");
   const [pedido, setPedido] = useState("");
   const [entrega, setEntrega] = useState("");
-  const [pdfLink, setPdfLink] = useState("");
 
   const [busca, setBusca] = useState("");
   const [fichas, setFichas] = useState<any[]>([]);
@@ -44,7 +43,8 @@ export default function Home() {
         designer,
         pedido,
         entrega,
-        pdfLink,
+
+        pdfLink: "",
 
         venda: false,
         arte: false,
@@ -76,7 +76,6 @@ export default function Home() {
       setDesigner("");
       setPedido("");
       setEntrega("");
-      setPdfLink("");
 
     } catch (error) {
 
@@ -138,6 +137,31 @@ export default function Home() {
       console.log(error);
 
       alert("Erro ao atualizar");
+    }
+  }
+
+  async function salvarPdfLink(
+    id: string,
+    link: string
+  ) {
+
+    try {
+
+      const fichaRef = doc(db, "fichas", id);
+
+      await updateDoc(fichaRef, {
+        pdfLink: link,
+      });
+
+      carregarFichas();
+
+      alert("PDF salvo!");
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Erro ao salvar PDF");
     }
   }
 
@@ -316,17 +340,54 @@ export default function Home() {
                         }
                       />
 
-                      <StatusToggle
-                        label={ficha.exportacao ? "EXPORTADO" : "EXPORTANDO"}
-                        ativo={ficha.exportacao}
-                        onClick={() =>
-                          alterarStatus(
-                            ficha.id,
-                            "exportacao",
-                            ficha.exportacao
-                          )
-                        }
-                      />
+                      <div className="space-y-2">
+
+                        <StatusToggle
+                          label={ficha.exportacao ? "EXPORTADO" : "EXPORTANDO"}
+                          ativo={ficha.exportacao}
+                          onClick={() =>
+                            alterarStatus(
+                              ficha.id,
+                              "exportacao",
+                              ficha.exportacao
+                            )
+                          }
+                        />
+
+                        {ficha.exportacao && (
+
+                          <div className="ml-4 pl-3 border-l border-zinc-700 space-y-3">
+
+                            <input
+                              type="text"
+                              placeholder="Cole aqui o link do PDF"
+                              defaultValue={ficha.pdfLink || ""}
+                              onBlur={(e) =>
+                                salvarPdfLink(
+                                  ficha.id,
+                                  e.target.value
+                                )
+                              }
+                              className="w-full bg-black border border-zinc-700 rounded-xl p-3 text-sm outline-none"
+                            />
+
+                            {ficha.pdfLink && (
+
+                              <a
+                                href={ficha.pdfLink}
+                                target="_blank"
+                                className="block bg-green-600 hover:bg-green-700 transition text-center rounded-xl p-3 text-sm font-bold"
+                              >
+                                VER PDF
+                              </a>
+
+                            )}
+
+                          </div>
+
+                        )}
+
+                      </div>
 
                       <StatusToggle
                         label={ficha.impressao ? "IMPRESSO" : "IMPRESSÃO"}
@@ -484,19 +545,6 @@ export default function Home() {
 
                   </div>
 
-                  {/* PDF */}
-                  {ficha.pdfLink && (
-
-                    <a
-                      href={ficha.pdfLink}
-                      target="_blank"
-                      className="block mt-5 bg-green-600 hover:bg-green-700 transition text-center rounded-2xl p-3 text-sm font-bold"
-                    >
-                      VER PDF
-                    </a>
-
-                  )}
-
                 </div>
 
               ))
@@ -583,22 +631,6 @@ export default function Home() {
                 type="date"
                 value={entrega}
                 onChange={(e) => setEntrega(e.target.value)}
-                className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
-              />
-
-            </div>
-
-            <div>
-
-              <label className="text-sm text-zinc-400">
-                Link do PDF
-              </label>
-
-              <input
-                type="text"
-                placeholder="Cole aqui o link do PDF"
-                value={pdfLink}
-                onChange={(e) => setPdfLink(e.target.value)}
                 className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
               />
 
