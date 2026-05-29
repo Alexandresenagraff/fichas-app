@@ -53,6 +53,10 @@ export default function Home() {
         prensa: false,
         corte: false,
         costura: false,
+
+        costureiroPaulo: false,
+        costureiroCelina: false,
+
         conferencia: false,
         entregue: false,
 
@@ -357,17 +361,53 @@ export default function Home() {
                         }
                       />
 
-                      <StatusToggle
-                        label="NA COSTURA"
-                        ativo={ficha.costura}
-                        onClick={() =>
-                          alterarStatus(
-                            ficha.id,
-                            "costura",
-                            ficha.costura
-                          )
-                        }
-                      />
+                      <div className="space-y-2">
+
+                        <StatusToggle
+                          label="NA COSTURA"
+                          ativo={ficha.costura}
+                          onClick={() =>
+                            alterarStatus(
+                              ficha.id,
+                              "costura",
+                              ficha.costura
+                            )
+                          }
+                        />
+
+                        {ficha.costura && (
+
+                          <div className="ml-4 pl-3 border-l border-zinc-700 space-y-2">
+
+                            <StatusToggle
+                              label="PAULO"
+                              ativo={ficha.costureiroPaulo}
+                              onClick={() =>
+                                alterarStatus(
+                                  ficha.id,
+                                  "costureiroPaulo",
+                                  ficha.costureiroPaulo
+                                )
+                              }
+                            />
+
+                            <StatusToggle
+                              label="CELINA"
+                              ativo={ficha.costureiroCelina}
+                              onClick={() =>
+                                alterarStatus(
+                                  ficha.id,
+                                  "costureiroCelina",
+                                  ficha.costureiroCelina
+                                )
+                              }
+                            />
+
+                          </div>
+
+                        )}
+
+                      </div>
 
                       <StatusToggle
                         label="CONFERÊNCIA/RECEPÇÃO"
