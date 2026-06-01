@@ -15,7 +15,7 @@ const db = getFirestore(app);
 export default function Cliente() {
 
   const [email, setEmail] = useState("");
-  const [pedido, setPedido] = useState<any>(null);
+  const [pedidos, setPedidos] = useState<any[]>([]);
 
   async function buscarPedido() {
 
@@ -25,24 +25,24 @@ export default function Cliente() {
         collection(db, "fichas")
       );
 
-      let encontrado = null;
+    const encontrados: any[] = [];
 
-      snapshot.forEach((doc) => {
+snapshot.forEach((doc) => {
 
-        const dados = doc.data();
+  const dados = doc.data();
 
-        if (
-          dados.email?.toLowerCase() ===
-          email.toLowerCase()
-        ) {
-          encontrado = dados;
-        }
+  if (
+    dados.email?.toLowerCase() ===
+    email.toLowerCase()
+  ) {
+    encontrados.push(dados);
+  }
 
-      });
+});
 
-      setPedido(encontrado);
+      setPedidos(encontrados);
 
-      if (!encontrado) {
+      if (encontrados.length === 0) {
         alert("Nenhum pedido encontrado.");
       }
 
@@ -54,27 +54,9 @@ export default function Cliente() {
     }
   }
 
-  const etapas = pedido
-    ? [
-        pedido.venda,
-        pedido.arte,
-        pedido.exportacao,
-        pedido.impressao,
-        pedido.prensa,
-        pedido.corte,
-        pedido.costura,
-        pedido.conferencia,
-        pedido.entregaStatus,
-      ]
-    : [];
+  const etapas = [];
 
-  const porcentagem = pedido
-    ? Math.round(
-        (etapas.filter(Boolean).length /
-          etapas.length) *
-          100
-      )
-    : 0;
+  const porcentagem = 0;
 
   return (
     <main className="min-h-screen bg-black text-white p-6">
@@ -106,13 +88,13 @@ export default function Cliente() {
           CONSULTAR
         </button>
 
-        {pedido && (
+        {pedidos.length > 0 && (
 
           <div className="mt-8">
 
-            <h2 className="text-xl font-bold mb-4">
-              {pedido.cliente}
-            </h2>
+           <h2 className="text-xl font-bold mb-4">
+  Teste
+</h2>
 
             <div className="w-full bg-zinc-800 rounded-full h-8 overflow-hidden mb-6">
 
@@ -131,15 +113,7 @@ export default function Cliente() {
 
             <div className="space-y-2 text-sm">
 
-              <p>{pedido.venda ? "✅" : "⬜"} VENDA</p>
-              <p>{pedido.arte ? "✅" : "⬜"} ARTE</p>
-              <p>{pedido.exportacao ? "✅" : "⬜"} EXPORTAÇÃO</p>
-              <p>{pedido.impressao ? "✅" : "⬜"} IMPRESSÃO</p>
-              <p>{pedido.prensa ? "✅" : "⬜"} PRENSA</p>
-              <p>{pedido.corte ? "✅" : "⬜"} CORTE</p>
-              <p>{pedido.costura ? "✅" : "⬜"} COSTURA</p>
-              <p>{pedido.conferencia ? "✅" : "⬜"} CONFERÊNCIA</p>
-              <p>{pedido.entregaStatus ? "✅" : "⬜"} ENTREGA</p>
+              <p>Teste</p>
 
             </div>
 
