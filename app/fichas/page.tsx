@@ -367,7 +367,7 @@ setEntrega("");
   </p>
 
   <p className="text-sm break-words font-medium">
-    {ficha.emailCliente || ficha.telefone || ficha.codigoCliente || "-"}
+    {ficha.email || "-"}
   </p>
 
 </div>
