@@ -359,7 +359,18 @@ setEntrega("");
     </div>
 
   </div>
+{/* IDENTIFICAÇÃO DO CLIENTE */}
+<div className="mb-4">
 
+  <p className="text-zinc-400 text-sm">
+    Email, Tel ou Cód. Cliente:
+  </p>
+
+  <p className="text-sm break-words font-medium">
+    {ficha.emailCliente || ficha.telefone || ficha.codigoCliente || "-"}
+  </p>
+
+</div>
   {/* OBSERVAÇÃO */}
   <div className="mb-4">
 
