@@ -703,11 +703,11 @@ setEntrega("");
 <div className="bg-zinc-900 rounded-3xl shadow-2xl p-5 mt-5 border border-zinc-800">
 
   <h1 className="text-4xl font-bold text-center mb-1">
-    CADASTRO RÁPIDO
+    CADASTRO
   </h1>
 
   <p className="text-center text-zinc-400 mb-6">
-    Sistema de Sublimação
+    Sistema Status de Pedidos
   </p>
 
   <div className="space-y-4">
@@ -786,7 +786,7 @@ setEntrega("");
       onClick={salvarFicha}
       className="w-full bg-blue-600 hover:bg-blue-700 transition rounded-2xl p-3 font-bold"
     >
-        SALVAR FICHA
+        SALVAR
     </button>
 
   </div>
