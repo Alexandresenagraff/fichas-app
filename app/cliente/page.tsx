@@ -178,11 +178,11 @@ return (
 
             <div className="space-y-2 text-sm">
 
-  <p>{pedido.venda ? "✅" : "⬜"} VENDA</p>
+  <p>{pedido.venda ? "✅" : "⬜"} VENDA CONCLUIDA</p>
 
-  <p>{pedido.arte ? "✅" : "⬜"} ARTE</p>
+  <p>{pedido.arte ? "✅" : "⬜"} ARTE APROVADA</p>
 
-  <p>{pedido.exportacao ? "✅" : "⬜"} EXPORTAÇÃO</p>
+  <p>{pedido.exportacao ? "✅" : "⬜"} APLICAÇÃO NO MOLDE</p>
 
   <p>{pedido.impressao ? "✅" : "⬜"} IMPRESSÃO</p>
 
@@ -192,9 +192,9 @@ return (
 
   <p>{pedido.costura ? "✅" : "⬜"} COSTURA</p>
 
-  <p>{pedido.conferencia ? "✅" : "⬜"} CONFERÊNCIA</p>
+  <p>{pedido.conferencia ? "✅" : "⬜"} CONFERÊNCIA/RECEPÇÃO</p>
 
-  <p>{pedido.entregaStatus ? "✅" : "⬜"} ENTREGA</p>
+  <p>{pedido.entregaStatus ? "✅" : "⬜"} ENVIADO/ENTREGA</p>
 
 </div>
 
