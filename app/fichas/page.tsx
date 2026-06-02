@@ -703,7 +703,7 @@ setEntrega("");
 <div className="bg-zinc-900 rounded-3xl shadow-2xl p-5 mt-5 border border-zinc-800">
 
   <h1 className="text-4xl font-bold text-center mb-1">
-    FICHAS
+    CADASTRO RÁPIDO
   </h1>
 
   <p className="text-center text-zinc-400 mb-6">
