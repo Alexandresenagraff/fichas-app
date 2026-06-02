@@ -722,7 +722,7 @@ setEntrega("");
 
     <input
       type="email"
-      placeholder="Email do Cliente"
+      placeholder="Email, Tel ou Cód cliente"
       value={email}
       onChange={(e) => setEmail(e.target.value)}
       className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
