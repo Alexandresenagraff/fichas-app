@@ -90,7 +90,17 @@ useEffect(() => {
 
   if (emailSalvo) {
     setEmail(emailSalvo);
-    buscarPedido();
+  }
+
+}, []);
+
+useEffect(() => {
+
+  const emailSalvo =
+    localStorage.getItem("clienteEmail");
+
+  if (emailSalvo) {
+    setEmail(emailSalvo);
   }
 
 }, []);
