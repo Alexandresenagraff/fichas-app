@@ -186,7 +186,7 @@ return (
 
   <p>{pedido.impressao ? "✅" : "⬜"} IMPRESSÃO</p>
 
-  <p>{pedido.prensa ? "✅" : "⬜"} PRENSA</p>
+  <p>{pedido.prensa ? "✅" : "⬜"} PRENSAGEM</p>
 
   <p>{pedido.corte ? "✅" : "⬜"} CORTE</p>
 
