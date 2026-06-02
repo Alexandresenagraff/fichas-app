@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import app from "../../firebase/config";
 
@@ -16,6 +16,7 @@ export default function Cliente() {
 
   const [email, setEmail] = useState("");
   const [pedidos, setPedidos] = useState<any[]>([]);
+  const [carregando, setCarregando] = useState(true);
 
   async function buscarPedido() {
 
@@ -41,7 +42,10 @@ snapshot.forEach((doc) => {
 });
 
       setPedidos(encontrados);
-
+localStorage.setItem(
+  "clienteEmail",
+  email
+);
       if (encontrados.length === 0) {
         alert("Nenhum pedido encontrado.");
       }
@@ -54,11 +58,48 @@ snapshot.forEach((doc) => {
     }
   }
 
-  const etapas = [];
+  function calcularPorcentagem(pedido: any) {
 
-  const porcentagem = 0;
+  const etapas = [
+    pedido.venda,
+    pedido.arte,
+    pedido.exportacao,
+    pedido.impressao,
+    pedido.prensa,
+    pedido.corte,
+    pedido.costura,
+    pedido.conferencia,
+    pedido.entregaStatus,
+  ];
 
-  return (
+  const concluidas = etapas.filter(Boolean).length;
+
+  return Math.round(
+    (concluidas / etapas.length) * 100
+  );
+}
+useEffect(() => {
+
+  const emailSalvo =
+    localStorage.getItem("clienteEmail");
+
+  if (emailSalvo) {
+    setEmail(emailSalvo);
+  }
+
+  setCarregando(false);
+
+}, []);
+
+useEffect(() => {
+
+  if (email) {
+    buscarPedido();
+  }
+
+}, [email]);
+
+return (
     <main className="min-h-screen bg-black text-white p-6">
 
       <div className="max-w-md mx-auto bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
@@ -90,34 +131,70 @@ snapshot.forEach((doc) => {
 
         {pedidos.length > 0 && (
 
-          <div className="mt-8">
+          <div className="mt-8 space-y-6">
+  {pedidos.map((pedido, index) => (
+    <div
+      key={index}
+      className="border border-zinc-700 rounded-2xl p-4"
+    >
 
            <h2 className="text-xl font-bold mb-4">
-  Teste
+   {pedido.cliente} - Pedido {index + 1}
 </h2>
+<div className="mb-4 text-sm text-zinc-300">
+
+  <p>
+    <strong>Pedido:</strong> {pedido.pedido || "-"}
+  </p>
+
+  <p>
+    <strong>Entrega prevista:</strong> {pedido.entrega || "-"}
+  </p>
+
+</div>
 
             <div className="w-full bg-zinc-800 rounded-full h-8 overflow-hidden mb-6">
 
               <div
                 className="bg-yellow-500 h-full"
                 style={{
-                  width: `${porcentagem}%`,
+                  width: `${calcularPorcentagem(pedido)}%`,
                 }}
               />
 
             </div>
 
             <p className="mb-4 font-bold">
-              {porcentagem}% concluído
+              {calcularPorcentagem(pedido)}% concluído
             </p>
 
             <div className="space-y-2 text-sm">
 
-              <p>Teste</p>
+  <p>{pedido.venda ? "✅" : "⬜"} VENDA</p>
 
-            </div>
+  <p>{pedido.arte ? "✅" : "⬜"} ARTE</p>
+
+  <p>{pedido.exportacao ? "✅" : "⬜"} EXPORTAÇÃO</p>
+
+  <p>{pedido.impressao ? "✅" : "⬜"} IMPRESSÃO</p>
+
+  <p>{pedido.prensa ? "✅" : "⬜"} PRENSA</p>
+
+  <p>{pedido.corte ? "✅" : "⬜"} CORTE</p>
+
+  <p>{pedido.costura ? "✅" : "⬜"} COSTURA</p>
+
+  <p>{pedido.conferencia ? "✅" : "⬜"} CONFERÊNCIA</p>
+
+  <p>{pedido.entregaStatus ? "✅" : "⬜"} ENTREGA</p>
+
+</div>
 
           </div>
+
+        ))}
+
+      </div>
 
         )}
 
