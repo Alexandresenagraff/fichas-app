@@ -41,20 +41,23 @@ snapshot.forEach((doc) => {
 
 });
 
-      setPedidos(encontrados);
-localStorage.setItem(
-  "clienteEmail",
-  email
-);
+   setPedidos(encontrados);
+
+if (encontrados.length > 0) {
+  localStorage.setItem(
+    "clienteEmail",
+    email
+  );
+}
       if (encontrados.length === 0) {
-        alert("Nenhum pedido encontrado.");
+        
       }
 
     } catch (error) {
 
       console.log(error);
 
-      alert("Erro ao buscar pedido.");
+      
     }
   }
 
@@ -83,21 +86,16 @@ useEffect(() => {
   const emailSalvo =
     localStorage.getItem("clienteEmail");
 
+  console.log("EMAIL SALVO:", emailSalvo);
+
   if (emailSalvo) {
     setEmail(emailSalvo);
-  }
-
-  setCarregando(false);
-
-}, []);
-
-useEffect(() => {
-
-  if (email) {
     buscarPedido();
   }
 
-}, [email]);
+}, []);
+
+
 
 return (
     <main className="min-h-screen bg-black text-white p-6">
