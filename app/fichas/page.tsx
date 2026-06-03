@@ -585,7 +585,7 @@ setEntrega("");
                       <div className="space-y-2">
 
                         <StatusToggle
-                          label={ficha.costura ? "COSTURA CONCLUÍDA" : "NA COSTURA"}
+                          label={ficha.costura ? "ENVIADO P/ COSTUREIRO(A)" : "COSTURA"}
                           ativo={ficha.costura}
                           onClick={() =>
                             alterarStatus(
