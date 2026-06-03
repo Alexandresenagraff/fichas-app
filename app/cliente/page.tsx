@@ -152,11 +152,11 @@ return (
 <div className="mb-4 text-sm text-zinc-300">
 
   <p>
-    <strong>Pedido:</strong> {pedido.pedido || "-"}
+    <strong>Pedido:</strong> {pedido.pedido ? pedido.pedido.split("-").reverse().join("/") : "-"}
   </p>
 
   <p>
-    <strong>Entrega prevista:</strong> {pedido.entrega || "-"}
+    <strong>Entrega prevista:</strong> {pedido.entrega ? pedido.entrega.split("-").reverse().join("/") : "-"}
   </p>
 
 </div>
