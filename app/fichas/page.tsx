@@ -57,10 +57,12 @@ export default function Home() {
         corte: false,
         costura: false,
 
-        costureiroPaulo: false,
-        costureiroCelina: false,
+costureiroPaulo: false,
+costureiroCelina: false,
 
-        conferencia: false,
+costuraConcluida: false,
+
+conferencia: false,
 
         entregaStatus: false,
         envio: false,
@@ -612,19 +614,37 @@ setEntrega("");
                               }
                             />
 
-                            <StatusToggle
-                              label="CELINA"
-                              ativo={ficha.costureiroCelina}
-                              onClick={() =>
-                                alterarStatus(
-                                  ficha.id,
-                                  "costureiroCelina",
-                                  ficha.costureiroCelina
-                                )
-                              }
-                            />
+                           <StatusToggle
+  label="CELINA"
+  ativo={ficha.costureiroCelina}
+  onClick={() =>
+    alterarStatus(
+      ficha.id,
+      "costureiroCelina",
+      ficha.costureiroCelina
+    )
+  }
+/>
 
-                          </div>
+{(ficha.costureiroPaulo || ficha.costureiroCelina) && (
+  <StatusToggle
+    label={
+      ficha.costuraConcluida
+        ? "COSTURA CONCLUÍDA"
+        : "AGUARDANDO COSTURA"
+    }
+    ativo={ficha.costuraConcluida}
+    onClick={() =>
+      alterarStatus(
+        ficha.id,
+        "costuraConcluida",
+        ficha.costuraConcluida
+      )
+    }
+  />
+)}
+
+</div>
 
                         )}
 
