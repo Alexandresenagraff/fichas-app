@@ -178,7 +178,7 @@ return (
 
             <div className="space-y-2 text-sm">
 
-  <p>{pedido.venda ? "✅" : "⬜"} VENDA CONCLUIDA</p>
+  <p>{pedido.venda ? "✅" : "⬜"} COMPRA REALIZADA</p>
 
   <p>{pedido.arte ? "✅" : "⬜"} ARTE APROVADA</p>
 
@@ -190,7 +190,7 @@ return (
 
 <p>{pedido.corte ? "✅" : "⬜"} CORTE</p>
 
-<p>{pedido.costuraConcluida ? "✅" : "⬜"} COSTURA</p>
+<p>{pedido.costuraConcluida ? "✅" : "⬜"} COSTURADO</p>
 
 <p>{pedido.conferencia ? "✅" : "⬜"} CONFERÊNCIA/RECEPÇÃO</p>
 
