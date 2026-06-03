@@ -182,19 +182,19 @@ return (
 
   <p>{pedido.arte ? "✅" : "⬜"} ARTE APROVADA</p>
 
-  <p>{pedido.exportacao ? "✅" : "⬜"} APLICAÇÃO NO MOLDE</p>
+<p>{pedido.exportacao ? "✅" : "⬜"} APLICAÇÃO NO MOLDE</p>
 
-  <p>{pedido.impressao ? "✅" : "⬜"} IMPRESSÃO</p>
+<p>{pedido.impressao ? "✅" : "⬜"} IMPRESSÃO</p>
 
-  <p>{pedido.prensa ? "✅" : "⬜"} PRENSAGEM</p>
+<p>{pedido.prensa ? "✅" : "⬜"} PRENSAGEM</p>
 
-  <p>{pedido.corte ? "✅" : "⬜"} CORTE</p>
+<p>{pedido.corte ? "✅" : "⬜"} CORTE</p>
 
-  <p>{pedido.costura ? "✅" : "⬜"} COSTURA</p>
+<p>{pedido.costuraConcluida ? "✅" : "⬜"} COSTURA</p>
 
-  <p>{pedido.conferencia ? "✅" : "⬜"} CONFERÊNCIA/RECEPÇÃO</p>
+<p>{pedido.conferencia ? "✅" : "⬜"} CONFERÊNCIA/RECEPÇÃO</p>
 
-  <p>{pedido.entregaStatus ? "✅" : "⬜"} ENVIADO/ENTREGA</p>
+<p>{pedido.entregaStatus ? "✅" : "⬜"} ENVIADO/ENTREGA</p>
 
 </div>
 
