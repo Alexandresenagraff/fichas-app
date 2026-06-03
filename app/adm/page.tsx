@@ -8,7 +8,7 @@ export default function Adm() {
   const router = useRouter();
 
   function entrar() {
-    if (senha === "12345") {
+    if (senha === "123") {
       router.push("/fichas");
     } else {
       alert("Senha incorreta");
