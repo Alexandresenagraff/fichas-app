@@ -343,9 +343,11 @@ setEntrega("");
         Pedido:
       </p>
 
-      <p className="text-base font-semibold">
-        {ficha.pedido || "-"}
-      </p>
+     <p className="text-base font-semibold">
+  {ficha.pedido
+    ? ficha.pedido.split("-").reverse().join("/")
+    : "-"}
+</p>
     </div>
 
     <div>
@@ -354,8 +356,10 @@ setEntrega("");
       </p>
 
       <p className="text-base font-semibold">
-        {ficha.entrega || "-"}
-      </p>
+  {ficha.entrega
+    ? ficha.entrega.split("-").reverse().join("/")
+    : "-"}
+</p>
     </div>
 
   </div>
