@@ -201,7 +201,7 @@ return (
 <p>
   {pedido.impressao
     ? "✅ IMPRESSO"
-    : "🟡 PREPARANDO IMPRESSÃO - Aguarde..."}
+    : "🟡 IMPRIMINDO - Aguarde..."}
 </p>
 
 <p>
@@ -213,7 +213,7 @@ return (
 <p>
   {pedido.corte
     ? "✅ CORTE CONCLUÍDO"
-    : "🟡 CORTE - Aguarde..."}
+    : "🟡 CORTANDO - Aguarde..."}
 </p>
 
 <p>
