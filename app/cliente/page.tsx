@@ -20,46 +20,48 @@ export default function Cliente() {
 
   async function buscarPedido() {
 
-    try {
+  if (!email.trim()) {
+    setPedidos([]);
+    alert("Digite seu e-mail, telefone ou código.");
+    return;
+  }
 
-      const snapshot = await getDocs(
-        collection(db, "fichas")
-      );
+  try {
+
+    const snapshot = await getDocs(
+      collection(db, "fichas")
+    );
 
     const encontrados: any[] = [];
 
-snapshot.forEach((doc) => {
+    snapshot.forEach((doc) => {
 
-  const dados = doc.data();
+      const dados = doc.data();
 
-  if (
-    dados.email?.toLowerCase() ===
-    email.toLowerCase()
-  ) {
-    encontrados.push(dados);
-  }
-
-});
-
-   setPedidos(encontrados);
-
-if (encontrados.length > 0) {
-  localStorage.setItem(
-    "clienteEmail",
-    email
-  );
-}
-      if (encontrados.length === 0) {
-        
+      if (
+        dados.email?.toLowerCase() ===
+        email.toLowerCase()
+      ) {
+        encontrados.push(dados);
       }
 
-    } catch (error) {
+    });
 
-      console.log(error);
+    setPedidos(encontrados);
 
-      
+    if (encontrados.length > 0) {
+      localStorage.setItem(
+        "clienteEmail",
+        email
+      );
     }
+
+  } catch (error) {
+
+    console.log(error);
+
   }
+}
 
   function calcularPorcentagem(pedido: any) {
 
