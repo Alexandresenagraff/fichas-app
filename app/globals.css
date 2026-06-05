@@ -24,3 +24,35 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+.shine {
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 50%;
+  height: 100%;
+
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.35),
+    transparent
+  );
+
+  transform: skewX(-25deg);
+
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% {
+    left: -150%;
+  }
+
+  50% {
+    left: 150%;
+  }
+
+  100% {
+    left: 150%;
+  }
+}

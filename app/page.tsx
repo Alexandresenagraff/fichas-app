@@ -46,11 +46,15 @@ const [menuAberto, setMenuAberto] = useState(false);
 <div className="flex flex-col gap-4">
 
   <button
-    onClick={() => router.push("/cliente")}
-    className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition"
-  >
+  onClick={() => router.push("/cliente")}
+  className="relative overflow-hidden bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition"
+>
+  <span className="relative z-10">
     Quero acompanhar!
-  </button>
+  </span>
+
+  <span className="shine"></span>
+</button>
 
   
 
