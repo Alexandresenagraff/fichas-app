@@ -33,7 +33,7 @@ const [menuAberto, setMenuAberto] = useState(false);
     </button>
   </div>
 )}
-      <div className="w-full max-w-md bg-zinc-900/60 backdrop-blur-md border border-zinc-700 rounded-3xl p-8 text-center">
+      <div className="w-full max-w-md bg-zinc-900/50 backdrop-blur-md rounded-3xl p-8 text-center">
 
        <h1 className="text-2xl font-bold mb-4">
   Olá, você é VIP!
