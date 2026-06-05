@@ -47,7 +47,7 @@ const [menuAberto, setMenuAberto] = useState(false);
 
   <button
   onClick={() => router.push("/cliente")}
-  className="relative overflow-hidden bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition"
+  className="relative overflow-hidden bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 text-white font-bold py-4 rounded-2xl transition"
 >
   <span className="relative z-10">
     Quero acompanhar!
