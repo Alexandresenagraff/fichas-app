@@ -124,7 +124,7 @@ return (
 
         <input
           type="text"
-          placeholder="Seu e-mail, telefone ou código"
+          placeholder="Digite aqui seu cód"
           value={email}
           onChange={(e) =>
             setEmail(e.target.value)
