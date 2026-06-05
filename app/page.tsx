@@ -19,7 +19,7 @@ export default function Home() {
   Olá, você é VIP!
 </h1>
 
-<p className="text-zinc-400 mb-8">
+<p className="text-zinc-400 mb-4">
   Acompanhe seu pedido aqui!
 </p>
 
