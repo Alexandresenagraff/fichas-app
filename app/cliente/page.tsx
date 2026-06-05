@@ -180,23 +180,59 @@ return (
 
             <div className="space-y-2 text-sm">
 
-  <p>{pedido.venda ? "✅" : "⬜"} COMPRA REALIZADA</p>
+  <p>
+  {pedido.venda
+    ? "✅ COMPRA REALIZADA"
+    : "🟡 COMPRA - Aguarde..."}
+</p>
 
-  <p>{pedido.arte ? "✅" : "⬜"} ARTE APROVADA</p>
+<p>
+  {pedido.arte
+    ? "✅ ARTE APROVADA"
+    : "🟡 TRABALHANDO NO LAYOUT - Aguarde..."}
+</p>
 
-<p>{pedido.exportacao ? "✅" : "⬜"} APLICAÇÃO NO MOLDE</p>
+<p>
+  {pedido.exportacao
+    ? "✅ APLICADO NO MOLDE"
+    : "🟡 APLICANDO NOS MOLDES - Aguarde..."}
+</p>
 
-<p>{pedido.impressao ? "✅" : "⬜"} IMPRESSÃO</p>
+<p>
+  {pedido.impressao
+    ? "✅ IMPRESSO"
+    : "🟡 PREPARANDO IMPRESSÃO - Aguarde..."}
+</p>
 
-<p>{pedido.prensa ? "✅" : "⬜"} PRENSAGEM</p>
+<p>
+  {pedido.prensa
+    ? "✅ PRENSAGEM CONCLUÍDA"
+    : "🟡 PRENSAGEM - Aguarde..."}
+</p>
 
-<p>{pedido.corte ? "✅" : "⬜"} CORTE</p>
+<p>
+  {pedido.corte
+    ? "✅ CORTE CONCLUÍDO"
+    : "🟡 CORTE - Aguarde..."}
+</p>
 
-<p>{pedido.costuraConcluida ? "✅" : "⬜"} COSTURADO</p>
+<p>
+  {pedido.costuraConcluida
+    ? "✅ COSTURA CONCLUÍDA"
+    : "🟡 COSTURANDO - Aguarde..."}
+</p>
 
-<p>{pedido.conferencia ? "✅" : "⬜"} CONFERÊNCIA/RECEPÇÃO</p>
+<p>
+  {pedido.conferencia
+    ? "✅ CONFERIDO"
+    : "🟡 CONFERINDO O PEDIDO - Aguarde..."}
+</p>
 
-<p>{pedido.entregaStatus ? "✅" : "⬜"} ENVIADO/ENTREGA</p>
+<p>
+  {pedido.entregaStatus
+    ? "✅ PEDIDO DESPACHADO"
+    : "🟡 EMBALANDO - Aguarde..."}
+</p>
 
 </div>
 
