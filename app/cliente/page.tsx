@@ -180,55 +180,55 @@ return (
 
             <div className="space-y-2 text-sm">
 
-  <p>
+  <p className="border border-zinc-700 rounded-xl p-2">
   {pedido.venda
     ? "✅ COMPRA REALIZADA"
     : "🟡 COMPRA - Aguarde..."}
 </p>
 
-<p>
+<p className="border border-zinc-700 rounded-xl p-2">
   {pedido.arte
     ? "✅ ARTE APROVADA"
     : "🟡 TRABALHANDO NO LAYOUT - Aguarde..."}
 </p>
 
-<p>
+<p className="border border-zinc-700 rounded-xl p-2">
   {pedido.exportacao
     ? "✅ APLICADO NO MOLDE"
     : "🟡 APLICANDO NOS MOLDES - Aguarde..."}
 </p>
 
-<p>
+<p className="border border-zinc-700 rounded-xl p-2">
   {pedido.impressao
     ? "✅ IMPRESSO"
     : "🟡 IMPRIMINDO - Aguarde..."}
 </p>
 
-<p>
+<p className="border border-zinc-700 rounded-xl p-2">
   {pedido.prensa
     ? "✅ PRENSAGEM CONCLUÍDA"
     : "🟡 PRENSAGEM - Aguarde..."}
 </p>
 
-<p>
+<p className="border border-zinc-700 rounded-xl p-2">
   {pedido.corte
     ? "✅ CORTE CONCLUÍDO"
     : "🟡 CORTANDO - Aguarde..."}
 </p>
 
-<p>
+<p className="border border-zinc-700 rounded-xl p-2">
   {pedido.costuraConcluida
     ? "✅ COSTURA CONCLUÍDA"
     : "🟡 COSTURANDO - Aguarde..."}
 </p>
 
-<p>
+<p className="border border-zinc-700 rounded-xl p-2">
   {pedido.conferencia
     ? "✅ CONFERIDO"
     : "🟡 CONFERINDO O PEDIDO - Aguarde..."}
 </p>
 
-<p>
+<p className="border border-zinc-700 rounded-xl p-2">
   {pedido.entregaStatus
     ? "✅ PEDIDO DESPACHADO"
     : "🟡 EMBALANDO - Aguarde..."}
