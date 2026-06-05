@@ -20,6 +20,16 @@ const [menuAberto, setMenuAberto] = useState(false);
 >
   ☰
 </button>
+{menuAberto && (
+  <div className="absolute top-16 right-4 bg-zinc-900 border border-zinc-700 rounded-xl shadow-lg overflow-hidden">
+    <button
+      onClick={() => router.push("/adm")}
+      className="block w-full text-left px-4 py-3 hover:bg-zinc-800"
+    >
+      Acesso Interno
+    </button>
+  </div>
+)}
       <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8 text-center">
 
        <h1 className="text-2xl font-bold mb-4">
