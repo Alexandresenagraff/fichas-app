@@ -15,12 +15,12 @@ export default function Home() {
 >
       <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8 text-center">
 
-       <h1 className="text-5xl font-bold mb-4">
+       <h1 className="text-2xl font-bold mb-4">
   Olá, você é VIP!
 </h1>
 
 <p className="text-zinc-400 mb-8">
-  Acompanhe seu pedido aqui.
+  Acompanhe seu pedido aqui!
 </p>
 
 <div className="flex flex-col gap-4">
