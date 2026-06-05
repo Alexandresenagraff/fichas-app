@@ -165,18 +165,18 @@ return (
 
             <div className="w-full bg-zinc-800 rounded-full h-8 overflow-hidden mb-6">
 
-              <div
-                className="bg-yellow-500 h-full"
-                style={{
-                  width: `${calcularPorcentagem(pedido)}%`,
-                }}
-              />
+  <div
+    className="h-full flex items-center justify-center font-bold text-white transition-all duration-500"
+    style={{
+      width: `${calcularPorcentagem(pedido)}%`,
+      background:
+        "linear-gradient(90deg, #eab308 0%, #22c55e 100%)",
+    }}
+  >
+    {calcularPorcentagem(pedido)}%
+  </div>
 
-            </div>
-
-            <p className="mb-4 font-bold">
-              {calcularPorcentagem(pedido)}% concluído
-            </p>
+</div>
 
             <div className="space-y-2 text-sm">
 
