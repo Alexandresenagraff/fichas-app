@@ -39,12 +39,7 @@ const [menuAberto, setMenuAberto] = useState(false);
     Quero acompanhar!
   </button>
 
-  <button
-    onClick={() => router.push("/adm")}
-    className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-2xl transition"
-  >
-    Área ADM
-  </button>
+  
 
 </div>
 
