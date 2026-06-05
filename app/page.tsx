@@ -1,18 +1,25 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
-
+const [menuAberto, setMenuAberto] = useState(false);
   return (
     <main
-  className="min-h-screen flex items-center justify-center p-6 bg-cover bg-center"
+  className="min-h-screen flex items-center justify-center p-6 bg-cover bg-center relative"
   style={{
     backgroundImage:
       "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/fundo.png')",
   }}
 >
+  <button
+  onClick={() => setMenuAberto(!menuAberto)}
+  className="absolute top-4 right-4 text-white text-3xl"
+>
+  ☰
+</button>
       <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8 text-center">
 
        <h1 className="text-2xl font-bold mb-4">
