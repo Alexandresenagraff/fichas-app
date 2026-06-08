@@ -63,26 +63,25 @@ export default function Cliente() {
   }
 }
 
-  function calcularPorcentagem(pedido: any) {
+function calcularPorcentagem(pedido: any) {
 
-const etapas = [
-  pedido.venda,
-  pedido.arte,
-  pedido.exportacao,
-  pedido.impressao,
-  pedido.prensa,
-  pedido.corte,
-  pedido.enviadoCostureiro,
-  pedido.costuraConcluida,
-  pedido.conferencia,
-  pedido.entregaStatus,
-];
+  const etapas = [
+    pedido.venda,
+    pedido.arte,
+    pedido.exportacao,
+    pedido.impressao,
+    pedido.prensa,
+    pedido.corte,
+    pedido.costuraConcluida,
+    pedido.conferencia,
+    pedido.entregaStatus,
+  ];
 
-const concluidas = etapas.filter(Boolean).length;
+  const concluidas = etapas.filter(Boolean).length;
 
-return Math.round(
-  (concluidas / etapas.length) * 100
-);
+  return Math.round(
+    (concluidas / etapas.length) * 100
+  );
 }
 useEffect(() => {
 
