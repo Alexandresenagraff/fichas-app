@@ -65,15 +65,15 @@ export default function Cliente() {
 
   function calcularPorcentagem(pedido: any) {
 
- const etapas = [
+const etapas = [
   pedido.venda,
   pedido.arte,
   pedido.exportacao,
   pedido.impressao,
   pedido.prensa,
   pedido.corte,
-  pedido.enviadoCostureiro, // NOVA ETAPA
-  pedido.aguardandoCostura,
+  pedido.enviadoCostureiro,
+  pedido.costuraConcluida,
   pedido.conferencia,
   pedido.entregaStatus,
 ];
