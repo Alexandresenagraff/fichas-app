@@ -73,7 +73,7 @@ export default function Cliente() {
   pedido.prensa,
   pedido.corte,
   pedido.enviadoCostureiro, // NOVA ETAPA
-  pedido.costura,
+  pedido.aguardandoCostura,
   pedido.conferencia,
   pedido.entregaStatus,
 ];
