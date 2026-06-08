@@ -425,16 +425,17 @@ setEntrega("");
   {(() => {
 
     const etapas = [
-      ficha.venda,
-      ficha.arte,
-      ficha.exportacao,
-      ficha.impressao,
-      ficha.prensa,
-      ficha.corte,
-      ficha.costura,
-      ficha.conferencia,
-      ficha.entregaStatus,
-    ];
+  ficha.venda,
+  ficha.arte,
+  ficha.exportacao,
+  ficha.impressao,
+  ficha.prensa,
+  ficha.corte,
+  ficha.costura,
+  ficha.costuraConcluida,
+  ficha.conferencia,
+  ficha.entregaStatus,
+];
 
     const concluidas = etapas.filter(Boolean).length;
 
