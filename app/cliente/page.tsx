@@ -110,13 +110,17 @@ useEffect(() => {
 
 
 return (
-    <main className="min-h-screen bg-black text-white px-3 py-4">
+    <main className="min-h-screen bg-zinc-100 text-white">
 
-      <div className="w-full max-w-4xl mx-auto p-4">
+      <div className="w-full">
 
-        <p className="text-center text-zinc-300 text-xl font-semibold mb-4">
-  Consulte seu pedido
-</p>
+        <div className="bg-blue-900 px-4 py-8">
+
+  <h2 className="text-center text-2xl font-medium mb-6">
+    VEJA O STATUS DOS SEUS PEDIDOS AQUI:
+  </h2>
+
+</div>
 
 <div className="bg-amber-200 rounded-2xl p-3 mb-6">
 
