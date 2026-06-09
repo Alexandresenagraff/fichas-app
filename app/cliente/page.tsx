@@ -110,9 +110,9 @@ useEffect(() => {
 
 
 return (
-    <main className="min-h-screen bg-black text-white p-6">
+    <main className="min-h-screen bg-black text-white px-3 py-4">
 
-      <div className="max-w-md mx-auto bg-zinc-900 rounded-3xl p-6 border border-zinc-800">
+      <div className="w-full max-w-4xl mx-auto p-4">
 
         <h1 className="text-3xl font-bold text-center mb-2">
           Área do Cliente
