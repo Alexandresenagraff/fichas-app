@@ -186,7 +186,7 @@ return (
 
             <div className="space-y-2 text-sm">
 
-  <p className="border border-zinc-700 rounded-xl p-2">
+  <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.venda
     ? "✅ COMPRA REALIZADA"
     : "🟡 COMPRA - Aguarde..."}
