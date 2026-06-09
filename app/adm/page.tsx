@@ -26,6 +26,30 @@ export default function Adm() {
       ☰
     </button>
 
+    {menuAberto && (
+  <div className="absolute top-0 right-0 h-full w-64 bg-zinc-800 text-white p-6 z-50">
+
+    <h2 className="text-center font-bold mb-6">
+      SETORES
+    </h2>
+
+    <div className="space-y-4">
+
+      <p>Comercial</p>
+      <p>Designers</p>
+      <p>Impressão</p>
+      <p>Prensa</p>
+      <p>Corte</p>
+      <p>Costura</p>
+      <p>Conferência</p>
+      <p>Envio</p>
+      <p>Administração</p>
+
+    </div>
+
+  </div>
+)}
+
     <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
 
       <h1 className="text-3xl font-bold text-white text-center mb-2">
