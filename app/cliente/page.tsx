@@ -158,16 +158,7 @@ return (
            <h2 className="text-xl font-bold mb-4 text-black">
    {pedido.cliente} - Pedido {index + 1}
 </h2>
-<button
-  onClick={() =>
-    setPedidoAberto(
-      pedidoAberto === index ? null : index
-    )
-  }
-  className="w-full bg-blue-900 text-white rounded-full py-3 mt-4 mb-4"
->
-  {pedidoAberto === index ? "RECOLHER" : "VISUALIZAR"}
-</button>
+
 <div className="mb-4 text-sm text-zinc-700">
 
   <p>
@@ -179,7 +170,16 @@ return (
   </p>
 
 </div>
-
+<button
+  onClick={() =>
+    setPedidoAberto(
+      pedidoAberto === index ? null : index
+    )
+  }
+  className="w-full bg-blue-900 text-white rounded-full py-3 mt-4 mb-4"
+>
+  {pedidoAberto === index ? "RECOLHER" : "VISUALIZAR"}
+</button>
 {pedidoAberto === index && (
 <>
 
