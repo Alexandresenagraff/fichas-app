@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function Adm() {
   const [senha, setSenha] = useState("");
+  const [menuAberto, setMenuAberto] = useState(false);
   const router = useRouter();
 
   function entrar() {
@@ -16,12 +17,20 @@ export default function Adm() {
   }
 
   return (
-    <main className="min-h-screen bg-black flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+  <main className="min-h-screen bg-black p-6 relative">
 
-        <h1 className="text-3xl font-bold text-white text-center mb-2">
-          Área ADM
-        </h1>
+    <button
+      onClick={() => setMenuAberto(!menuAberto)}
+      className="absolute top-6 right-6 text-white text-4xl"
+    >
+      ☰
+    </button>
+
+    <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
+
+      <h1 className="text-3xl font-bold text-white text-center mb-2">
+        Área ADM
+      </h1>
 
         <p className="text-zinc-400 text-center mb-6">
           Informe a senha administrativa
