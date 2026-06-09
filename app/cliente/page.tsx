@@ -196,7 +196,7 @@ return (
   {pedido.arte
     ? "✅ ARTE APROVADA"
     : "🟡 TRABALHANDO NO LAYOUT - Aguarde..."}
-</p>className="border border-zinc-400 rounded-xl p-2 text-black"
+</p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.exportacao
