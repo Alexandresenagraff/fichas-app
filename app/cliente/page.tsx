@@ -114,30 +114,39 @@ return (
 
       <div className="w-full max-w-4xl mx-auto p-4">
 
-        <h1 className="text-3xl font-bold text-center mb-2">
-          Área do Cliente
-        </h1>
+        <p className="text-center text-zinc-300 text-xl font-semibold mb-4">
+  Consulte seu pedido
+</p>
 
-        <p className="text-center text-zinc-400 mb-6">
-          Consulte seu pedido
-        </p>
+<div className="bg-amber-200 rounded-2xl p-3 mb-6">
 
-        <input
-          type="text"
-          placeholder="Digite aqui seu cód"
-          value={email}
-          onChange={(e) =>
-            setEmail(e.target.value)
-          }
-          className="w-full bg-black border border-zinc-700 rounded-2xl p-3 mb-4"
-        />
+  <div className="flex items-center bg-white rounded-xl px-4 py-3">
 
-        <button
-          onClick={buscarPedido}
-          className="w-full bg-blue-600 hover:bg-blue-700 rounded-2xl p-3 font-bold"
-        >
-          CONSULTAR
-        </button>
+    <span className="text-black text-xl mr-3">
+      🔍
+    </span>
+
+    <input
+      type="text"
+      placeholder="Digite seu código"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") buscarPedido()
+      }}
+      className="w-full bg-transparent text-black outline-none"
+    />
+
+  </div>
+
+</div>
+
+<button
+  onClick={buscarPedido}
+  className="hidden"
+>
+  CONSULTAR
+</button>
 
         {pedidos.length > 0 && (
 
