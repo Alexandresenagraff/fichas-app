@@ -180,7 +180,10 @@ return (
 
 </div>
 
-            <div className="w-full bg-zinc-800 rounded-full h-8 overflow-hidden mb-6">
+{pedidoAberto === index && (
+<>
+
+<div className="w-full bg-zinc-800 rounded-full h-8 overflow-hidden mb-6">
 
   <div
     className="h-full flex items-center justify-center font-bold text-white transition-all duration-500"
@@ -188,14 +191,14 @@ return (
       width: `${calcularPorcentagem(pedido)}%`,
       background:
         "linear-gradient(90deg, #eab308 0%, #22c55e 100%)",
-    }}
+   }}
   >
     {calcularPorcentagem(pedido)}%
   </div>
 
 </div>
 
-            <div className="space-y-2 text-sm">
+<div className="space-y-2 text-sm">
 
   <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.venda
@@ -253,11 +256,14 @@ return (
 
 </div>
 
+</>
+)}
+
+</div>
+
+))}
+
           </div>
-
-        ))}
-
-      </div>
 
         )}
 
