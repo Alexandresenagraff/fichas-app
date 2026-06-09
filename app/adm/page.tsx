@@ -17,7 +17,12 @@ export default function Adm() {
   }
 
   return (
-  <main className="min-h-screen bg-black flex items-center justify-center p-6 relative">
+  <main
+  className="min-h-screen bg-black flex items-center justify-center p-6 relative"
+  onClick={() => {
+    if (menuAberto) setMenuAberto(false)
+  }}
+>
 
     <button
       onClick={() => setMenuAberto(!menuAberto)}
@@ -27,43 +32,46 @@ export default function Adm() {
     </button>
 
     {menuAberto && (
-  <div className="absolute top-0 right-0 h-auto w-50 bg-zinc-800/80 text-white p-6 z-50">
+  <div
+  onClick={(e) => e.stopPropagation()}
+  className="absolute top-0 right-0 h-auto w-50 bg-zinc-800/90 text-white p-6 z-50"
+>
 
-    <h2 className="text-center font-bold mb-4">
+    <h2 className="text-left font-bold mb-6">
     SETORES
     </h2>
 
     <div className="space-y-6">
 
-      <button className="w-full text-left py-2 border-b border-zinc-600">
+      <button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
   ▸ COMERCIAL
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
   ▸ DESIGNERS
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
   ▸ IMPRESSÃO
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
   ▸ PRENSA
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
   ▸ CORTE
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
   ▸ COSTURA
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
   ▸ CONFERÊNCIA
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
   ▸ ENVIO
 </button>
 
