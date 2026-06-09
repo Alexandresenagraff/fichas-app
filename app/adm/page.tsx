@@ -27,10 +27,10 @@ export default function Adm() {
     </button>
 
     {menuAberto && (
-  <div className="absolute top-0 right-0 h-auto w-48 bg-zinc-800/70 text-white p-6 z-50">
+  <div className="absolute top-0 right-0 h-auto w-50 bg-zinc-800/80 text-white p-6 z-50">
 
     <h2 className="text-center font-bold mb-6">
-      SETORES
+    SETORES
     </h2>
 
     <div className="space-y-4">
