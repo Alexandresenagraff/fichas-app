@@ -33,7 +33,7 @@ export default function Adm() {
     SETORES
     </h2>
 
-    <div className="space-y-4">
+    <div className="space-y-6">
 
       <p>👤 COMERCIAL</p>
 <p>✏️ DESIGNERS</p>
