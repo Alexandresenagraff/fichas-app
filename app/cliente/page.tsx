@@ -116,9 +116,32 @@ return (
 
         <div className="bg-blue-900 px-4 py-8">
 
-  <h2 className="text-center text-lg font-medium mb-4">
-  Consulte seu pedido
-</h2>
+  <h2 className="text-center text-lg font-medium mb-2">
+    Veja aqui o Status do seu Pedido!
+  </h2>
+
+  <div className="flex items-center bg-white rounded-full px-4 py-3 mb-4">
+
+    <span className="text-black text-xl mr-3">
+      🔍
+    </span>
+
+    <input
+      type="text"
+      placeholder="Digite seu código"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      className="w-full bg-transparent text-black outline-none"
+    />
+
+  </div>
+
+  <button
+    onClick={buscarPedido}
+    className="block mx-auto bg-blue-700 hover:bg-blue-800 px-8 py-2 rounded-xl font-medium"
+  >
+    CONSULTAR
+  </button>
 
 </div>
 
