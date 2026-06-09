@@ -47,9 +47,23 @@ export default function Adm() {
   ▸ COMERCIAL
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
-  ▸ DESIGNERS
-</button>
+<div>
+  <button
+    onClick={() => setDesignersAberto(!designersAberto)}
+    className="w-full text-left py-2 border-b border-zinc-600 text-sm"
+  >
+    {designersAberto ? "▾ DESIGNERS" : "▸ DESIGNERS"}
+  </button>
+
+  {designersAberto && (
+    <div className="ml-4 mt-2 space-y-2 text-xs text-zinc-300">
+      <button className="block w-full text-left">LÁZARO</button>
+      <button className="block w-full text-left">EDIVAN</button>
+      <button className="block w-full text-left">ALEXANDRE</button>
+      <button className="block w-full text-left">PAULÃO</button>
+    </div>
+  )}
+</div>
 
 <button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
   ▸ IMPRESSÃO
