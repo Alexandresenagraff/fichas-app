@@ -17,11 +17,11 @@ export default function Adm() {
   }
 
   return (
-  <main className="min-h-screen bg-black p-6 relative">
+  <main className="min-h-screen bg-black flex items-center justify-center p-6 relative">
 
     <button
       onClick={() => setMenuAberto(!menuAberto)}
-      className="absolute top-6 right-6 text-white text-4xl"
+      className="absolute top-6 right-6 text-white text-3xl"
     >
       ☰
     </button>
