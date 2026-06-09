@@ -116,32 +116,28 @@ return (
 
         <div className="bg-blue-900 px-4 py-8">
 
-  <h2 className="text-center text-2xl font-medium mb-6">
-    VEJA O STATUS DOS SEUS PEDIDOS AQUI:
-  </h2>
+  <h2 className="text-center text-lg font-medium mb-4">
+  Consulte seu pedido
+</h2>
 
 </div>
 
-<div className="bg-amber-200 rounded-2xl p-3 mb-6">
+<div className="flex items-center bg-white rounded-xl px-4 py-3 mb-4">
 
-  <div className="flex items-center bg-white rounded-xl px-4 py-3">
+  <span className="text-black text-xl mr-3">
+    🔍
+  </span>
 
-    <span className="text-black text-xl mr-3">
-      🔍
-    </span>
-
-    <input
-      type="text"
-      placeholder="Digite seu código"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") buscarPedido()
-      }}
-      className="w-full bg-transparent text-black outline-none"
-    />
-
-  </div>
+  <input
+    type="text"
+    placeholder="Digite seu código"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter") buscarPedido()
+    }}
+    className="w-full bg-transparent text-black outline-none"
+  />
 
 </div>
 
