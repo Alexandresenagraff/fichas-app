@@ -203,55 +203,55 @@ return (
   <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.venda
     ? "✅ COMPRA REALIZADA"
-    : "🟡 COMPRA - Aguarde..."}
+    : "⚪ COMPRA"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.arte
     ? "✅ ARTE APROVADA"
-    : "🟡 TRABALHANDO NO LAYOUT - Aguarde..."}
+    : "⚪ TRABALHANDO NO LAYOUT"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.exportacao
     ? "✅ APLICADO NO MOLDE"
-    : "🟡 APLICANDO NOS MOLDES - Aguarde..."}
+    : "⚪ APLICANDO NOS MOLDES"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.impressao
     ? "✅ IMPRESSO"
-    : "🟡 IMPRIMINDO - Aguarde..."}
+    : "⚪ IMPRIMINDO"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.prensa
     ? "✅ PRENSAGEM CONCLUÍDA"
-    : "🟡 PRENSAGEM - Aguarde..."}
+    : "⚪ PRENSAGEM"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.corte
     ? "✅ CORTE CONCLUÍDO"
-    : "🟡 CORTANDO - Aguarde..."}
+    : "⚪ CORTANDO"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.costuraConcluida
     ? "✅ COSTURA CONCLUÍDA"
-    : "🟡 COSTURANDO - Aguarde..."}
+    : "⚪ COSTURANDO"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.conferencia
     ? "✅ CONFERIDO"
-    : "🟡 CONFERINDO O PEDIDO - Aguarde..."}
+    : "⚪ CONFERINDO O PEDIDO"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.entregaStatus
     ? "✅ PEDIDO DESPACHADO"
-    : "🟡 EMBALANDO - Aguarde..."}
+    : "⚪ EMBALANDO"}
 </p>
 
 </div>
