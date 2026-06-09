@@ -192,49 +192,49 @@ return (
     : "🟡 COMPRA - Aguarde..."}
 </p>
 
-<p className="border border-zinc-700 rounded-xl p-2">
+<p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.arte
     ? "✅ ARTE APROVADA"
     : "🟡 TRABALHANDO NO LAYOUT - Aguarde..."}
-</p>
+</p>className="border border-zinc-400 rounded-xl p-2 text-black"
 
-<p className="border border-zinc-700 rounded-xl p-2">
+<p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.exportacao
     ? "✅ APLICADO NO MOLDE"
     : "🟡 APLICANDO NOS MOLDES - Aguarde..."}
 </p>
 
-<p className="border border-zinc-700 rounded-xl p-2">
+<p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.impressao
     ? "✅ IMPRESSO"
     : "🟡 IMPRIMINDO - Aguarde..."}
 </p>
 
-<p className="border border-zinc-700 rounded-xl p-2">
+<p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.prensa
     ? "✅ PRENSAGEM CONCLUÍDA"
     : "🟡 PRENSAGEM - Aguarde..."}
 </p>
 
-<p className="border border-zinc-700 rounded-xl p-2">
+<p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.corte
     ? "✅ CORTE CONCLUÍDO"
     : "🟡 CORTANDO - Aguarde..."}
 </p>
 
-<p className="border border-zinc-700 rounded-xl p-2">
+<p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.costuraConcluida
     ? "✅ COSTURA CONCLUÍDA"
     : "🟡 COSTURANDO - Aguarde..."}
 </p>
 
-<p className="border border-zinc-700 rounded-xl p-2">
+<p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.conferencia
     ? "✅ CONFERIDO"
     : "🟡 CONFERINDO O PEDIDO - Aguarde..."}
 </p>
 
-<p className="border border-zinc-700 rounded-xl p-2">
+<p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.entregaStatus
     ? "✅ PEDIDO DESPACHADO"
     : "🟡 EMBALANDO - Aguarde..."}
