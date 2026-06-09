@@ -35,15 +35,41 @@ export default function Adm() {
 
     <div className="space-y-6">
 
-      <p>👤 COMERCIAL</p>
-<p>✏️ DESIGNERS</p>
-<p>🖨️ IMPRESSÃO</p>
-<p>🔥 PRENSA</p>
-<p>✂️ CORTE</p>
-<p>🧵 COSTURA</p>
-<p>✔️ CONFERÊNCIA</p>
-<p>📦 ENVIO</p>
-<p>⚙️ ADMINISTRAÇÃO</p>
+      <button className="w-full text-left py-2 border-b border-zinc-600">
+  ▸ COMERCIAL
+</button>
+
+<button className="w-full text-left py-2 border-b border-zinc-600">
+  ▸ DESIGNERS
+</button>
+
+<button className="w-full text-left py-2 border-b border-zinc-600">
+  ▸ IMPRESSÃO
+</button>
+
+<button className="w-full text-left py-2 border-b border-zinc-600">
+  ▸ PRENSA
+</button>
+
+<button className="w-full text-left py-2 border-b border-zinc-600">
+  ▸ CORTE
+</button>
+
+<button className="w-full text-left py-2 border-b border-zinc-600">
+  ▸ COSTURA
+</button>
+
+<button className="w-full text-left py-2 border-b border-zinc-600">
+  ▸ CONFERÊNCIA
+</button>
+
+<button className="w-full text-left py-2 border-b border-zinc-600">
+  ▸ ENVIO
+</button>
+
+<button className="w-full text-left py-2">
+  ▸ ADMINISTRAÇÃO
+</button>
 
     </div>
 
