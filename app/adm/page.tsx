@@ -41,7 +41,7 @@ export default function Adm() {
 
     {designersAberto && (
       <div
-        className="absolute top-0 -left-28 h-auto w-38 bg-zinc-800/90 text-white p-4"
+        className="absolute top-0 -left-32 h-auto w-38 bg-zinc-800/90 text-white p-4"
       >
         <h3 className="font-bold text-sm mb-4">
           DESIGNERS
