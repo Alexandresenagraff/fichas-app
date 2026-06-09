@@ -155,11 +155,11 @@ return (
       className="bg-white border border-zinc-300 rounded-2xl p-4 shadow-md"
     >
 
-           <h2 className="text-xl font-bold mb-4 text-black">
+           <h2 className="text-xl font-bold mb-2 text-black">
    {pedido.cliente} - Pedido {index + 1}
 </h2>
 
-<div className="mb-4 text-sm text-zinc-700">
+<div className="mb-2 text-sm text-zinc-700">
 
   <p>
     <strong>Pedido:</strong> {pedido.pedido ? pedido.pedido.split("-").reverse().join("/") : "-"}
@@ -176,7 +176,7 @@ return (
       pedidoAberto === index ? null : index
     )
   }
-  className="w-full bg-blue-900 text-white rounded-full py-3 mt-4 mb-4"
+  className="w-full bg-blue-900 text-white rounded-full py-3 mt-2 mb-2"
 >
   {pedidoAberto === index ? "RECOLHER" : "VISUALIZAR"}
 </button>
