@@ -116,7 +116,7 @@ return (
 
         <div className="bg-blue-900 px-4 py-8">
 
-  <h2 className="text-center text-lg font-medium mb-2">
+  <h2 className="text-center text-lg font-medium mb-1">
     Veja aqui o Status do seu Pedido!
   </h2>
 
@@ -151,13 +151,13 @@ return (
   {pedidos.map((pedido, index) => (
     <div
       key={index}
-      className="border border-zinc-700 rounded-2xl p-4"
+      className="bg-white border border-zinc-300 rounded-2xl p-4 shadow-md"
     >
 
-           <h2 className="text-xl font-bold mb-4">
+           <h2 className="text-xl font-bold mb-4 text-black">
    {pedido.cliente} - Pedido {index + 1}
 </h2>
-<div className="mb-4 text-sm text-zinc-300">
+<div className="mb-4 text-sm text-zinc-700">
 
   <p>
     <strong>Pedido:</strong> {pedido.pedido ? pedido.pedido.split("-").reverse().join("/") : "-"}
