@@ -36,12 +36,12 @@ export default function Adm() {
     {menuAberto && (
   <div
     onClick={(e) => e.stopPropagation()}
-    className="absolute top-0 right-0 h-auto w-50 bg-zinc-800/90 text-white p-6 z-50"
+    className="absolute top-0 right-0 h-auto w-50 bg-zinc-700/90 text-white p-6 z-50"
   >
 
     {designersAberto && (
       <div
-        className="absolute top-0 -left-36 h-auto w-32 bg-zinc-800/90 text-white p-4"
+        className="absolute top-0 -left-40 h-auto w-36 bg-zinc-800/90 text-white p-4"
       >
         <h3 className="font-bold text-sm mb-4">
           DESIGNERS
