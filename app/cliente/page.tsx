@@ -145,33 +145,7 @@ return (
 
 </div>
 
-<div className="flex items-center bg-white rounded-xl px-4 py-3 mb-4">
-
-  <span className="text-black text-xl mr-3">
-    🔍
-  </span>
-
-  <input
-    type="text"
-    placeholder="Digite seu código"
-    value={email}
-    onChange={(e) => setEmail(e.target.value)}
-    onKeyDown={(e) => {
-      if (e.key === "Enter") buscarPedido()
-    }}
-    className="w-full bg-transparent text-black outline-none"
-  />
-
-</div>
-
-<button
-  onClick={buscarPedido}
-  className="hidden"
->
-  CONSULTAR
-</button>
-
-        {pedidos.length > 0 && (
+          {pedidos.length > 0 && (
 
           <div className="mt-8 space-y-6">
   {pedidos.map((pedido, index) => (
