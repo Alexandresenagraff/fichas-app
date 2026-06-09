@@ -35,9 +35,37 @@ export default function Adm() {
 
     {menuAberto && (
   <div
-  onClick={(e) => e.stopPropagation()}
-  className="absolute top-0 right-0 h-auto w-50 bg-zinc-800/90 text-white p-6 z-50"
->
+    onClick={(e) => e.stopPropagation()}
+    className="absolute top-0 right-0 h-auto w-50 bg-zinc-800/90 text-white p-6 z-50"
+  >
+
+    {designersAberto && (
+      <div
+        className="absolute top-0 -left-36 h-auto w-32 bg-zinc-800/90 text-white p-4"
+      >
+        <h3 className="font-bold text-sm mb-4">
+          DESIGNERS
+        </h3>
+
+        <div className="space-y-3 text-xs">
+          <button className="block w-full text-left border-b border-zinc-600 pb-2">
+            ▸ LÁZARO
+          </button>
+
+          <button className="block w-full text-left border-b border-zinc-600 pb-2">
+            ▸ EDIVAN
+          </button>
+
+          <button className="block w-full text-left border-b border-zinc-600 pb-2">
+            ▸ ALEXANDRE
+          </button>
+
+          <button className="block w-full text-left">
+            ▸ PAULÃO
+          </button>
+        </div>
+      </div>
+    )}
 
     <h2 className="text-left font-bold mb-6">
     SETORES
@@ -57,14 +85,7 @@ export default function Adm() {
     {designersAberto ? "▾ DESIGNERS" : "▸ DESIGNERS"}
   </button>
 
-  {designersAberto && (
-    <div className="ml-4 mt-2 space-y-2 text-xs text-zinc-300">
-      <button className="block w-full text-left">LÁZARO</button>
-      <button className="block w-full text-left">EDIVAN</button>
-      <button className="block w-full text-left">ALEXANDRE</button>
-      <button className="block w-full text-left">PAULÃO</button>
-    </div>
-  )}
+  
 </div>
 
 <button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
