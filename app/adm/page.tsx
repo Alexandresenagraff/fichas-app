@@ -27,7 +27,7 @@ export default function Adm() {
     </button>
 
     {menuAberto && (
-  <div className="absolute top-0 right-0 h-full w-64 bg-zinc-800 text-white p-6 z-50">
+  <div className="absolute top-0 right-0 h-auto w-48 bg-zinc-800/70 text-white p-6 z-50">
 
     <h2 className="text-center font-bold mb-6">
       SETORES
@@ -35,15 +35,15 @@ export default function Adm() {
 
     <div className="space-y-4">
 
-      <p>Comercial</p>
-      <p>Designers</p>
-      <p>Impressão</p>
-      <p>Prensa</p>
-      <p>Corte</p>
-      <p>Costura</p>
-      <p>Conferência</p>
-      <p>Envio</p>
-      <p>Administração</p>
+      <p>👤 COMERCIAL</p>
+<p>✏️ DESIGNERS</p>
+<p>🖨️ IMPRESSÃO</p>
+<p>🔥 PRENSA</p>
+<p>✂️ CORTE</p>
+<p>🧵 COSTURA</p>
+<p>✔️ CONFERÊNCIA</p>
+<p>📦 ENVIO</p>
+<p>⚙️ ADMINISTRAÇÃO</p>
 
     </div>
 
