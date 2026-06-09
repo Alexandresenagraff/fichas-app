@@ -209,19 +209,19 @@ return (
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.arte
     ? "✅ ARTE APROVADA"
-    : "⚪ TRABALHANDO NO LAYOUT"}
+    : "⚪ ARTE"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.exportacao
     ? "✅ APLICADO NO MOLDE"
-    : "⚪ APLICANDO NOS MOLDES"}
+    : "⚪ APLICAÇÃO NO MOLDE"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.impressao
     ? "✅ IMPRESSO"
-    : "⚪ IMPRIMINDO"}
+    : "⚪ IMPRESSÃO"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
@@ -233,25 +233,25 @@ return (
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.corte
     ? "✅ CORTE CONCLUÍDO"
-    : "⚪ CORTANDO"}
+    : "⚪ CORTE"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.costuraConcluida
     ? "✅ COSTURA CONCLUÍDA"
-    : "⚪ COSTURANDO"}
+    : "⚪ COSTURA"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.conferencia
     ? "✅ CONFERIDO"
-    : "⚪ CONFERINDO O PEDIDO"}
+    : "⚪ CONFERÊNCIA"}
 </p>
 
 <p className="border border-zinc-400 rounded-xl p-2 text-black">
   {pedido.entregaStatus
     ? "✅ PEDIDO DESPACHADO"
-    : "⚪ EMBALANDO"}
+    : "⚪ ENVIO"}
 </p>
 
 </div>
