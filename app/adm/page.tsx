@@ -112,7 +112,7 @@ export default function Adm() {
   ▸ ENVIO
 </button>
 
-<button className="w-full text-left py-2">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
   ▸ ADMINISTRAÇÃO
 </button>
 
