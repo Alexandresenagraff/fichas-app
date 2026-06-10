@@ -22,8 +22,9 @@ export default function Adm() {
   <main
   className="min-h-screen bg-black flex items-center justify-center p-6 relative"
   onClick={() => {
-    if (menuAberto) setMenuAberto(false)
-  }}
+  if (menuAberto) setMenuAberto(false);
+  if (designersAberto) setDesignersAberto(false);
+}}
 >
 
     <button
@@ -41,8 +42,9 @@ export default function Adm() {
 
     {designersAberto && (
       <div
-        className="absolute top-0 -left-38 h-auto w-38 bg-zinc-800/90 text-white p-4"
-      >
+  onClick={(e) => e.stopPropagation()}
+  className="absolute top-0 -left-38 h-auto w-38 bg-zinc-800/90 text-white p-4 rounded-xl shadow-xl animate-[slideDown_0.3s_ease-out]"
+>
         <h3 className="font-bold text-sm mb-4">
           DESIGNERS
         </h3>
