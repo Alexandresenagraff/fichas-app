@@ -82,7 +82,7 @@ export default function Adm() {
 <div>
   <button
     onClick={() => setDesignersAberto(!designersAberto)}
-    className="w-full text-left py-2 border-b border-zinc-600 text-sm"
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
   >
     {designersAberto ? "▾ DESIGNERS" : "▸ DESIGNERS"}
   </button>
