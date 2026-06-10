@@ -36,7 +36,7 @@ export default function Adm() {
     {menuAberto && (
   <div
     onClick={(e) => e.stopPropagation()}
-    className="absolute top-0 right-0 h-auto w-50 bg-zinc-700/90 text-white p-6 z-50 rounded-xl"
+    className="absolute top-0 right-0 h-auto w-36 bg-zinc-700/90 text-white p-2 z-50 rounded-xl"
   >
 
     {designersAberto && (
@@ -73,7 +73,7 @@ export default function Adm() {
 
     <div className="space-y-6">
 
-      <button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
+      <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
   ▸ COMERCIAL
 </button>
 
@@ -88,27 +88,27 @@ export default function Adm() {
   
 </div>
 
-<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
   ▸ IMPRESSÃO
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
   ▸ PRENSA
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
   ▸ CORTE
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
   ▸ COSTURA
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
   ▸ CONFERÊNCIA
 </button>
 
-<button className="w-full text-left py-2 border-b border-zinc-600 text-sm">
+<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
   ▸ ENVIO
 </button>
 
