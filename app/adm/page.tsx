@@ -36,7 +36,7 @@ export default function Adm() {
     {menuAberto && (
   <div
     onClick={(e) => e.stopPropagation()}
-    className="absolute top-0 right-0 h-auto w-50 bg-zinc-700/90 text-white p-6 z-50"
+    className="absolute top-0 right-0 h-auto w-50 bg-zinc-700/90 text-white p-6 z-50 rounded-xl"
   >
 
     {designersAberto && (
