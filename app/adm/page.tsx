@@ -28,7 +28,7 @@ export default function Adm() {
 
     <button
       onClick={() => setMenuAberto(!menuAberto)}
-      className="absolute top-6 right-6 text-white text-3xl"
+      className="absolute top-4 right-6 text-white text-2xl"
     >
       ☰
     </button>
