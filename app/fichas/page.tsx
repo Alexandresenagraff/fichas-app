@@ -530,7 +530,7 @@ async function salvarEdicao() {
 
     <div>
       <p className="text-zinc-400 text-sm">
-        Vendedor:
+        Vendedor:git add .
       </p>
 
       <p className="text-lg font-bold break-words uppercase">
@@ -915,13 +915,17 @@ async function salvarEdicao() {
       className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
     />
 
-    <input
-      type="text"
-      placeholder="Designer"
-      value={designer}
-      onChange={(e) => setDesigner(e.target.value)}
-      className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
-    />
+   <select
+  value={designer}
+  onChange={(e) => setDesigner(e.target.value)}
+  className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none text-white"
+>
+  <option value="">Selecione o Designer</option>
+  <option value="ALEXANDRE">ALEXANDRE</option>
+  <option value="LÁZARO">LÁZARO</option>
+  <option value="EDIVAN">EDIVAN</option>
+  <option value="PAULÃO">PAULÃO</option>
+</select>
 
     <div>
 
