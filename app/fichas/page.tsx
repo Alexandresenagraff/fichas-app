@@ -28,6 +28,15 @@ export default function Home() {
 
   const [busca, setBusca] = useState("");
   const [fichas, setFichas] = useState<any[]>([]);
+  const [editandoId, setEditandoId] = useState("");
+
+const [editCliente, setEditCliente] = useState("");
+const [editEmail, setEditEmail] = useState("");
+const [editVendedor, setEditVendedor] = useState("");
+const [editObservacao, setEditObservacao] = useState("");
+const [editDesigner, setEditDesigner] = useState("");
+const [editPedido, setEditPedido] = useState("");
+const [editEntrega, setEditEntrega] = useState("");
 
   async function salvarFicha() {
 
@@ -225,7 +234,61 @@ setEntrega("");
     setFichas([]);
 
   }, []);
+function iniciarEdicao(ficha: any) {
+  setEditandoId(ficha.id);
 
+  setEditCliente(ficha.cliente || "");
+  setEditEmail(ficha.email || "");
+  setEditVendedor(ficha.vendedor || "");
+  setEditObservacao(ficha.observacao || "");
+  setEditDesigner(ficha.designer || "");
+  setEditPedido(ficha.pedido || "");
+  setEditEntrega(ficha.entrega || "");
+}
+
+async function salvarEdicao() {
+  try {
+
+    const fichaRef = doc(db, "fichas", editandoId);
+
+    await updateDoc(fichaRef, {
+      cliente: editCliente,
+      email: editEmail,
+      vendedor: editVendedor,
+      observacao: editObservacao,
+      designer: editDesigner,
+      pedido: editPedido,
+      entrega: editEntrega,
+    });
+
+    setFichas((prev) =>
+      prev.map((item) =>
+        item.id === editandoId
+          ? {
+              ...item,
+              cliente: editCliente,
+              email: editEmail,
+              vendedor: editVendedor,
+              observacao: editObservacao,
+              designer: editDesigner,
+              pedido: editPedido,
+              entrega: editEntrega,
+            }
+          : item
+      )
+    );
+
+    setEditandoId("");
+
+    alert("Alterações salvas!");
+
+  } catch (error) {
+
+    console.log(error);
+
+    alert("Erro ao salvar alterações");
+  }
+}
   function StatusToggle({
     label,
     ativo,
@@ -310,9 +373,44 @@ setEntrega("");
   {/* NOME + LIXEIRA */}
   <div className="flex justify-between items-start gap-3 mb-3">
 
-    <p className="text-2xl font-bold break-words leading-tight flex-1 uppercase">
-      {ficha.cliente}
-    </p>
+  {editandoId === ficha.id ? (
+
+  <input
+    type="text"
+    value={editCliente}
+    onChange={(e) => setEditCliente(e.target.value)}
+    className="flex-1 bg-black border border-zinc-700 rounded-xl p-2 text-white"
+  />
+
+) : (
+
+  <p className="text-2xl font-bold break-words leading-tight flex-1 uppercase">
+    {ficha.cliente}
+  </p>
+
+)}
+  <div className="flex gap-2">
+
+    <button
+      onClick={() => iniciarEdicao(ficha)}
+      className="text-white hover:text-blue-500 transition flex-shrink-0"
+      title="Editar ficha"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="w-7 h-7"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        strokeWidth={2}
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M16.5 3.5a2.121 2.121 0 113 3L12 14l-4 1 1-4 7.5-7.5z"
+        />
+      </svg>
+    </button>
 
     <button
       onClick={() => excluirFicha(ficha.id)}
@@ -337,6 +435,8 @@ setEntrega("");
 
   </div>
 
+</div>
+
   {/* DATAS */}
   <div className="grid grid-cols-2 gap-4 mb-4">
 
@@ -345,11 +445,24 @@ setEntrega("");
         Pedido:
       </p>
 
-     <p className="text-base font-semibold">
-  {ficha.pedido
-    ? ficha.pedido.split("-").reverse().join("/")
-    : "-"}
-</p>
+     {editandoId === ficha.id ? (
+
+  <input
+    type="date"
+    value={editEntrega}
+    onChange={(e) => setEditEntrega(e.target.value)}
+    className="w-full bg-black border border-zinc-700 rounded-xl p-2 text-white"
+  />
+
+) : (
+
+  <p className="text-base font-semibold">
+    {ficha.entrega
+      ? ficha.entrega.split("-").reverse().join("/")
+      : "-"}
+  </p>
+
+)}
     </div>
 
     <div>
@@ -377,6 +490,28 @@ setEntrega("");
   </p>
 
 </div>
+
+{editandoId === ficha.id && (
+
+  <div className="flex gap-2 mt-4">
+
+    <button
+      onClick={salvarEdicao}
+      className="bg-green-600 px-4 py-2 rounded-xl text-sm font-bold"
+    >
+      💾 SALVAR
+    </button>
+
+    <button
+      onClick={() => setEditandoId("")}
+      className="bg-red-600 px-4 py-2 rounded-xl text-sm font-bold"
+    >
+      ❌ CANCELAR
+    </button>
+
+  </div>
+
+)}
   {/* OBSERVAÇÃO */}
   <div className="mb-4">
 
