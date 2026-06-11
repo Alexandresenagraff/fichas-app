@@ -899,13 +899,22 @@ async function salvarEdicao() {
       className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
     />
 
-    <input
-      type="text"
-      placeholder="Nome do Vendedor"
-      value={vendedor}
-      onChange={(e) => setVendedor(e.target.value)}
-      className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
-    />
+    <select
+  value={vendedor}
+  onChange={(e) => setVendedor(e.target.value)}
+  className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none text-white"
+>
+  <option value="">Selecione o Vendedor</option>
+  <option value="PALOMA">PALOMA</option>
+  <option value="MIKELLY">MIKELLY</option>
+  <option value="LARISSA">LARISSA</option>
+  <option value="JEFFERSON">JEFFERSON</option>
+  <option value="JANIELLY">JANIELLY</option>
+  <option value="ROSE">ROSE</option>
+  <option value="CÉSAR">CÉSAR</option>
+  <option value="GRAÇA">GRAÇA</option>
+  <option value="KELLY">KELLY</option>
+</select>
 
     <input
       type="text"
