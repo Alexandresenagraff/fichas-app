@@ -368,9 +368,40 @@ async function salvarEdicao() {
     ▸ COMERCIAL
   </button>
 
-  <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
-    ▸ DESIGNERS
+  <div>
+
+  <button
+    onClick={() => setDesignersAberto(!designersAberto)}
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  >
+    {designersAberto ? "▾ DESIGNERS" : "▸ DESIGNERS"}
   </button>
+
+  {designersAberto && (
+
+    <div className="ml-3 mt-2 space-y-2 text-xs">
+
+      <button className="block w-full text-left">
+        ▸ LÁZARO
+      </button>
+
+      <button className="block w-full text-left">
+        ▸ EDIVAN
+      </button>
+
+      <button className="block w-full text-left">
+        ▸ ALEXANDRE
+      </button>
+
+      <button className="block w-full text-left">
+        ▸ PAULÃO
+      </button>
+
+    </div>
+
+  )}
+
+</div>
 
   <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
     ▸ IMPRESSÃO
