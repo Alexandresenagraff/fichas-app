@@ -353,6 +353,29 @@ async function salvarEdicao() {
     ☰
   </button>
 
+  {menuAberto && (
+  <div
+    onClick={(e) => e.stopPropagation()}
+    className="fixed top-16 right-4 w-40 bg-zinc-700/90 text-white p-3 z-50 rounded-xl"
+  >
+    <h2 className="font-bold mb-4">
+      SETORES
+    </h2>
+
+    <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
+      ▸ COMERCIAL
+    </button>
+
+    <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
+      ▸ DESIGNERS
+    </button>
+
+    <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
+      ▸ IMPRESSÃO
+    </button>
+  </div>
+)}
+
   <div className="max-w-md mx-auto">
 
   </div>
@@ -360,7 +383,7 @@ async function salvarEdicao() {
       <div className="max-w-md mx-auto">
 
         {/* PESQUISA */}
-        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-4 mb-5 mt-8 border border-zinc-800">
+        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-4 mb-5 mt-6 border border-zinc-800">
 
           <input
             type="text"
