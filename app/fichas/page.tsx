@@ -370,26 +370,26 @@ async function salvarEdicao() {
 
   <div>
 
-  <button
-    onClick={() => setDesignersAberto(!designersAberto)}
-    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
-  >
-    {designersAberto ? "▾ DESIGNERS" : "▸ DESIGNERS"}
-  </button>
-
   {designersAberto && (
+  <div
+    onClick={(e) => e.stopPropagation()}
+    className="absolute top-0 -left-40 w-40 bg-zinc-800/90 text-white p-4 rounded-xl shadow-xl"
+  >
+    <h3 className="font-bold text-sm mb-4">
+      DESIGNERS
+    </h3>
 
-    <div className="ml-3 mt-2 space-y-2 text-xs">
+    <div className="space-y-3 text-xs">
 
-      <button className="block w-full text-left">
+      <button className="block w-full text-left border-b border-zinc-600 pb-2">
         ▸ LÁZARO
       </button>
 
-      <button className="block w-full text-left">
+      <button className="block w-full text-left border-b border-zinc-600 pb-2">
         ▸ EDIVAN
       </button>
 
-      <button className="block w-full text-left">
+      <button className="block w-full text-left border-b border-zinc-600 pb-2">
         ▸ ALEXANDRE
       </button>
 
@@ -398,8 +398,15 @@ async function salvarEdicao() {
       </button>
 
     </div>
+  </div>
+)}
 
-  )}
+<button
+  onClick={() => setDesignersAberto(!designersAberto)}
+  className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+>
+  {designersAberto ? "▾ DESIGNERS" : "▸ DESIGNERS"}
+</button>
 
 </div>
 
