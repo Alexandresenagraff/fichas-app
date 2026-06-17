@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 
 export default function Adm() {
   const [senha, setSenha] = useState("");
-  const [menuAberto, setMenuAberto] = useState(false);
-  const [designersAberto, setDesignersAberto] = useState(false);
+  
 
   const router = useRouter();
 
@@ -19,109 +18,9 @@ export default function Adm() {
   }
 
   return (
-  <main
-  className="min-h-screen bg-black flex items-center justify-center p-6 relative"
-  onClick={() => {
-  if (menuAberto) setMenuAberto(false);
-  if (designersAberto) setDesignersAberto(false);
-}}
->
+  <main className="min-h-screen bg-black flex items-center justify-center p-6">
 
-    <button
-      onClick={() => setMenuAberto(!menuAberto)}
-      className="absolute top-4 right-6 text-white text-2xl"
-    >
-      ☰
-    </button>
-
-    {menuAberto && (
-  <div
-    onClick={(e) => e.stopPropagation()}
-    className="absolute top-16 right-0 h-auto w-40 bg-zinc-700/90 text-white p-3 z-50 rounded-xl animate-[slideDown_0.3s_ease-out]"
-  >
-
-    {designersAberto && (
-      <div
-  onClick={(e) => e.stopPropagation()}
-  className="absolute top-0 -left-38 h-auto w-38 bg-zinc-800/90 text-white p-4 rounded-xl shadow-xl animate-[slideDown_0.3s_ease-out]"
->
-        <h3 className="font-bold text-sm mb-4">
-          DESIGNERS
-        </h3>
-
-        <div className="space-y-3 text-xs">
-          <button className="block w-full text-left border-b border-zinc-600 pb-2">
-            ▸ LÁZARO
-          </button>
-
-          <button className="block w-full text-left border-b border-zinc-600 pb-2">
-            ▸ EDIVAN
-          </button>
-
-          <button className="block w-full text-left border-b border-zinc-600 pb-2">
-            ▸ ALEXANDRE
-          </button>
-
-          <button className="block w-full text-left">
-            ▸ PAULÃO
-          </button>
-        </div>
-      </div>
-    )}
-
-    <h2 className="text-left font-bold mb-6">
-    SETORES
-    </h2>
-
-    <div className="space-y-6">
-
-      <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
-  ▸ COMERCIAL
-</button>
-
-<div>
-  <button
-    onClick={() => setDesignersAberto(!designersAberto)}
-    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
-  >
-    {designersAberto ? "▾ DESIGNERS" : "▸ DESIGNERS"}
-  </button>
-
-  
-</div>
-
-<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
-  ▸ IMPRESSÃO
-</button>
-
-<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
-  ▸ PRENSA
-</button>
-
-<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
-  ▸ CORTE
-</button>
-
-<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
-  ▸ COSTURA
-</button>
-
-<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
-  ▸ CONFERÊNCIA
-</button>
-
-<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
-  ▸ ENVIO
-</button>
-
-<button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
-  ▸ ADMINISTRAÇÃO
-</button>
-
-    </div>
-
-  </div>
-)}
+    
 
     <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8">
 
