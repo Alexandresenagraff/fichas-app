@@ -30,6 +30,9 @@ export default function Home() {
   const [fichas, setFichas] = useState<any[]>([]);
   const [editandoId, setEditandoId] = useState("");
 
+  const [menuAberto, setMenuAberto] = useState(false);
+const [designersAberto, setDesignersAberto] = useState(false);
+
 const [editCliente, setEditCliente] = useState("");
 const [editEmail, setEditEmail] = useState("");
 const [editVendedor, setEditVendedor] = useState("");
@@ -333,7 +336,26 @@ async function salvarEdicao() {
 
   return (
 
-    <main className="min-h-screen bg-black p-3 text-white">
+    <main
+  className="min-h-screen bg-black p-3 text-white relative"
+  onClick={() => {
+    if (menuAberto) setMenuAberto(false);
+    if (designersAberto) setDesignersAberto(false);
+  }}
+>
+   <button
+    onClick={(e) => {
+      e.stopPropagation();
+      setMenuAberto(!menuAberto);
+    }}
+    className="fixed top-4 right-4 text-white text-3xl z-50"
+  >
+    ☰
+  </button>
+
+  <div className="max-w-md mx-auto">
+    
+  </div>
 
       <div className="max-w-md mx-auto">
 
