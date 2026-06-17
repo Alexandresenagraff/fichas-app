@@ -348,19 +348,19 @@ async function salvarEdicao() {
       e.stopPropagation();
       setMenuAberto(!menuAberto);
     }}
-    className="fixed top-4 right-4 text-white text-3xl z-50"
+    className="fixed top-3 right-4 text-white text-xl z-50"
   >
     ☰
   </button>
 
   <div className="max-w-md mx-auto">
-    
+
   </div>
 
       <div className="max-w-md mx-auto">
 
         {/* PESQUISA */}
-        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-4 mb-5 border border-zinc-800">
+        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-4 mb-5 mt-8 border border-zinc-800">
 
           <input
             type="text"
