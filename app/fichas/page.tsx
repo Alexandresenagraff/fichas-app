@@ -29,6 +29,8 @@ export default function Home() {
   const [busca, setBusca] = useState("");
   const [fichas, setFichas] = useState<any[]>([]);
   const [editandoId, setEditandoId] = useState("");
+  
+  const [pedidosAbertos, setPedidosAbertos] = useState<string[]>([]);
 
   const [menuAberto, setMenuAberto] = useState(false);
 const [designersAberto, setDesignersAberto] = useState(false);
@@ -285,18 +287,42 @@ async function salvarEdicao() {
 
     alert("Alterações salvas!");
 
-  } catch (error) {
+ } catch (error) {
 
-    console.log(error);
+  console.log(error);
 
-    alert("Erro ao salvar alterações");
-  }
+  alert("Erro ao salvar alterações");
 }
-  function StatusToggle({
-    label,
-    ativo,
-    onClick,
-  }: {
+}
+
+function alternarPedido(id: string) {
+
+  if (pedidosAbertos.includes(id)) {
+
+    setPedidosAbertos(
+      pedidosAbertos.filter(
+        (item) => item !== id
+      )
+    );
+
+  } else {
+
+    setPedidosAbertos([
+      ...pedidosAbertos,
+      id
+    ]);
+
+  }
+
+}
+
+
+
+function StatusToggle({
+  label,
+  ativo,
+  onClick,
+}: {
     label: string;
     ativo: boolean;
     onClick: () => void;
@@ -590,6 +616,16 @@ async function salvarEdicao() {
     </div>
 
   </div>
+  
+  <button
+  onClick={() => alternarPedido(ficha.id)}
+  className="w-full bg-blue-800 hover:bg-blue-900 transition rounded-full py-3 mb-4 font-medium"
+>
+  {pedidosAbertos.includes(ficha.id)
+    ? "RECOLHER"
+    : "VISUALIZAR"}
+</button>
+
 {/* IDENTIFICAÇÃO DO CLIENTE */}
 <div className="mb-4">
 
