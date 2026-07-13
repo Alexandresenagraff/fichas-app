@@ -19,6 +19,8 @@ export default function Home() {
 
   const [busca, setBusca] = useState("");
   const [fichas, setFichas] = useState<any[]>([]);
+  const [urgentes, setUrgentes] = useState<any[]>([]);
+  const [mostrarUrgentes, setMostrarUrgentes] = useState(false);
   const [editandoId, setEditandoId] = useState("");
   
   const [pedidosAbertos, setPedidosAbertos] = useState<string[]>([]);
@@ -76,6 +78,65 @@ const [editEntrega, setEditEntrega] = useState("");
 
     alert("Erro ao pesquisar fichas");
   }
+}
+
+function ehUrgente(ficha: any) {
+  if (ficha.entregaStatus || !ficha.criadoEm || !ficha.entrega) {
+    return false;
+  }
+
+  const cadastro = ficha.criadoEm.toDate
+    ? ficha.criadoEm.toDate()
+    : new Date(ficha.criadoEm);
+  const [ano, mes, dia] = ficha.entrega.split("-").map(Number);
+
+  if (Number.isNaN(cadastro.getTime()) || !ano || !mes || !dia) {
+    return false;
+  }
+
+  const inicioDoCadastro = Date.UTC(
+    cadastro.getFullYear(),
+    cadastro.getMonth(),
+    cadastro.getDate()
+  );
+  const dataDeEntrega = Date.UTC(ano, mes - 1, dia);
+  const prazoEmDias = Math.round(
+    (dataDeEntrega - inicioDoCadastro) / (1000 * 60 * 60 * 24)
+  );
+
+  return prazoEmDias >= 0 && prazoEmDias <= 15;
+}
+
+async function carregarUrgentes() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "fichas"));
+    const lista: any[] = [];
+
+    querySnapshot.forEach((item) => {
+      const ficha = { id: item.id, ...item.data() };
+
+      if (ehUrgente(ficha)) {
+        lista.push(ficha);
+      }
+    });
+
+    setUrgentes(lista);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function alternarUrgentes() {
+  if (mostrarUrgentes) {
+    setMostrarUrgentes(false);
+    setFichas([]);
+    return;
+  }
+
+  setBusca("");
+  setFichas(urgentes);
+  setPedidosAbertos([]);
+  setMostrarUrgentes(true);
 }
 
   async function alterarStatus(
@@ -167,7 +228,7 @@ const [editEntrega, setEditEntrega] = useState("");
 
   useEffect(() => {
 
-    setFichas([]);
+    carregarUrgentes();
 
   }, []);
 function iniciarEdicao(ficha: any) {
@@ -421,15 +482,30 @@ function StatusToggle({
             value={busca}
             onChange={(e) => {
               setBusca(e.target.value);
+              setMostrarUrgentes(false);
               pesquisarFichas(e.target.value);
             }}
             className="w-full bg-black border border-zinc-700 rounded-2xl p-3 text-sm text-white placeholder-zinc-500 outline-none"
           />
 
+          <div className="mt-3 flex gap-2">
+            <button
+              onClick={alternarUrgentes}
+              aria-pressed={mostrarUrgentes}
+              className={`rounded-full px-4 py-2 text-xs font-bold transition ${
+                mostrarUrgentes
+                  ? "bg-amber-400 text-black"
+                  : "bg-amber-600 text-white hover:bg-amber-500"
+              }`}
+            >
+              URGENTES ({urgentes.length})
+            </button>
+          </div>
+
         </div>
 
         {/* RESULTADOS */}
-        {busca && (
+        {(busca || mostrarUrgentes) && (
 
           <div className="space-y-4">
 
@@ -957,7 +1033,9 @@ function StatusToggle({
             ) : (
 
               <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-4 text-center text-zinc-400">
-                Nenhum cliente encontrado
+                {mostrarUrgentes
+                  ? "Nenhum pedido urgente encontrado"
+                  : "Nenhum cliente encontrado"}
               </div>
 
             )}
