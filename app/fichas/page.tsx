@@ -15,12 +15,14 @@ import {
 
 const db = getFirestore(app);
 
+type FiltroPedidos = "urgentes" | "atrasados" | "noPrazo" | "finalizados";
+
 export default function Home() {
 
   const [busca, setBusca] = useState("");
   const [fichas, setFichas] = useState<any[]>([]);
-  const [urgentes, setUrgentes] = useState<any[]>([]);
-  const [mostrarUrgentes, setMostrarUrgentes] = useState(false);
+  const [resumoPedidos, setResumoPedidos] = useState<any[]>([]);
+  const [filtroAtivo, setFiltroAtivo] = useState<FiltroPedidos | null>(null);
   const [editandoId, setEditandoId] = useState("");
   
   const [pedidosAbertos, setPedidosAbertos] = useState<string[]>([]);
@@ -80,63 +82,77 @@ const [editEntrega, setEditEntrega] = useState("");
   }
 }
 
-function ehUrgente(ficha: any) {
-  if (ficha.entregaStatus || !ficha.criadoEm || !ficha.entrega) {
-    return false;
+function categoriaDaFicha(ficha: any): FiltroPedidos {
+  if (ficha.entregaStatus) {
+    return "finalizados";
   }
 
-  const cadastro = ficha.criadoEm.toDate
-    ? ficha.criadoEm.toDate()
-    : new Date(ficha.criadoEm);
+  if (!ficha.entrega) {
+    return "noPrazo";
+  }
+
   const [ano, mes, dia] = ficha.entrega.split("-").map(Number);
-
-  if (Number.isNaN(cadastro.getTime()) || !ano || !mes || !dia) {
-    return false;
-  }
-
-  const inicioDoCadastro = Date.UTC(
-    cadastro.getFullYear(),
-    cadastro.getMonth(),
-    cadastro.getDate()
+  const hoje = new Date();
+  const inicioDeHoje = Date.UTC(
+    hoje.getFullYear(),
+    hoje.getMonth(),
+    hoje.getDate()
   );
   const dataDeEntrega = Date.UTC(ano, mes - 1, dia);
-  const prazoEmDias = Math.round(
-    (dataDeEntrega - inicioDoCadastro) / (1000 * 60 * 60 * 24)
+  const diasRestantes = Math.round(
+    (dataDeEntrega - inicioDeHoje) / (1000 * 60 * 60 * 24)
   );
 
-  return prazoEmDias >= 0 && prazoEmDias <= 15;
+  if (diasRestantes < 0) {
+    return "atrasados";
+  }
+
+  return diasRestantes <= 12 ? "urgentes" : "noPrazo";
 }
 
-async function carregarUrgentes() {
+function statusAtual(ficha: any) {
+  if (ficha.entregaStatus) return "ENTREGUE";
+  if (ficha.conferencia) return "CONFERIDO E EMBALADO";
+  if (ficha.costuraConcluida) return "COSTURA CONCLUÍDA";
+  if (ficha.costura) return "EM COSTURA";
+  if (ficha.corte) return "CORTADO";
+  if (ficha.prensa) return "NA PRENSA";
+  if (ficha.impressao) return "IMPRESSO";
+  if (ficha.exportacao) return "EXPORTADO";
+  if (ficha.arte) return "ARTE CONCLUÍDA";
+  if (ficha.venda) return "VENDA FEITA";
+
+  return "AGUARDANDO VENDA";
+}
+
+async function carregarResumoPedidos() {
   try {
     const querySnapshot = await getDocs(collection(db, "fichas"));
     const lista: any[] = [];
 
     querySnapshot.forEach((item) => {
-      const ficha = { id: item.id, ...item.data() };
-
-      if (ehUrgente(ficha)) {
-        lista.push(ficha);
-      }
+      lista.push({ id: item.id, ...item.data() });
     });
 
-    setUrgentes(lista);
+    setResumoPedidos(lista);
   } catch (error) {
     console.log(error);
   }
 }
 
-function alternarUrgentes() {
-  if (mostrarUrgentes) {
-    setMostrarUrgentes(false);
+function selecionarFiltro(filtro: FiltroPedidos) {
+  if (filtroAtivo === filtro) {
+    setFiltroAtivo(null);
     setFichas([]);
     return;
   }
 
   setBusca("");
-  setFichas(urgentes);
+  setFichas(
+    resumoPedidos.filter((ficha) => categoriaDaFicha(ficha) === filtro)
+  );
   setPedidosAbertos([]);
-  setMostrarUrgentes(true);
+  setFiltroAtivo(filtro);
 }
 
   async function alterarStatus(
@@ -160,6 +176,8 @@ function alternarUrgentes() {
             : item
         )
       );
+
+      carregarResumoPedidos();
 
     } catch (error) {
 
@@ -228,7 +246,7 @@ function alternarUrgentes() {
 
   useEffect(() => {
 
-    carregarUrgentes();
+    carregarResumoPedidos();
 
   }, []);
 function iniciarEdicao(ficha: any) {
@@ -351,6 +369,23 @@ function StatusToggle({
       </div>
     );
   }
+
+  const filtros = [
+    { id: "urgentes" as const, label: "URGENTES", cor: "amber" },
+    { id: "atrasados" as const, label: "ATRASADOS", cor: "red" },
+    { id: "noPrazo" as const, label: "NO PRAZO", cor: "blue" },
+    { id: "finalizados" as const, label: "FINALIZADOS", cor: "green" },
+  ];
+
+  const contagens = filtros.reduce(
+    (total, filtro) => ({
+      ...total,
+      [filtro.id]: resumoPedidos.filter(
+        (ficha) => categoriaDaFicha(ficha) === filtro.id
+      ).length,
+    }),
+    {} as Record<FiltroPedidos, number>
+  );
 
   return (
 
@@ -482,30 +517,47 @@ function StatusToggle({
             value={busca}
             onChange={(e) => {
               setBusca(e.target.value);
-              setMostrarUrgentes(false);
+              setFiltroAtivo(null);
               pesquisarFichas(e.target.value);
             }}
             className="w-full bg-black border border-zinc-700 rounded-2xl p-3 text-sm text-white placeholder-zinc-500 outline-none"
           />
 
-          <div className="mt-3 flex gap-2">
-            <button
-              onClick={alternarUrgentes}
-              aria-pressed={mostrarUrgentes}
-              className={`rounded-full px-4 py-2 text-xs font-bold transition ${
-                mostrarUrgentes
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {filtros.map((filtro) => {
+              const ativo = filtroAtivo === filtro.id;
+              const estilo = {
+                amber: ativo
                   ? "bg-amber-400 text-black"
-                  : "bg-amber-600 text-white hover:bg-amber-500"
-              }`}
-            >
-              URGENTES ({urgentes.length})
-            </button>
+                  : "bg-amber-600 text-white hover:bg-amber-500",
+                red: ativo
+                  ? "bg-red-400 text-black"
+                  : "bg-red-700 text-white hover:bg-red-600",
+                blue: ativo
+                  ? "bg-blue-400 text-black"
+                  : "bg-blue-700 text-white hover:bg-blue-600",
+                green: ativo
+                  ? "bg-green-400 text-black"
+                  : "bg-green-700 text-white hover:bg-green-600",
+              }[filtro.cor];
+
+              return (
+                <button
+                  key={filtro.id}
+                  onClick={() => selecionarFiltro(filtro.id)}
+                  aria-pressed={ativo}
+                  className={`rounded-full px-3 py-2 text-xs font-bold transition ${estilo}`}
+                >
+                  {filtro.label} ({contagens[filtro.id]})
+                </button>
+              );
+            })}
           </div>
 
         </div>
 
         {/* RESULTADOS */}
-        {(busca || mostrarUrgentes) && (
+        {(busca || filtroAtivo) && (
 
           <div className="space-y-4">
 
@@ -640,6 +692,10 @@ function StatusToggle({
     ? "RECOLHER"
     : "VISUALIZAR"}
 </button>
+
+<p className="mb-4 text-center text-xs font-semibold text-zinc-400">
+  STATUS ATUAL: <span className="text-lime-400">{statusAtual(ficha)}</span>
+</p>
 
 {pedidosAbertos.includes(ficha.id) && (
 <div id={`detalhes-${ficha.id}`} className="animate-[slideDown_0.25s_ease-out]">
@@ -1033,8 +1089,8 @@ function StatusToggle({
             ) : (
 
               <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-4 text-center text-zinc-400">
-                {mostrarUrgentes
-                  ? "Nenhum pedido urgente encontrado"
+                {filtroAtivo
+                  ? "Nenhum pedido encontrado neste filtro"
                   : "Nenhum cliente encontrado"}
               </div>
 
