@@ -413,7 +413,7 @@ function StatusToggle({
       <div className="max-w-md mx-auto">
 
         {/* PESQUISA */}
-        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-4 mb-5 mt-8 border border-zinc-800">
+        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-4 mb-5 mt-12 border border-zinc-800">
 
           <input
             type="text"
