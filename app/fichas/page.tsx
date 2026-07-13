@@ -600,16 +600,16 @@ function StatusToggle({
 
   <input
     type="date"
-    value={editEntrega}
-    onChange={(e) => setEditEntrega(e.target.value)}
+    value={editPedido}
+    onChange={(e) => setEditPedido(e.target.value)}
     className="w-full bg-black border border-zinc-700 rounded-xl p-2 text-white"
   />
 
 ) : (
 
   <p className="text-base font-semibold">
-    {ficha.entrega
-      ? ficha.entrega.split("-").reverse().join("/")
+    {ficha.pedido
+      ? ficha.pedido.split("-").reverse().join("/")
       : "-"}
   </p>
 
