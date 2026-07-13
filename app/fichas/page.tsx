@@ -620,11 +620,16 @@ function StatusToggle({
   <button
   onClick={() => alternarPedido(ficha.id)}
   className="w-full bg-blue-800 hover:bg-blue-900 transition rounded-full py-3 mb-4 font-medium"
+  aria-expanded={pedidosAbertos.includes(ficha.id)}
+  aria-controls={`detalhes-${ficha.id}`}
 >
   {pedidosAbertos.includes(ficha.id)
     ? "RECOLHER"
     : "VISUALIZAR"}
 </button>
+
+{pedidosAbertos.includes(ficha.id) && (
+<div id={`detalhes-${ficha.id}`} className="animate-[slideDown_0.25s_ease-out]">
 
 {/* IDENTIFICAÇÃO DO CLIENTE */}
 <div className="mb-4">
@@ -699,9 +704,13 @@ function StatusToggle({
   </div>
 
 </div>
+)}
+
+</div>
 
                   {/* STATUS */}
                   {/* STATUS */}
+{pedidosAbertos.includes(ficha.id) && (
 <div className="flex flex-col gap-2">
 
   {/* BARRA DE PROGRESSO */}
@@ -1001,6 +1010,8 @@ function StatusToggle({
                     </div>
 
                   </div>
+
+                )}
 
                 </div>
 
