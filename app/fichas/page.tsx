@@ -834,18 +834,6 @@ function StatusToggle({
                     <div className="space-y-2">
 
                       <StatusToggle
-                        label={ficha.venda ? "VENDA FEITA" : "VENDA"}
-                        ativo={ficha.venda}
-                        onClick={() =>
-                          alterarStatus(
-                            ficha.id,
-                            "venda",
-                            ficha.venda
-                          )
-                        }
-                      />
-
-                      <StatusToggle
                         label={ficha.arte ? "ARTE CONCLUÍDA" : "ARTE"}
                         ativo={ficha.arte}
                         onClick={() =>

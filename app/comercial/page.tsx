@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 import app from "../../firebase/config";
 
@@ -9,6 +10,7 @@ import { addDoc, collection, getFirestore } from "firebase/firestore";
 const db = getFirestore(app);
 
 export default function Comercial() {
+  const router = useRouter();
   const [cliente, setCliente] = useState("");
   const [email, setEmail] = useState("");
   const [vendedor, setVendedor] = useState("");
@@ -33,7 +35,7 @@ export default function Comercial() {
         pedido,
         entrega,
         pdfLink: "",
-        venda: false,
+        venda: true,
         arte: false,
         exportacao: false,
         impressao: false,
@@ -58,6 +60,7 @@ export default function Comercial() {
       setDesigner("");
       setPedido("");
       setEntrega("");
+      router.push("/fichas");
     } catch (error) {
       console.log(error);
       alert("Erro ao salvar");
