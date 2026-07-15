@@ -463,16 +463,6 @@ function StatusToggle({
     ▸ COMERCIAL
   </button>
 
-  <button
-    onClick={() => {
-      setMenuAberto(false);
-      window.location.href = "/arte";
-    }}
-    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
-  >
-    ▸ ARTE
-  </button>
-
   <div>
 
   {designersAberto && (
@@ -486,19 +476,47 @@ function StatusToggle({
 
     <div className="space-y-3 text-xs">
 
-      <button className="block w-full text-left border-b border-zinc-600 pb-2">
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setDesignersAberto(false);
+          window.location.href = "/arte?designer=LAZARO";
+        }}
+        className="block w-full text-left border-b border-zinc-600 pb-2"
+      >
         ▸ LÁZARO
       </button>
 
-      <button className="block w-full text-left border-b border-zinc-600 pb-2">
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setDesignersAberto(false);
+          window.location.href = "/arte?designer=EDIVAN";
+        }}
+        className="block w-full text-left border-b border-zinc-600 pb-2"
+      >
         ▸ EDIVAN
       </button>
 
-      <button className="block w-full text-left border-b border-zinc-600 pb-2">
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setDesignersAberto(false);
+          window.location.href = "/arte?designer=ALEXANDRE";
+        }}
+        className="block w-full text-left border-b border-zinc-600 pb-2"
+      >
         ▸ ALEXANDRE
       </button>
 
-      <button className="block w-full text-left">
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setDesignersAberto(false);
+          window.location.href = "/arte?designer=PAULAO";
+        }}
+        className="block w-full text-left"
+      >
         ▸ PAULÃO
       </button>
 

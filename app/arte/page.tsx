@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import app from "../../firebase/config";
 
@@ -17,24 +17,22 @@ const db = getFirestore(app);
 
 export default function Arte() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const designerAtivo = searchParams.get("designer") || "";
   const [fichas, setFichas] = useState<any[]>([]);
   const [busca, setBusca] = useState("");
-  const [designerFiltro, setDesignerFiltro] = useState("");
 
   async function carregarFichas() {
     try {
       const snapshot = await getDocs(collection(db, "fichas"));
       const lista: any[] = [];
 
-      const designersArte = ["ALEXANDRE", "LÁZARO", "EDIVAN", "PAULÃO"];
-
       snapshot.forEach((item) => {
         const dados = item.data();
         if (
           dados.venda &&
           !dados.entregaStatus &&
-          dados.designer &&
-          designersArte.includes(dados.designer.toUpperCase())
+          dados.designer
         ) {
           lista.push({ id: item.id, ...dados });
         }
@@ -109,7 +107,7 @@ export default function Arte() {
 
   const fichasFiltradas = fichas.filter((ficha) => {
     const matchBusca = ficha.cliente?.toLowerCase().includes(busca.toLowerCase());
-    const matchDesigner = !designerFiltro || ficha.designer?.toUpperCase() === designerFiltro;
+    const matchDesigner = !designerAtivo || ficha.designer?.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === designerAtivo;
     return matchBusca && matchDesigner;
   });
 
@@ -151,7 +149,7 @@ export default function Arte() {
         </div>
 
         {/* PESQUISA */}
-        <div className="bg-zinc-900 rounded-2xl p-3 mb-4 border border-zinc-800 space-y-3">
+        <div className="bg-zinc-900 rounded-2xl p-3 mb-4 border border-zinc-800">
           <input
             type="text"
             placeholder="🔎 Pesquisar Cliente"
@@ -159,18 +157,6 @@ export default function Arte() {
             onChange={(e) => setBusca(e.target.value)}
             className="w-full bg-black border border-zinc-700 rounded-xl p-3 text-sm text-white placeholder-zinc-500 outline-none"
           />
-
-          <select
-            value={designerFiltro}
-            onChange={(e) => setDesignerFiltro(e.target.value)}
-            className="w-full bg-black border border-zinc-700 rounded-xl p-3 text-sm text-white outline-none"
-          >
-            <option value="">Todos os Designers</option>
-            <option value="ALEXANDRE">ALEXANDRE</option>
-            <option value="LÁZARO">LÁZARO</option>
-            <option value="EDIVAN">EDIVAN</option>
-            <option value="PAULÃO">PAULÃO</option>
-          </select>
         </div>
 
         {/* CONTADORES */}
