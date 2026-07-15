@@ -896,17 +896,26 @@ function StatusToggle({
                         }
                       />
 
-                      <StatusToggle
-                        label={ficha.arte ? "ARTE CONCLUÍDA" : "ARTE"}
-                        ativo={ficha.arte}
-                        onClick={() =>
-                          alterarStatus(
-                            ficha.id,
-                            "arte",
+                      <div className={`flex items-center justify-between w-full rounded-xl px-3 py-2 ${
+                        ficha.arte
+                          ? "bg-purple-500/20 border border-purple-500/30"
+                          : "bg-zinc-900 border border-zinc-800"
+                      }`}>
+                        <span className={`text-sm font-medium ${
+                          ficha.arte ? "text-lime-400" : "text-white"
+                        }`}>
+                          {ficha.arte ? "ARTE CONCLUÍDA" : "ARTE"}
+                        </span>
+                        <div className={`relative w-8 h-4 rounded-full ${
+                          ficha.arte ? "bg-zinc-700" : "bg-zinc-700"
+                        }`}>
+                          <div className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${
                             ficha.arte
-                          )
-                        }
-                      />
+                              ? "translate-x-4 bg-lime-400"
+                              : "translate-x-1 bg-red-500"
+                          }`} />
+                        </div>
+                      </div>
 
                       <div className="space-y-2">
 
