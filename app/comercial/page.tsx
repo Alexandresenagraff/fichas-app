@@ -9,6 +9,16 @@ import { addDoc, collection, getFirestore } from "firebase/firestore";
 
 const db = getFirestore(app);
 
+function formatarDataHora(): string {
+  const agora = new Date();
+  const dia = String(agora.getDate()).padStart(2, "0");
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
+  const ano = agora.getFullYear();
+  const horas = String(agora.getHours()).padStart(2, "0");
+  const minutos = String(agora.getMinutes()).padStart(2, "0");
+  return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+}
+
 export default function Comercial() {
   const router = useRouter();
   const [cliente, setCliente] = useState("");
@@ -41,6 +51,7 @@ export default function Comercial() {
         entrega,
         pdfLink: "",
         venda: true,
+        vendaData: formatarDataHora(),
         arte: false,
         exportacao: false,
         impressao: false,

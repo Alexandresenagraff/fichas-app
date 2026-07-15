@@ -63,11 +63,25 @@ export default function Impressao() {
   async function alterarStatus(id: string, campo: string, valorAtual: boolean) {
     try {
       const fichaRef = doc(db, "fichas", id);
-      await updateDoc(fichaRef, { [campo]: !valorAtual });
+      const atualizacao: any = { [campo]: !valorAtual };
+      if (campo === "impressao") {
+        if (!valorAtual) {
+          const agora = new Date();
+          const dia = String(agora.getDate()).padStart(2, "0");
+          const mes = String(agora.getMonth() + 1).padStart(2, "0");
+          const ano = agora.getFullYear();
+          const horas = String(agora.getHours()).padStart(2, "0");
+          const minutos = String(agora.getMinutes()).padStart(2, "0");
+          atualizacao.impressaoData = `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+        } else {
+          atualizacao.impressaoData = "";
+        }
+      }
+      await updateDoc(fichaRef, atualizacao);
 
       setFichas((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, [campo]: !valorAtual } : item
+          item.id === id ? { ...item, [campo]: !valorAtual, ...(campo === "impressao" ? { impressaoData: atualizacao.impressaoData } : {}) } : item
         )
       );
     } catch (error) {

@@ -67,11 +67,18 @@ export default function Arte() {
   async function concluirArte(id: string) {
     try {
       const fichaRef = doc(db, "fichas", id);
-      await updateDoc(fichaRef, { arte: true });
+      const agora = new Date();
+      const dia = String(agora.getDate()).padStart(2, "0");
+      const mes = String(agora.getMonth() + 1).padStart(2, "0");
+      const ano = agora.getFullYear();
+      const horas = String(agora.getHours()).padStart(2, "0");
+      const minutos = String(agora.getMinutes()).padStart(2, "0");
+      const arteData = `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+      await updateDoc(fichaRef, { arte: true, arteData });
 
       setFichas((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, arte: true } : item
+          item.id === id ? { ...item, arte: true, arteData } : item
         )
       );
     } catch (error) {
@@ -83,11 +90,11 @@ export default function Arte() {
   async function desfazerArte(id: string) {
     try {
       const fichaRef = doc(db, "fichas", id);
-      await updateDoc(fichaRef, { arte: false });
+      await updateDoc(fichaRef, { arte: false, arteData: "" });
 
       setFichas((prev) =>
         prev.map((item) =>
-          item.id === id ? { ...item, arte: false } : item
+          item.id === id ? { ...item, arte: false, arteData: "" } : item
         )
       );
     } catch (error) {

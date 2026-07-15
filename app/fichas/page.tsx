@@ -140,6 +140,31 @@ async function carregarResumoPedidos() {
   }
 }
 
+function formatarDataHora(): string {
+  const agora = new Date();
+  const dia = String(agora.getDate()).padStart(2, "0");
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
+  const ano = agora.getFullYear();
+  const horas = String(agora.getHours()).padStart(2, "0");
+  const minutos = String(agora.getMinutes()).padStart(2, "0");
+  return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+}
+
+function campoData(campo: string): string {
+  const mapa: Record<string, string> = {
+    venda: "vendaData",
+    arte: "arteData",
+    exportacao: "exportacaoData",
+    impressao: "impressaoData",
+    prensa: "prensaData",
+    corte: "corteData",
+    costura: "costuraData",
+    conferencia: "conferenciaData",
+    entregaStatus: "entregaData",
+  };
+  return mapa[campo] || "";
+}
+
 function selecionarFiltro(filtro: FiltroPedidos) {
   if (filtroAtivo === filtro) {
     setFiltroAtivo(null);
@@ -165,14 +190,17 @@ function selecionarFiltro(filtro: FiltroPedidos) {
 
       const fichaRef = doc(db, "fichas", id);
 
-      await updateDoc(fichaRef, {
-        [campo]: !valorAtual,
-      });
+      const campoDataHora = campoData(campo);
+      const atualizacao: any = { [campo]: !valorAtual };
+      if (campoDataHora) {
+        atualizacao[campoDataHora] = !valorAtual ? formatarDataHora() : "";
+      }
+      await updateDoc(fichaRef, atualizacao);
 
       setFichas((prev) =>
         prev.map((item) =>
           item.id === id
-            ? { ...item, [campo]: !valorAtual }
+            ? { ...item, [campo]: !valorAtual, ...(campoDataHora ? { [campoDataHora]: atualizacao[campoDataHora] } : {}) }
             : item
         )
       );
@@ -331,10 +359,12 @@ function alternarPedido(id: string) {
 function StatusToggle({
   label,
   ativo,
+  data,
   onClick,
 }: {
     label: string;
     ativo: boolean;
+    data?: string;
     onClick: () => void;
   }) {
     return (
@@ -348,6 +378,12 @@ function StatusToggle({
         }`}>
           {label}
         </span>
+
+        {data && (
+          <span className="text-sm text-white font-normal flex-shrink-0">
+            {data}
+          </span>
+        )}
 
         <button
           onClick={onClick}
@@ -887,6 +923,7 @@ function StatusToggle({
                       <StatusToggle
                         label={ficha.venda ? "VENDA FEITA" : "VENDA"}
                         ativo={ficha.venda}
+                        data={ficha.vendaData}
                         onClick={() =>
                           alterarStatus(
                             ficha.id,
@@ -899,6 +936,7 @@ function StatusToggle({
                       <StatusToggle
                         label={ficha.arte ? "ARTE CONCLUÍDA" : "ARTE"}
                         ativo={ficha.arte}
+                        data={ficha.arteData}
                         onClick={() =>
                           alterarStatus(
                             ficha.id,
@@ -913,6 +951,7 @@ function StatusToggle({
                         <StatusToggle
                           label={ficha.exportacao ? "EXPORTADO" : "EXPORTANDO"}
                           ativo={ficha.exportacao}
+                          data={ficha.exportacaoData}
                           onClick={() =>
                             alterarStatus(
                               ficha.id,
@@ -960,6 +999,7 @@ function StatusToggle({
                       <StatusToggle
                         label={ficha.impressao ? "IMPRESSO" : "IMPRESSÃO"}
                         ativo={ficha.impressao}
+                        data={ficha.impressaoData}
                         onClick={() =>
                           alterarStatus(
                             ficha.id,
@@ -976,6 +1016,7 @@ function StatusToggle({
                       <StatusToggle
                         label={ficha.prensa ? "PRENSAGEM CONCLUÍDA" : "NA PRENSA"}
                         ativo={ficha.prensa}
+                        data={ficha.prensaData}
                         onClick={() =>
                           alterarStatus(
                             ficha.id,
@@ -988,6 +1029,7 @@ function StatusToggle({
                       <StatusToggle
                         label={ficha.corte ? "CORTADO" : "CORTE"}
                         ativo={ficha.corte}
+                        data={ficha.corteData}
                         onClick={() =>
                           alterarStatus(
                             ficha.id,
@@ -1002,6 +1044,7 @@ function StatusToggle({
                         <StatusToggle
                           label={ficha.costura ? "ENVIADO P/ COSTUREIRO(A)" : "COSTURA"}
                           ativo={ficha.costura}
+                          data={ficha.costuraData}
                           onClick={() =>
                             alterarStatus(
                               ficha.id,
@@ -1070,6 +1113,7 @@ function StatusToggle({
                             : "CONFERÊNCIA/RECEPÇÃO"
                         }
                         ativo={ficha.conferencia}
+                        data={ficha.conferenciaData}
                         onClick={() =>
                           alterarStatus(
                             ficha.id,
@@ -1084,6 +1128,7 @@ function StatusToggle({
                         <StatusToggle
                           label={ficha.entregaStatus ? "ENTREGUE" : "ENTREGA"}
                           ativo={ficha.entregaStatus}
+                          data={ficha.entregaData}
                           onClick={() =>
                             alterarStatus(
                               ficha.id,
