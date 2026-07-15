@@ -145,7 +145,6 @@ export default function Comercial() {
               <option value="LÁZARO">LÁZARO</option>
               <option value="EDIVAN">EDIVAN</option>
               <option value="PAULÃO">PAULÃO</option>
-              <option value="DIEGO">DIEGO</option>
             </select>
 
             <div>

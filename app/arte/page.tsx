@@ -26,7 +26,7 @@ export default function Arte() {
       const snapshot = await getDocs(collection(db, "fichas"));
       const lista: any[] = [];
 
-      const designersArte = ["ALEXANDRE", "LÁZARO", "EDIVAN", "PAULÃO", "DIEGO"];
+      const designersArte = ["ALEXANDRE", "LÁZARO", "EDIVAN", "PAULÃO"];
 
       snapshot.forEach((item) => {
         const dados = item.data();
@@ -170,7 +170,6 @@ export default function Arte() {
             <option value="LÁZARO">LÁZARO</option>
             <option value="EDIVAN">EDIVAN</option>
             <option value="PAULÃO">PAULÃO</option>
-            <option value="DIEGO">DIEGO</option>
           </select>
         </div>
 
