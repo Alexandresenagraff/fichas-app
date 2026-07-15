@@ -154,7 +154,11 @@ function ComercialContent() {
     }
   }
 
-  const pedidosFiltrados = pedidos.filter((ficha) => {
+  const pedidosDoVendedor = vendedorParam
+    ? pedidos.filter((ficha) => ficha.vendedor === vendedorParam)
+    : pedidos;
+
+  const pedidosFiltrados = pedidosDoVendedor.filter((ficha) => {
     const matchBusca = ficha.cliente
       ?.toLowerCase()
       .includes(busca.toLowerCase());
@@ -165,7 +169,7 @@ function ComercialContent() {
   const contagens = etapas.reduce(
     (total, etapa) => ({
       ...total,
-      [etapa.id]: pedidos.filter((ficha) => etapaDaFicha(ficha) === etapa.id)
+      [etapa.id]: pedidosDoVendedor.filter((ficha) => etapaDaFicha(ficha) === etapa.id)
         .length,
     }),
     {} as Record<Etapa, number>
@@ -179,7 +183,9 @@ function ComercialContent() {
           <div>
             <h1 className="text-2xl font-bold">COMERCIAL</h1>
             <p className="text-zinc-400 text-xs">
-              Acompanhamento de pedidos
+              {vendedorParam
+                ? `Dashboard de ${vendedorParam}`
+                : "Acompanhamento de pedidos"}
             </p>
           </div>
           <button
