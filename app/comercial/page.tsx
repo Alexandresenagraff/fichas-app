@@ -5,69 +5,27 @@ import { useSearchParams } from "next/navigation";
 
 import app from "../../firebase/config";
 
+import { addDoc, collection, getFirestore, getDocs } from "firebase/firestore";
+
 import {
-  addDoc,
-  collection,
-  getFirestore,
-  getDocs,
-  updateDoc,
-  doc,
-} from "firebase/firestore";
+  formatarDataHora,
+  etapaDaFicha,
+  ETAPAS,
+  VENDEDORES,
+  DESIGNERS,
+  type Ficha,
+  type Etapa,
+} from "../lib/helpers";
 
 const db = getFirestore(app);
-
-function formatarDataHora(): string {
-  const agora = new Date();
-  const dia = String(agora.getDate()).padStart(2, "0");
-  const mes = String(agora.getMonth() + 1).padStart(2, "0");
-  const ano = agora.getFullYear();
-  const horas = String(agora.getHours()).padStart(2, "0");
-  const minutos = String(agora.getMinutes()).padStart(2, "0");
-  return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
-}
-
-type Etapa =
-  | "novo"
-  | "arte"
-  | "exportacao"
-  | "impressao"
-  | "prensa"
-  | "corte"
-  | "costura"
-  | "conferencia"
-  | "entrega";
-
-const etapas: { id: Etapa; label: string; cor: string }[] = [
-  { id: "novo", label: "NOVO PEDIDO", cor: "blue" },
-  { id: "arte", label: "ARTE", cor: "purple" },
-  { id: "exportacao", label: "EXPORTAÇÃO", cor: "indigo" },
-  { id: "impressao", label: "IMPRESSÃO", cor: "cyan" },
-  { id: "prensa", label: "PRENSA", cor: "amber" },
-  { id: "corte", label: "CORTE", cor: "orange" },
-  { id: "costura", label: "COSTURA", cor: "pink" },
-  { id: "conferencia", label: "CONFERÊNCIA", cor: "teal" },
-  { id: "entrega", label: "ENTREGA", cor: "green" },
-];
-
-function etapaDaFicha(ficha: any): Etapa {
-  if (ficha.entregaStatus) return "entrega";
-  if (ficha.conferencia) return "conferencia";
-  if (ficha.costuraConcluida) return "conferencia";
-  if (ficha.costura) return "costura";
-  if (ficha.corte) return "corte";
-  if (ficha.prensa) return "prensa";
-  if (ficha.impressao) return "impressao";
-  if (ficha.exportacao) return "exportacao";
-  if (ficha.arte) return "arte";
-  return "novo";
-}
 
 function ComercialContent() {
   const searchParams = useSearchParams();
   const vendedorParam = searchParams.get("vendedor") || "";
 
   const [modalAberto, setModalAberto] = useState(false);
-  const [pedidos, setPedidos] = useState<any[]>([]);
+  const [pedidos, setPedidos] = useState<Ficha[]>([]);
+  const [carregando, setCarregando] = useState(true);
   const [abaAtiva, setAbaAtiva] = useState<Etapa>("novo");
   const [busca, setBusca] = useState("");
 
@@ -82,9 +40,9 @@ function ComercialContent() {
   async function carregarPedidos() {
     try {
       const snapshot = await getDocs(collection(db, "fichas"));
-      const lista: any[] = [];
+      const lista: Ficha[] = [];
       snapshot.forEach((item) => {
-        const dados = item.data();
+        const dados = item.data() as Ficha;
         if (dados.venda) {
           lista.push({ id: item.id, ...dados });
         }
@@ -92,12 +50,24 @@ function ComercialContent() {
       setPedidos(lista);
     } catch (error) {
       console.log(error);
+    } finally {
+      setCarregando(false);
     }
   }
 
   useEffect(() => {
     carregarPedidos();
   }, []);
+
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && modalAberto) {
+        setModalAberto(false);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [modalAberto]);
 
   async function salvarFicha() {
     if (!cliente) {
@@ -160,16 +130,18 @@ function ComercialContent() {
 
   const pedidosFiltrados = pedidosDoVendedor.filter((ficha) => {
     const termo = busca.trim().toLowerCase();
-    const matchBusca = !termo || (ficha.cliente || "").toLowerCase().includes(termo);
+    const matchBusca =
+      !termo || (ficha.cliente || "").toLowerCase().includes(termo);
     const matchEtapa = etapaDaFicha(ficha) === abaAtiva;
     return matchBusca && matchEtapa;
   });
 
-  const contagens = etapas.reduce(
+  const contagens = ETAPAS.reduce(
     (total, etapa) => ({
       ...total,
-      [etapa.id]: pedidosDoVendedor.filter((ficha) => etapaDaFicha(ficha) === etapa.id)
-        .length,
+      [etapa.id]: pedidosDoVendedor.filter(
+        (ficha) => etapaDaFicha(ficha) === etapa.id
+      ).length,
     }),
     {} as Record<Etapa, number>
   );
@@ -196,39 +168,41 @@ function ComercialContent() {
         </div>
 
         {/* BUSCA */}
-        <div className="bg-zinc-900 rounded-2xl p-3 mb-4 border border-zinc-800">
+        <div className="bg-zinc-900 rounded-2xl p-3 mb-4 border border-zinc-800 relative">
           <input
             type="text"
             placeholder="🔎 Pesquisar Cliente"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="w-full bg-black border border-zinc-700 rounded-xl p-3 text-sm text-white placeholder-zinc-500 outline-none"
+            className="w-full bg-black border border-zinc-700 rounded-xl p-3 pr-10 text-sm text-white placeholder-zinc-500 outline-none"
           />
+          {busca && (
+            <button
+              onClick={() => setBusca("")}
+              className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white text-sm"
+              title="Limpar busca"
+            >
+              ✕
+            </button>
+          )}
         </div>
 
         {/* ABAS */}
         <div className="grid grid-cols-3 gap-2 mb-5">
-          {etapas.map((etapa) => {
+          {ETAPAS.map((etapa) => {
             const ativo = abaAtiva === etapa.id;
-            const corMap: Record<string, string> = {
-              blue: ativo ? "bg-blue-500 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
-              purple: ativo ? "bg-purple-500 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
-              indigo: ativo ? "bg-indigo-500 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
-              cyan: ativo ? "bg-cyan-500 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
-              amber: ativo ? "bg-amber-500 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
-              orange: ativo ? "bg-orange-500 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
-              pink: ativo ? "bg-pink-500 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
-              teal: ativo ? "bg-teal-500 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
-              green: ativo ? "bg-green-500 text-white" : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700",
-            };
             return (
               <button
                 key={etapa.id}
                 onClick={() => setAbaAtiva(etapa.id)}
-                className={`rounded-xl py-2.5 text-[10px] font-bold transition text-center ${corMap[etapa.cor]}`}
+                className={`rounded-xl py-2.5 text-[10px] font-bold transition text-center ${
+                  ativo ? etapa.ativo : etapa.inativo
+                }`}
               >
                 {etapa.label}
-                <span className="block text-xs mt-0.5">({contagens[etapa.id]})</span>
+                <span className="block text-xs mt-0.5">
+                  ({contagens[etapa.id]})
+                </span>
               </button>
             );
           })}
@@ -236,7 +210,11 @@ function ComercialContent() {
 
         {/* LISTA */}
         <div className="space-y-3">
-          {pedidosFiltrados.length > 0 ? (
+          {carregando ? (
+            <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400">
+              Carregando pedidos...
+            </div>
+          ) : pedidosFiltrados.length > 0 ? (
             pedidosFiltrados.map((ficha) => (
               <div
                 key={ficha.id}
@@ -253,19 +231,28 @@ function ComercialContent() {
 
                 {ficha.pedido && (
                   <p className="text-xs text-zinc-400 mb-1">
-                    Pedido: <span className="text-white font-semibold">{ficha.pedido.split("-").reverse().join("/")}</span>
+                    Pedido:{" "}
+                    <span className="text-white font-semibold">
+                      {ficha.pedido.split("-").reverse().join("/")}
+                    </span>
                   </p>
                 )}
 
                 {ficha.entrega && (
                   <p className="text-xs text-zinc-400 mb-1">
-                    Entrega: <span className="text-white font-semibold">{ficha.entrega.split("-").reverse().join("/")}</span>
+                    Entrega:{" "}
+                    <span className="text-white font-semibold">
+                      {ficha.entrega.split("-").reverse().join("/")}
+                    </span>
                   </p>
                 )}
 
                 {ficha.vendedor && (
                   <p className="text-xs text-zinc-400 mb-2">
-                    Vendedor: <span className="text-white font-semibold">{ficha.vendedor}</span>
+                    Vendedor:{" "}
+                    <span className="text-white font-semibold">
+                      {ficha.vendedor}
+                    </span>
                   </p>
                 )}
 
@@ -284,7 +271,7 @@ function ComercialContent() {
             <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400">
               {busca
                 ? "Nenhum cliente encontrado"
-                : `Nenhum pedido em ${etapas.find((e) => e.id === abaAtiva)?.label}`}
+                : `Nenhum pedido em ${ETAPAS.find((e) => e.id === abaAtiva)?.label}`}
             </div>
           )}
         </div>
@@ -333,15 +320,11 @@ function ComercialContent() {
                 className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none text-white"
               >
                 <option value="">Selecione o Vendedor</option>
-                <option value="PALOMA">PALOMA</option>
-                <option value="MIKELLY">MIKELLY</option>
-                <option value="LARISSA">LARISSA</option>
-                <option value="JEFFERSON">JEFFERSON</option>
-                <option value="JANIELLY">JANIELLY</option>
-                <option value="ROSE">ROSE</option>
-                <option value="CÉSAR">CÉSAR</option>
-                <option value="GRAÇA">GRAÇA</option>
-                <option value="KELLY">KELLY</option>
+                {VENDEDORES.map((nome) => (
+                  <option key={nome} value={nome}>
+                    {nome}
+                  </option>
+                ))}
               </select>
 
               <input
@@ -358,11 +341,11 @@ function ComercialContent() {
                 className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none text-white"
               >
                 <option value="">Selecione o Designer</option>
-                <option value="ALEXANDRE">ALEXANDRE</option>
-                <option value="LÁZARO">LÁZARO</option>
-                <option value="EDIVAN">EDIVAN</option>
-                <option value="PAULÃO">PAULÃO</option>
-                <option value="DIEGO">DIEGO</option>
+                {DESIGNERS.map((nome) => (
+                  <option key={nome} value={nome}>
+                    {nome}
+                  </option>
+                ))}
               </select>
 
               <div>
@@ -406,7 +389,13 @@ function ComercialContent() {
 
 export default function Comercial() {
   return (
-    <Suspense fallback={<main className="min-h-screen bg-black p-3 text-white"><p className="text-zinc-400 text-center mt-12">Carregando...</p></main>}>
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-black p-3 text-white">
+          <p className="text-zinc-400 text-center mt-12">Carregando...</p>
+        </main>
+      }
+    >
       <ComercialContent />
     </Suspense>
   );
