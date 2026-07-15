@@ -8,52 +8,67 @@ import app from "../../firebase/config";
 import {
   getFirestore,
   collection,
-  getDocs,
+  onSnapshot,
   updateDoc,
   doc,
 } from "firebase/firestore";
 
+import {
+  formatarDataHora,
+  etapaDaFicha,
+  type Ficha,
+  type Etapa,
+  type HistoricoAprovacao,
+} from "../lib/helpers";
+
 const db = getFirestore(app);
+
+type SecaoArte = "arteParaCriar" | "alteracaoSolicitada" | "aguardandoAprovacao";
 
 function ArteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const designerAtivo = searchParams.get("designer") || "";
-  const [fichas, setFichas] = useState<any[]>([]);
+  const [fichas, setFichas] = useState<Ficha[]>([]);
+  const [carregando, setCarregando] = useState(true);
   const [busca, setBusca] = useState("");
+  const [secaoAtiva, setSecaoAtiva] = useState<SecaoArte>("arteParaCriar");
 
-  async function carregarFichas() {
-    try {
-      const snapshot = await getDocs(collection(db, "fichas"));
-      const lista: any[] = [];
+  useEffect(() => {
+    setCarregando(true);
+    const unsubscribe = onSnapshot(
+      collection(db, "fichas"),
+      (snapshot) => {
+        const lista: Ficha[] = [];
+        snapshot.forEach((item) => {
+          const dados = item.data() as Ficha;
+          if (
+            dados.venda &&
+            !dados.entregaStatus &&
+            dados.designer
+          ) {
+            lista.push({ id: item.id, ...dados });
+          }
+        });
 
-      snapshot.forEach((item) => {
-        const dados = item.data();
-        if (
-          dados.venda &&
-          !dados.entregaStatus &&
-          dados.designer
-        ) {
-          lista.push({ id: item.id, ...dados });
-        }
-      });
+        lista.sort((a, b) => {
+          const dateA = a.pedido ? new Date(a.pedido).getTime() : 0;
+          const dateB = b.pedido ? new Date(b.pedido).getTime() : 0;
+          return dateB - dateA;
+        });
 
-      lista.sort((a, b) => {
-        // Completed go to the bottom
-        if (a.arte !== b.arte) return a.arte ? 1 : -1;
-        // Within each group, newest first
-        const dateA = a.pedido ? new Date(a.pedido).getTime() : 0;
-        const dateB = b.pedido ? new Date(b.pedido).getTime() : 0;
-        return dateB - dateA;
-      });
+        setFichas(lista);
+        setCarregando(false);
+      },
+      (error) => {
+        console.log(error);
+        setCarregando(false);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
-      setFichas(lista);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  function estaAtrasado(ficha: any): boolean {
+  function estaAtrasado(ficha: Ficha): boolean {
     if (!ficha.entrega || ficha.arte) return false;
     const [ano, mes, dia] = ficha.entrega.split("-").map(Number);
     const hoje = new Date();
@@ -65,20 +80,36 @@ function ArteContent() {
   async function concluirArte(id: string) {
     try {
       const fichaRef = doc(db, "fichas", id);
-      const agora = new Date();
-      const dia = String(agora.getDate()).padStart(2, "0");
-      const mes = String(agora.getMonth() + 1).padStart(2, "0");
-      const ano = agora.getFullYear();
-      const horas = String(agora.getHours()).padStart(2, "0");
-      const minutos = String(agora.getMinutes()).padStart(2, "0");
-      const arteData = `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+      const arteData = formatarDataHora();
       await updateDoc(fichaRef, { arte: true, arteData });
+    } catch (error) {
+      console.log(error);
+      alert("Erro ao atualizar");
+    }
+  }
 
-      setFichas((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, arte: true, arteData } : item
-        )
-      );
+  async function concluirAlteracao(ficha: Ficha) {
+    if (!ficha.id) return;
+
+    try {
+      const fichaRef = doc(db, "fichas", ficha.id);
+      const arteData = formatarDataHora();
+
+      const novaMensagem: HistoricoAprovacao = {
+        dataHora: arteData,
+        autor: ficha.designer || "Designer",
+        mensagem: "Alteração concluída.",
+        tipo: "resposta",
+      };
+
+      const historico = ficha.historicoAprovacao || [];
+
+      await updateDoc(fichaRef, {
+        arte: true,
+        alteracaoSolicitada: false,
+        arteData,
+        historicoAprovacao: [...historico, novaMensagem],
+      });
     } catch (error) {
       console.log(error);
       alert("Erro ao atualizar");
@@ -89,21 +120,11 @@ function ArteContent() {
     try {
       const fichaRef = doc(db, "fichas", id);
       await updateDoc(fichaRef, { arte: false, arteData: "" });
-
-      setFichas((prev) =>
-        prev.map((item) =>
-          item.id === id ? { ...item, arte: false, arteData: "" } : item
-        )
-      );
     } catch (error) {
       console.log(error);
       alert("Erro ao atualizar");
     }
   }
-
-  useEffect(() => {
-    carregarFichas();
-  }, []);
 
   const fichasFiltradas = fichas.filter((ficha) => {
     const matchBusca = ficha.cliente?.toLowerCase().includes(busca.toLowerCase());
@@ -111,14 +132,123 @@ function ArteContent() {
     return matchBusca && matchDesigner;
   });
 
-  const pendentes = fichasFiltradas.filter((f) => !f.arte);
-  const concluidas = fichasFiltradas
-    .filter((f) => f.arte)
-    .sort((a, b) => {
-      const dateA = a.pedido ? new Date(a.pedido).getTime() : 0;
-      const dateB = b.pedido ? new Date(b.pedido).getTime() : 0;
-      return dateB - dateA;
-    });
+  const arteParaCriar = fichasFiltradas.filter((f) => etapaDaFicha(f) === "arteParaCriar");
+  const alteracaoSolicitada = fichasFiltradas.filter((f) => etapaDaFicha(f) === "alteracaoSolicitada");
+  const aguardandoAprovacao = fichasFiltradas.filter((f) => etapaDaFicha(f) === "aguardandoAprovacao");
+
+  const secoes: { id: SecaoArte; label: string; lista: Ficha[]; cor: string }[] = [
+    { id: "arteParaCriar", label: "ARTE P/ CRIAR", lista: arteParaCriar, cor: "text-amber-400" },
+    { id: "alteracaoSolicitada", label: "ALTERAÇÃO SOLICITADA", lista: alteracaoSolicitada, cor: "text-red-400" },
+    { id: "aguardandoAprovacao", label: "AGUARDANDO APROVAÇÃO", lista: aguardandoAprovacao, cor: "text-yellow-400" },
+  ];
+
+  function renderSecao(ficha: Ficha) {
+    const etapa = etapaDaFicha(ficha);
+
+    return (
+      <div
+        key={ficha.id}
+        className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-lg"
+      >
+        <div className="flex items-start justify-between mb-3">
+          <p className="text-xl font-bold uppercase break-words flex-1">
+            {ficha.cliente}
+          </p>
+          {estaAtrasado(ficha) && (
+            <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-lg flex-shrink-0 ml-2">
+              ATRASADO
+            </span>
+          )}
+        </div>
+
+        {ficha.designer && (
+          <p className="text-sm text-zinc-400 mb-2">
+            Designer: <span className="text-white font-semibold">{ficha.designer}</span>
+          </p>
+        )}
+
+        {ficha.vendedor && (
+          <p className="text-sm text-zinc-400 mb-2">
+            Vendedor: <span className="text-white font-semibold">{ficha.vendedor}</span>
+          </p>
+        )}
+
+        {ficha.pedido && (
+          <p className="text-sm text-zinc-400 mb-2">
+            Data: <span className="text-white font-semibold">{ficha.pedido.split("-").reverse().join("/")}</span>
+          </p>
+        )}
+
+        {ficha.entrega && (
+          <p className="text-sm text-zinc-400 mb-2">
+            Entrega: <span className="text-white font-semibold">{ficha.entrega.split("-").reverse().join("/")}</span>
+          </p>
+        )}
+
+        {ficha.observacao && (
+          <p className="text-sm text-zinc-500 mb-4 break-words">
+            Obs: {ficha.observacao}
+          </p>
+        )}
+
+        {ficha.historicoAprovacao && ficha.historicoAprovacao.length > 0 && (
+          <div className="bg-black/50 rounded-xl p-3 mb-4 space-y-2 max-h-48 overflow-y-auto">
+            {ficha.historicoAprovacao.map((item, index) => (
+              <div key={index} className="text-xs border-l-2 border-zinc-600 pl-2">
+                <p className="text-zinc-500 mb-0.5">
+                  {item.dataHora} — {item.autor}
+                </p>
+                <p className="text-zinc-200">{item.mensagem}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="mb-4">
+          {ficha.pdfLink ? (
+            <a
+              href={ficha.pdfLink}
+              target="_blank"
+              className="block bg-blue-800 hover:bg-blue-900 transition text-center rounded-xl p-3 text-sm font-bold"
+            >
+              📄 VER MOLDE (PDF)
+            </a>
+          ) : (
+            <p className="text-xs text-zinc-600 text-center bg-zinc-900 rounded-xl p-3">
+              Molde ainda não disponível
+            </p>
+          )}
+        </div>
+
+        {etapa === "arteParaCriar" && (
+          <button
+            onClick={() => concluirArte(ficha.id || "")}
+            className="w-full bg-lime-600 hover:bg-lime-700 transition rounded-xl py-3 text-sm font-bold"
+          >
+            ✅ ARTE CONCLUÍDA
+          </button>
+        )}
+
+        {etapa === "alteracaoSolicitada" && (
+          <button
+            onClick={() => concluirAlteracao(ficha)}
+            className="w-full bg-red-600 hover:bg-red-700 transition rounded-xl py-3 text-sm font-bold"
+          >
+            ✅ ALTERAÇÃO CONCLUÍDA
+          </button>
+        )}
+
+        {etapa === "aguardandoAprovacao" && (
+          <button
+            onClick={() => desfazerArte(ficha.id || "")}
+            className="w-full bg-zinc-800 hover:bg-zinc-700 transition rounded-xl py-2 text-xs font-medium text-zinc-400"
+          >
+            DESFAZER
+          </button>
+        )}
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-black text-white p-3">
@@ -135,7 +265,7 @@ function ArteContent() {
             <div>
               <h1 className="text-2xl font-bold">ARTE</h1>
               <p className="text-zinc-400 text-xs">
-                Pedidos aguardando aprovação de arte
+                {designerAtivo ? `Designer: ${designerAtivo}` : "Aprovação de arte"}
               </p>
             </div>
           </div>
@@ -149,171 +279,66 @@ function ArteContent() {
         </div>
 
         {/* PESQUISA */}
-        <div className="bg-zinc-900 rounded-2xl p-3 mb-4 border border-zinc-800">
+        <div className="bg-zinc-900 rounded-2xl p-3 mb-4 border border-zinc-800 relative">
           <input
             type="text"
             placeholder="🔎 Pesquisar Cliente"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="w-full bg-black border border-zinc-700 rounded-xl p-3 text-sm text-white placeholder-zinc-500 outline-none"
+            className="w-full bg-black border border-zinc-700 rounded-xl p-3 pr-10 text-sm text-white placeholder-zinc-500 outline-none"
           />
+          {busca && (
+            <button
+              onClick={() => setBusca("")}
+              className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white text-sm"
+              title="Limpar busca"
+            >
+              ✕
+            </button>
+          )}
         </div>
 
-        {/* CONTADORES */}
-        <div className="grid grid-cols-2 gap-3 mb-5">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold text-amber-400">{pendentes.length}</p>
-            <p className="text-xs text-zinc-400">PENDENTES</p>
-          </div>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
-            <p className="text-2xl font-bold text-lime-400">{concluidas.length}</p>
-            <p className="text-xs text-zinc-400">CONCLUÍDAS</p>
-          </div>
+        {/* ABAS */}
+        <div className="grid grid-cols-3 gap-2 mb-5">
+          {secoes.map((secao) => {
+            const ativo = secaoAtiva === secao.id;
+            return (
+              <button
+                key={secao.id}
+                onClick={() => setSecaoAtiva(secao.id)}
+                className={`rounded-xl py-2.5 text-[10px] font-bold transition text-center ${
+                  ativo
+                    ? "bg-zinc-700 text-white"
+                    : "bg-zinc-900 text-zinc-400 hover:bg-zinc-800"
+                }`}
+              >
+                {secao.label}
+                <span className={`block text-xs mt-0.5 ${ativo ? "text-white" : secao.cor}`}>
+                  ({secao.lista.length})
+                </span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* PENDENTES */}
-        {pendentes.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-sm font-bold text-zinc-400 mb-3 px-1">
-              AGUARDANDO ARTE ({pendentes.length})
-            </h2>
-            <div className="space-y-3">
-              {pendentes.map((ficha) => (
-                <div
-                  key={ficha.id}
-                  className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-lg"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <p className="text-xl font-bold uppercase break-words flex-1">
-                      {ficha.cliente}
-                    </p>
-                    {estaAtrasado(ficha) && (
-                      <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-lg flex-shrink-0 ml-2">
-                        ATRASADO
-                      </span>
-                    )}
-                  </div>
-
-                  {ficha.designer && (
-                    <p className="text-sm text-zinc-400 mb-2">
-                      Designer: <span className="text-white font-semibold">{ficha.designer}</span>
-                    </p>
-                  )}
-
-                  {ficha.pedido && (
-                    <p className="text-sm text-zinc-400 mb-2">
-                      Data: <span className="text-white font-semibold">{ficha.pedido.split("-").reverse().join("/")}</span>
-                    </p>
-                  )}
-
-                  {ficha.entrega && (
-                    <p className="text-sm text-zinc-400 mb-2">
-                      Entrega: <span className="text-white font-semibold">{ficha.entrega.split("-").reverse().join("/")}</span>
-                    </p>
-                  )}
-
-                  {ficha.observacao && (
-                    <p className="text-sm text-zinc-500 mb-4 break-words">
-                      Obs: {ficha.observacao}
-                    </p>
-                  )}
-
-                  <div className="mb-4">
-                    {ficha.pdfLink ? (
-                      <a
-                        href={ficha.pdfLink}
-                        target="_blank"
-                        className="block bg-blue-800 hover:bg-blue-900 transition text-center rounded-xl p-3 text-sm font-bold"
-                      >
-                        📄 VER MOLDE (PDF)
-                      </a>
-                    ) : (
-                      <p className="text-xs text-zinc-600 text-center bg-zinc-900 rounded-xl p-3">
-                        Molde ainda não disponível
-                      </p>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => concluirArte(ficha.id)}
-                    className="w-full bg-lime-600 hover:bg-lime-700 transition rounded-xl py-3 text-sm font-bold"
-                  >
-                    ✅ ARTE CONCLUÍDA
-                  </button>
-                </div>
-              ))}
+        {/* LISTA */}
+        <div className="space-y-3">
+          {carregando ? (
+            <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400">
+              Carregando pedidos...
             </div>
-          </div>
-        )}
-
-        {/* CONCLUÍDAS */}
-        {concluidas.length > 0 && (
-          <div>
-            <h2 className="text-sm font-bold text-zinc-400 mb-3 px-1">
-              ARTE CONCLUÍDA ({concluidas.length})
-            </h2>
-            <div className="space-y-3">
-              {concluidas.map((ficha) => (
-                <div
-                  key={ficha.id}
-                  className="bg-zinc-950 border border-lime-800/30 rounded-2xl p-5 shadow-lg opacity-70"
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <p className="text-xl font-bold uppercase break-words text-lime-400">
-                      {ficha.cliente}
-                    </p>
-                    <span className="text-lime-400 text-xs font-bold flex-shrink-0 ml-2">
-                      ✅ OK
-                    </span>
-                  </div>
-
-                  {ficha.designer && (
-                    <p className="text-sm text-zinc-400 mb-2">
-                      Designer: <span className="text-white font-semibold">{ficha.designer}</span>
-                    </p>
-                  )}
-
-                  {ficha.pedido && (
-                    <p className="text-sm text-zinc-400 mb-2">
-                      Data: <span className="text-white font-semibold">{ficha.pedido.split("-").reverse().join("/")}</span>
-                    </p>
-                  )}
-
-                  {ficha.entrega && (
-                    <p className="text-sm text-zinc-400 mb-2">
-                      Entrega: <span className="text-white font-semibold">{ficha.entrega.split("-").reverse().join("/")}</span>
-                    </p>
-                  )}
-
-                  {ficha.pdfLink && (
-                    <a
-                      href={ficha.pdfLink}
-                      target="_blank"
-                      className="block bg-zinc-800 hover:bg-zinc-700 transition text-center rounded-xl p-3 text-xs font-medium mb-4"
-                    >
-                      📄 VER MOLDE
-                    </a>
-                  )}
-
-                  <button
-                    onClick={() => desfazerArte(ficha.id)}
-                    className="w-full bg-zinc-800 hover:bg-zinc-700 transition rounded-xl py-2 text-xs font-medium text-zinc-400"
-                  >
-                    DESFAZER
-                  </button>
-                </div>
-              ))}
+          ) : secoes.find((s) => s.id === secaoAtiva)?.lista.length ? (
+            secoes
+              .find((s) => s.id === secaoAtiva)
+              ?.lista.map((ficha) => renderSecao(ficha))
+          ) : (
+            <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400">
+              {busca
+                ? "Nenhum cliente encontrado"
+                : `Nenhum pedido em ${secoes.find((s) => s.id === secaoAtiva)?.label}`}
             </div>
-          </div>
-        )}
-
-        {fichasFiltradas.length === 0 && (
-          <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400 mt-4">
-            {busca
-              ? "Nenhum cliente encontrado"
-              : "Nenhum pedido pendente de arte"}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </main>
   );

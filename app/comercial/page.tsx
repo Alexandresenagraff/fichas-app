@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 
 import app from "../../firebase/config";
 
-import { addDoc, collection, doc, getFirestore, getDocs, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc } from "firebase/firestore";
 
 import {
   formatarDataHora,
@@ -41,26 +41,27 @@ function ComercialContent() {
   const [pedido, setPedido] = useState("");
   const [entrega, setEntrega] = useState("");
 
-  async function carregarPedidos() {
-    try {
-      const snapshot = await getDocs(collection(db, "fichas"));
-      const lista: Ficha[] = [];
-      snapshot.forEach((item) => {
-        const dados = item.data() as Ficha;
-        if (dados.venda) {
-          lista.push({ id: item.id, ...dados });
-        }
-      });
-      setPedidos(lista);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setCarregando(false);
-    }
-  }
-
   useEffect(() => {
-    carregarPedidos();
+    setCarregando(true);
+    const unsubscribe = onSnapshot(
+      collection(db, "fichas"),
+      (snapshot) => {
+        const lista: Ficha[] = [];
+        snapshot.forEach((item) => {
+          const dados = item.data() as Ficha;
+          if (dados.venda) {
+            lista.push({ id: item.id, ...dados });
+          }
+        });
+        setPedidos(lista);
+        setCarregando(false);
+      },
+      (error) => {
+        console.log(error);
+        setCarregando(false);
+      }
+    );
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -126,7 +127,6 @@ function ComercialContent() {
       setPedido("");
       setEntrega("");
       setModalAberto(false);
-      carregarPedidos();
     } catch (error) {
       console.log(error);
       alert("Erro ao salvar");
@@ -160,7 +160,6 @@ function ComercialContent() {
       setMensagemAlteracao("");
       setFichaAlteracao(null);
       setModalAlteracao(false);
-      carregarPedidos();
     } catch (error) {
       console.log(error);
       alert("Erro ao solicitar alteração");
@@ -187,8 +186,6 @@ function ComercialContent() {
         exportacaoData: formatarDataHora(),
         historicoAprovacao: [...historico, novaMensagem],
       });
-
-      carregarPedidos();
     } catch (error) {
       console.log(error);
       alert("Erro ao aprovar arte");
