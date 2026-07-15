@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import app from "../../firebase/config";
@@ -15,7 +15,7 @@ import {
 
 const db = getFirestore(app);
 
-export default function Arte() {
+function ArteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const designerAtivo = searchParams.get("designer") || "";
@@ -316,5 +316,13 @@ export default function Arte() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function Arte() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-black text-white p-3"><div className="max-w-md mx-auto"><p className="text-zinc-400 text-center mt-12">Carregando...</p></div></main>}>
+      <ArteContent />
+    </Suspense>
   );
 }
