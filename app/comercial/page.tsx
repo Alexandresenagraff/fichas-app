@@ -25,6 +25,11 @@ export default function Comercial() {
       return;
     }
 
+    if (!entrega) {
+      alert("Selecione a data de entrega");
+      return;
+    }
+
     try {
       await addDoc(collection(db, "fichas"), {
         cliente,
@@ -129,6 +134,7 @@ export default function Comercial() {
               <option value="LÁZARO">LÁZARO</option>
               <option value="EDIVAN">EDIVAN</option>
               <option value="PAULÃO">PAULÃO</option>
+              <option value="DIEGO">DIEGO</option>
             </select>
 
             <div>
@@ -142,11 +148,16 @@ export default function Comercial() {
             </div>
 
             <div>
-              <label className="text-sm text-zinc-400">Data da Entrega</label>
+              <label className="text-sm text-zinc-400">Data da Entrega *</label>
               <input
                 type="date"
                 value={entrega}
-                onChange={(e) => setEntrega(e.target.value)}
+                onChange={(e) => {
+                  const valor = e.target.value.replace(/-(\d{2})-/, (match, mes) => {
+                    return mes === "00" ? "-01-" : match;
+                  });
+                  setEntrega(valor);
+                }}
                 className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
               />
             </div>

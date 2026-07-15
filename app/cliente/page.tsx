@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 import app from "../../firebase/config";
 
@@ -14,9 +15,9 @@ const db = getFirestore(app);
 
 export default function Cliente() {
 
+  const router = useRouter();
   const [email, setEmail] = useState("");
 const [pedidos, setPedidos] = useState<any[]>([]);
-const [carregando, setCarregando] = useState(true);
 const [pedidoAberto, setPedidoAberto] = useState<number | null>(null);
 
   async function buscarPedido() {
@@ -89,19 +90,6 @@ useEffect(() => {
   const emailSalvo =
     localStorage.getItem("clienteEmail");
 
-  console.log("EMAIL SALVO:", emailSalvo);
-
-  if (emailSalvo) {
-    setEmail(emailSalvo);
-  }
-
-}, []);
-
-useEffect(() => {
-
-  const emailSalvo =
-    localStorage.getItem("clienteEmail");
-
   if (emailSalvo) {
     setEmail(emailSalvo);
   }
@@ -111,19 +99,30 @@ useEffect(() => {
 
 
 return (
-    <main className="min-h-screen bg-zinc-100 text-white">
+    <main className="min-h-screen bg-white text-black">
 
-      <div className="w-full">
+      <div className="w-full max-w-2xl mx-auto">
 
-        <div className="bg-blue-900 px-4 py-8">
+        <div className="bg-gradient-to-br from-blue-900 to-blue-800 px-4 py-8 relative shadow-lg header-shine">
 
-  <h2 className="text-center text-lg font-medium mb-1">
-    Veja aqui o Status do seu Pedido!
+  <button
+    onClick={() => router.push("/")}
+    className="absolute top-4 left-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition text-white text-lg"
+  >
+    ←
+  </button>
+
+  <h2 className="text-center text-xl sm:text-2xl font-bold mb-4 px-2 tracking-wide">
+    Acompanhe seu Pedido
   </h2>
 
-  <div className="flex items-center bg-white rounded-full px-4 py-3 mb-4">
+  <p className="text-center text-blue-200 text-sm mb-5">
+    Digite seu código, e-mail ou telefone para consultar
+  </p>
 
-    <span className="text-black text-xl mr-3">
+  <div className="flex items-center bg-white rounded-full px-5 py-3 mb-5 shadow-md">
+
+    <span className="text-zinc-400 text-xl mr-3">
       🔍
     </span>
 
@@ -132,34 +131,35 @@ return (
       placeholder="Digite seu código"
       value={email}
       onChange={(e) => setEmail(e.target.value)}
-      className="w-full bg-transparent text-black outline-none"
+      className="w-full bg-transparent text-black text-lg outline-none placeholder-zinc-400"
     />
 
   </div>
 
   <button
     onClick={buscarPedido}
-    className="block mx-auto bg-blue-700 hover:bg-blue-800 px-8 py-2 rounded-xl font-medium"
+    className="relative overflow-hidden block mx-auto bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 text-white font-bold px-10 py-3 rounded-2xl transition shadow-lg"
   >
-    CONSULTAR
+    <span className="relative z-10">CONSULTAR</span>
+    <span className="shine"></span>
   </button>
 
 </div>
 
           {pedidos.length > 0 && (
 
-          <div className="mt-8 space-y-6">
+          <div className="mt-8 px-4 sm:px-6 space-y-6 pb-12">
   {pedidos.map((pedido, index) => (
     <div
       key={index}
-      className="bg-white border border-zinc-300 rounded-2xl p-4 shadow-md"
+      className="bg-white border border-zinc-300 rounded-2xl p-5 sm:p-6 shadow-md overflow-hidden"
     >
 
-           <h2 className="text-xl font-bold mb-2 text-black">
+           <h2 className="text-lg sm:text-xl font-bold mb-2 text-black break-words text-center">
    {pedido.cliente} - Pedido {index + 1}
 </h2>
 
-<div className="mb-2 text-sm text-zinc-700">
+<div className="mb-2 text-xs sm:text-sm text-zinc-700 break-words">
 
   <p>
     <strong>Pedido:</strong> {pedido.pedido ? pedido.pedido.split("-").reverse().join("/") : "-"}
@@ -176,9 +176,12 @@ return (
       pedidoAberto === index ? null : index
     )
   }
-  className="w-full bg-blue-900 text-white rounded-full py-3 mt-2 mb-2"
+  className="relative overflow-hidden w-full bg-blue-600 hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] text-white font-bold rounded-full py-3 mt-2 mb-3 transition shadow-md"
 >
-  {pedidoAberto === index ? "RECOLHER" : "VISUALIZAR"}
+  <span className="relative z-10">
+    {pedidoAberto === index ? "RECOLHER" : "VISUALIZAR"}
+  </span>
+  <span className="shine"></span>
 </button>
 {pedidoAberto === index && (
 <>
@@ -198,61 +201,70 @@ return (
 
 </div>
 
-<div className="space-y-2 text-sm">
+<div className="space-y-3 text-sm sm:text-base">
 
-  <p className="border border-zinc-400 rounded-xl p-2 text-black">
-  {pedido.venda
-    ? "✅ COMPRA REALIZADA"
-    : "⚪ COMPRA"}
-</p>
+  <div className={`flex items-center gap-3 rounded-xl border-l-4 px-4 py-3.5 shadow-sm ${
+    pedido.venda ? "border-lime-500 bg-lime-50" : "border-zinc-300 bg-zinc-50"
+  }`}>
+    <span className="text-lg">{pedido.venda ? "✅" : "⚪"}</span>
+    <span className={`font-medium ${pedido.venda ? "text-lime-700" : "text-zinc-500"}`}>COMPRA REALIZADA</span>
+  </div>
 
-<p className="border border-zinc-400 rounded-xl p-2 text-black">
-  {pedido.arte
-    ? "✅ ARTE APROVADA"
-    : "⚪ ARTE"}
-</p>
+  <div className={`flex items-center gap-3 rounded-xl border-l-4 px-4 py-3.5 shadow-sm ${
+    pedido.arte ? "border-lime-500 bg-lime-50" : "border-zinc-300 bg-zinc-50"
+  }`}>
+    <span className="text-lg">{pedido.arte ? "✅" : "⚪"}</span>
+    <span className={`font-medium ${pedido.arte ? "text-lime-700" : "text-zinc-500"}`}>ARTE APROVADA</span>
+  </div>
 
-<p className="border border-zinc-400 rounded-xl p-2 text-black">
-  {pedido.exportacao
-    ? "✅ APLICADO NO MOLDE"
-    : "⚪ APLICAÇÃO NO MOLDE"}
-</p>
+  <div className={`flex items-center gap-3 rounded-xl border-l-4 px-4 py-3.5 shadow-sm ${
+    pedido.exportacao ? "border-lime-500 bg-lime-50" : "border-zinc-300 bg-zinc-50"
+  }`}>
+    <span className="text-lg">{pedido.exportacao ? "✅" : "⚪"}</span>
+    <span className={`font-medium ${pedido.exportacao ? "text-lime-700" : "text-zinc-500"}`}>APLICADO NO MOLDE</span>
+  </div>
 
-<p className="border border-zinc-400 rounded-xl p-2 text-black">
-  {pedido.impressao
-    ? "✅ IMPRESSO"
-    : "⚪ IMPRESSÃO"}
-</p>
+  <div className={`flex items-center gap-3 rounded-xl border-l-4 px-4 py-3.5 shadow-sm ${
+    pedido.impressao ? "border-lime-500 bg-lime-50" : "border-zinc-300 bg-zinc-50"
+  }`}>
+    <span className="text-lg">{pedido.impressao ? "✅" : "⚪"}</span>
+    <span className={`font-medium ${pedido.impressao ? "text-lime-700" : "text-zinc-500"}`}>IMPRESSO</span>
+  </div>
 
-<p className="border border-zinc-400 rounded-xl p-2 text-black">
-  {pedido.prensa
-    ? "✅ PRENSAGEM CONCLUÍDA"
-    : "⚪ PRENSAGEM"}
-</p>
+  <div className={`flex items-center gap-3 rounded-xl border-l-4 px-4 py-3.5 shadow-sm ${
+    pedido.prensa ? "border-lime-500 bg-lime-50" : "border-zinc-300 bg-zinc-50"
+  }`}>
+    <span className="text-lg">{pedido.prensa ? "✅" : "⚪"}</span>
+    <span className={`font-medium ${pedido.prensa ? "text-lime-700" : "text-zinc-500"}`}>PRENSAGEM CONCLUÍDA</span>
+  </div>
 
-<p className="border border-zinc-400 rounded-xl p-2 text-black">
-  {pedido.corte
-    ? "✅ CORTE CONCLUÍDO"
-    : "⚪ CORTE"}
-</p>
+  <div className={`flex items-center gap-3 rounded-xl border-l-4 px-4 py-3.5 shadow-sm ${
+    pedido.corte ? "border-lime-500 bg-lime-50" : "border-zinc-300 bg-zinc-50"
+  }`}>
+    <span className="text-lg">{pedido.corte ? "✅" : "⚪"}</span>
+    <span className={`font-medium ${pedido.corte ? "text-lime-700" : "text-zinc-500"}`}>CORTE CONCLUÍDO</span>
+  </div>
 
-<p className="border border-zinc-400 rounded-xl p-2 text-black">
-  {pedido.costuraConcluida
-    ? "✅ COSTURA CONCLUÍDA"
-    : "⚪ COSTURA"}
-</p>
+  <div className={`flex items-center gap-3 rounded-xl border-l-4 px-4 py-3.5 shadow-sm ${
+    pedido.costuraConcluida ? "border-lime-500 bg-lime-50" : "border-zinc-300 bg-zinc-50"
+  }`}>
+    <span className="text-lg">{pedido.costuraConcluida ? "✅" : "⚪"}</span>
+    <span className={`font-medium ${pedido.costuraConcluida ? "text-lime-700" : "text-zinc-500"}`}>COSTURA CONCLUÍDA</span>
+  </div>
 
-<p className="border border-zinc-400 rounded-xl p-2 text-black">
-  {pedido.conferencia
-    ? "✅ CONFERIDO"
-    : "⚪ CONFERÊNCIA"}
-</p>
+  <div className={`flex items-center gap-3 rounded-xl border-l-4 px-4 py-3.5 shadow-sm ${
+    pedido.conferencia ? "border-lime-500 bg-lime-50" : "border-zinc-300 bg-zinc-50"
+  }`}>
+    <span className="text-lg">{pedido.conferencia ? "✅" : "⚪"}</span>
+    <span className={`font-medium ${pedido.conferencia ? "text-lime-700" : "text-zinc-500"}`}>CONFERIDO</span>
+  </div>
 
-<p className="border border-zinc-400 rounded-xl p-2 text-black">
-  {pedido.entregaStatus
-    ? "✅ PEDIDO DESPACHADO"
-    : "⚪ ENVIO"}
-</p>
+  <div className={`flex items-center gap-3 rounded-xl border-l-4 px-4 py-3.5 shadow-sm ${
+    pedido.entregaStatus ? "border-lime-500 bg-lime-50" : "border-zinc-300 bg-zinc-50"
+  }`}>
+    <span className="text-lg">{pedido.entregaStatus ? "✅" : "⚪"}</span>
+    <span className={`font-medium ${pedido.entregaStatus ? "text-lime-700" : "text-zinc-500"}`}>PEDIDO DESPACHADO</span>
+  </div>
 
 </div>
 

@@ -427,6 +427,16 @@ function StatusToggle({
     ▸ COMERCIAL
   </button>
 
+  <button
+    onClick={() => {
+      setMenuAberto(false);
+      window.location.href = "/arte";
+    }}
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  >
+    ▸ ARTE
+  </button>
+
   <div>
 
   {designersAberto && (
@@ -481,11 +491,23 @@ function StatusToggle({
     ▸ CORTE
   </button>
 
-  <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
+  <button
+    onClick={() => {
+      setMenuAberto(false);
+      window.location.href = "/costura";
+    }}
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  >
     ▸ COSTURA
   </button>
 
-  <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
+  <button
+    onClick={() => {
+      setMenuAberto(false);
+      window.location.href = "/conferencia";
+    }}
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  >
     ▸ CONFERÊNCIA
   </button>
 
@@ -508,20 +530,49 @@ function StatusToggle({
 
       <div className="max-w-md mx-auto">
 
-        {/* PESQUISA */}
-        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-4 mb-5 mt-12 border border-zinc-800">
+        <div className="flex items-center justify-between mt-12 mb-3 px-1">
+          <h1 className="text-xl font-bold text-white">PEDIDOS</h1>
+          <button
+            onClick={() => window.location.href = "/comercial"}
+            className="bg-blue-600 hover:bg-blue-700 transition rounded-full px-4 py-2 text-sm font-bold text-white"
+          >
+            + Novo
+          </button>
+        </div>
 
-          <input
-            type="text"
-            placeholder="🔎 Pesquisar Cliente"
-            value={busca}
-            onChange={(e) => {
-              setBusca(e.target.value);
-              setFiltroAtivo(null);
-              pesquisarFichas(e.target.value);
-            }}
-            className="w-full bg-black border border-zinc-700 rounded-2xl p-3 text-sm text-white placeholder-zinc-500 outline-none"
-          />
+        {/* PESQUISA */}
+        <div className="bg-zinc-900 rounded-3xl shadow-2xl p-4 mb-5 border border-zinc-800">
+
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder={filtroAtivo ? `🔎 Filtro: ${filtros.find(f => f.id === filtroAtivo)?.label}` : "🔎 Pesquisar Cliente"}
+              value={busca}
+              onChange={(e) => {
+                setBusca(e.target.value);
+                setFiltroAtivo(null);
+                pesquisarFichas(e.target.value);
+              }}
+              className={`flex-1 bg-black border rounded-2xl p-3 text-sm text-white placeholder-zinc-500 outline-none ${
+                filtroAtivo
+                  ? "border-blue-500 placeholder-blue-300"
+                  : "border-zinc-700"
+              }`}
+            />
+
+            <button
+              onClick={() => {
+                carregarResumoPedidos();
+                setBusca("");
+                setFiltroAtivo(null);
+                setFichas([]);
+              }}
+              className="bg-zinc-800 hover:bg-zinc-700 transition rounded-2xl px-3 text-white text-lg flex-shrink-0"
+              title="Atualizar pedidos"
+            >
+              ↻
+            </button>
+          </div>
 
           <div className="mt-3 grid grid-cols-2 gap-2">
             {filtros.map((filtro) => {
@@ -834,16 +885,37 @@ function StatusToggle({
                     <div className="space-y-2">
 
                       <StatusToggle
-                        label={ficha.arte ? "ARTE CONCLUÍDA" : "ARTE"}
-                        ativo={ficha.arte}
+                        label={ficha.venda ? "VENDA FEITA" : "VENDA"}
+                        ativo={ficha.venda}
                         onClick={() =>
                           alterarStatus(
                             ficha.id,
-                            "arte",
-                            ficha.arte
+                            "venda",
+                            ficha.venda
                           )
                         }
                       />
+
+                      <div className={`flex items-center justify-between w-full rounded-xl px-3 py-2 ${
+                        ficha.arte
+                          ? "bg-purple-500/20 border border-purple-500/30"
+                          : "bg-zinc-900 border border-zinc-800"
+                      }`}>
+                        <span className={`text-sm font-medium ${
+                          ficha.arte ? "text-lime-400" : "text-white"
+                        }`}>
+                          {ficha.arte ? "ARTE CONCLUÍDA" : "ARTE"}
+                        </span>
+                        <div className={`relative w-8 h-4 rounded-full ${
+                          ficha.arte ? "bg-zinc-700" : "bg-zinc-700"
+                        }`}>
+                          <div className={`absolute top-0.5 w-3 h-3 rounded-full transition-all ${
+                            ficha.arte
+                              ? "translate-x-4 bg-lime-400"
+                              : "translate-x-1 bg-red-500"
+                          }`} />
+                        </div>
+                      </div>
 
                       <div className="space-y-2">
 
