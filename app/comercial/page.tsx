@@ -182,8 +182,6 @@ function ComercialContent() {
       await updateDoc(doc(db, "fichas", ficha.id), {
         arteAprovada: true,
         alteracaoSolicitada: false,
-        exportacao: true,
-        exportacaoData: formatarDataHora(),
         historicoAprovacao: [...historico, novaMensagem],
       });
     } catch (error) {
