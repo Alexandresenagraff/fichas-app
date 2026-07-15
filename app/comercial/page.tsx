@@ -159,9 +159,8 @@ function ComercialContent() {
     : pedidos;
 
   const pedidosFiltrados = pedidosDoVendedor.filter((ficha) => {
-    const matchBusca = ficha.cliente
-      ?.toLowerCase()
-      .includes(busca.toLowerCase());
+    const termo = busca.trim().toLowerCase();
+    const matchBusca = !termo || (ficha.cliente || "").toLowerCase().includes(termo);
     const matchEtapa = etapaDaFicha(ficha) === abaAtiva;
     return matchBusca && matchEtapa;
   });
