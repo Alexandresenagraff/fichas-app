@@ -66,15 +66,16 @@ export function formatarDataHora(): string {
   return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
 }
 
-export function etapaDaFicha(ficha: Ficha): Etapa {
-  if (ficha.entregaStatus) return "entrega";
-  if (ficha.conferencia) return "conferencia";
+export function etapaDaFicha(ficha: Ficha): Etapa | null {
+  if (ficha.entregaStatus) return null;
+  if (ficha.conferencia) return "entrega";
   if (ficha.costuraConcluida) return "conferencia";
   if (ficha.costura) return "costura";
-  if (ficha.corte) return "corte";
-  if (ficha.prensa) return "prensa";
-  if (ficha.impressao) return "impressao";
-  if (ficha.exportacao || ficha.arteAprovada) return "exportacao";
+  if (ficha.corte) return "costura";
+  if (ficha.prensa) return "corte";
+  if (ficha.impressao) return "prensa";
+  if (ficha.exportacao) return "impressao";
+  if (ficha.arteAprovada) return "exportacao";
   if (ficha.alteracaoSolicitada) return "alteracaoSolicitada";
   if (ficha.arte) return "aguardandoAprovacao";
   return "arteParaCriar";
