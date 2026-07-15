@@ -29,6 +29,7 @@ export default function Home() {
 
   const [menuAberto, setMenuAberto] = useState(false);
 const [designersAberto, setDesignersAberto] = useState(false);
+const [vendedoresAberto, setVendedoresAberto] = useState(false);
 
 const [editCliente, setEditCliente] = useState("");
 const [editEmail, setEditEmail] = useState("");
@@ -430,6 +431,7 @@ function StatusToggle({
   onClick={() => {
     if (menuAberto) setMenuAberto(false);
     if (designersAberto) setDesignersAberto(false);
+    if (vendedoresAberto) setVendedoresAberto(false);
   }}
 >
    <button
@@ -453,15 +455,130 @@ function StatusToggle({
 
 <div className="space-y-3">
 
-  <button
-    onClick={() => {
-      setMenuAberto(false);
-      window.location.href = "/comercial";
-    }}
-    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  <div className="relative">
+
+  {vendedoresAberto && (
+  <div
+    onClick={(e) => e.stopPropagation()}
+    className="absolute top-0 -left-40 w-40 bg-zinc-800/90 text-white p-4 rounded-xl shadow-xl z-50"
   >
-    ▸ COMERCIAL
-  </button>
+    <h3 className="font-bold text-sm mb-4">
+      VENDEDORES
+    </h3>
+
+    <div className="space-y-3 text-xs">
+
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setVendedoresAberto(false);
+          window.location.href = "/comercial?vendedor=PALOMA";
+        }}
+        className="block w-full text-left border-b border-zinc-600 pb-2"
+      >
+        ▸ PALOMA
+      </button>
+
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setVendedoresAberto(false);
+          window.location.href = "/comercial?vendedor=MIKELLY";
+        }}
+        className="block w-full text-left border-b border-zinc-600 pb-2"
+      >
+        ▸ MIKELLY
+      </button>
+
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setVendedoresAberto(false);
+          window.location.href = "/comercial?vendedor=LARISSA";
+        }}
+        className="block w-full text-left border-b border-zinc-600 pb-2"
+      >
+        ▸ LARISSA
+      </button>
+
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setVendedoresAberto(false);
+          window.location.href = "/comercial?vendedor=JEFFERSON";
+        }}
+        className="block w-full text-left border-b border-zinc-600 pb-2"
+      >
+        ▸ JEFFERSON
+      </button>
+
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setVendedoresAberto(false);
+          window.location.href = "/comercial?vendedor=JANIELLY";
+        }}
+        className="block w-full text-left border-b border-zinc-600 pb-2"
+      >
+        ▸ JANIELLY
+      </button>
+
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setVendedoresAberto(false);
+          window.location.href = "/comercial?vendedor=ROSE";
+        }}
+        className="block w-full text-left border-b border-zinc-600 pb-2"
+      >
+        ▸ ROSE
+      </button>
+
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setVendedoresAberto(false);
+          window.location.href = "/comercial?vendedor=CÉSAR";
+        }}
+        className="block w-full text-left border-b border-zinc-600 pb-2"
+      >
+        ▸ CÉSAR
+      </button>
+
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setVendedoresAberto(false);
+          window.location.href = "/comercial?vendedor=GRAÇA";
+        }}
+        className="block w-full text-left border-b border-zinc-600 pb-2"
+      >
+        ▸ GRAÇA
+      </button>
+
+      <button
+        onClick={() => {
+          setMenuAberto(false);
+          setVendedoresAberto(false);
+          window.location.href = "/comercial?vendedor=KELLY";
+        }}
+        className="block w-full text-left"
+      >
+        ▸ KELLY
+      </button>
+
+    </div>
+  </div>
+)}
+
+<button
+  onClick={() => setVendedoresAberto(!vendedoresAberto)}
+  className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+>
+  {vendedoresAberto ? "▾ COMERCIAL" : "▸ COMERCIAL"}
+</button>
+
+</div>
 
   <div>
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import app from "../../firebase/config";
 
@@ -19,11 +19,13 @@ function formatarDataHora(): string {
   return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
 }
 
-export default function Comercial() {
+function ComercialContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const vendedorParam = searchParams.get("vendedor") || "";
   const [cliente, setCliente] = useState("");
   const [email, setEmail] = useState("");
-  const [vendedor, setVendedor] = useState("");
+  const [vendedor, setVendedor] = useState(vendedorParam);
   const [observacao, setObservacao] = useState("");
   const [designer, setDesigner] = useState("");
   const [pedido, setPedido] = useState("");
@@ -145,6 +147,7 @@ export default function Comercial() {
               <option value="LÁZARO">LÁZARO</option>
               <option value="EDIVAN">EDIVAN</option>
               <option value="PAULÃO">PAULÃO</option>
+              <option value="DIEGO">DIEGO</option>
             </select>
 
             <div>
@@ -182,5 +185,13 @@ export default function Comercial() {
         </div>
       </div>
     </main>
+  );
+}
+
+export default function Comercial() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-black p-3 text-white"><p className="text-zinc-400 text-center mt-12">Carregando...</p></main>}>
+      <ComercialContent />
+    </Suspense>
   );
 }
