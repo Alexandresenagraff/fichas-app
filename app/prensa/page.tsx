@@ -10,16 +10,16 @@ import { Ficha, formatarDataHora } from "../lib/helpers";
 
 const db = getFirestore(app);
 
-const entryCondition = (ficha: Ficha) => ficha.exportacao === true;
+const entryCondition = (ficha: Ficha) => ficha.impressao === true;
 const pendingCondition = (ficha: Ficha) =>
-  ficha.exportacao === true && ficha.impressao === false;
-const completedCondition = (ficha: Ficha) => ficha.impressao === true;
+  ficha.impressao === true && ficha.prensa === false;
+const completedCondition = (ficha: Ficha) => ficha.prensa === true;
 
-async function marcarImpresso(id: string) {
+async function marcarPrensagemConcluida(id: string) {
   try {
     await updateDoc(doc(db, "fichas", id), {
-      impressao: true,
-      impressaoData: formatarDataHora(),
+      prensa: true,
+      prensaData: formatarDataHora(),
     });
   } catch (error) {
     console.log(error);
@@ -27,20 +27,20 @@ async function marcarImpresso(id: string) {
   }
 }
 
-export default function Impressao() {
+export default function Prensa() {
   return (
     <SectorDashboard
-      title="IMPRESSÃO"
-      description="Pedidos aguardando impressão"
+      title="PRENSA"
+      description="Pedidos aguardando prensagem"
       entryCondition={entryCondition}
       pendingCondition={pendingCondition}
       completedCondition={completedCondition}
       actionRenderer={(ficha: Ficha) => (
         <button
-          onClick={() => marcarImpresso(ficha.id || "")}
-          className="w-full bg-cyan-600 hover:bg-cyan-700 transition rounded-xl py-3 text-sm font-bold"
+          onClick={() => marcarPrensagemConcluida(ficha.id || "")}
+          className="w-full bg-amber-600 hover:bg-amber-700 transition rounded-xl py-3 text-sm font-bold"
         >
-          ✅ IMPRESSO
+          ✅ PRENSAGEM CONCLUÍDA
         </button>
       )}
     />

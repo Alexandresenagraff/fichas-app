@@ -81,6 +81,36 @@ export function etapaDaFicha(ficha: Ficha): Etapa | null {
   return "arteParaCriar";
 }
 
+export type CategoriaPedido = "urgentes" | "atrasados" | "noPrazo" | "finalizados";
+
+export function categoriaDaFicha(ficha: Ficha): CategoriaPedido {
+  if (ficha.entregaStatus) {
+    return "finalizados";
+  }
+
+  if (!ficha.entrega) {
+    return "noPrazo";
+  }
+
+  const [ano, mes, dia] = ficha.entrega.split("-").map(Number);
+  const hoje = new Date();
+  const inicioDeHoje = Date.UTC(
+    hoje.getFullYear(),
+    hoje.getMonth(),
+    hoje.getDate()
+  );
+  const dataDeEntrega = Date.UTC(ano, mes - 1, dia);
+  const diasRestantes = Math.round(
+    (dataDeEntrega - inicioDeHoje) / (1000 * 60 * 60 * 24)
+  );
+
+  if (diasRestantes < 0) {
+    return "atrasados";
+  }
+
+  return diasRestantes <= 12 ? "urgentes" : "noPrazo";
+}
+
 export const VENDEDORES = [
   "PALOMA",
   "MIKELLY",
