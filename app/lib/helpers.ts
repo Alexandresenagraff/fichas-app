@@ -1,6 +1,7 @@
 export type Etapa =
-  | "novo"
-  | "arte"
+  | "arteParaCriar"
+  | "aguardandoAprovacao"
+  | "alteracaoSolicitada"
   | "exportacao"
   | "impressao"
   | "prensa"
@@ -8,6 +9,13 @@ export type Etapa =
   | "costura"
   | "conferencia"
   | "entrega";
+
+export interface HistoricoAprovacao {
+  dataHora: string;
+  autor: string;
+  mensagem: string;
+  tipo: "alteracao" | "resposta" | "aprovacao";
+}
 
 export interface Ficha {
   id?: string;
@@ -23,6 +31,9 @@ export interface Ficha {
   vendaData?: string;
   arte: boolean;
   arteData?: string;
+  arteAprovada?: boolean;
+  alteracaoSolicitada?: boolean;
+  historicoAprovacao?: HistoricoAprovacao[];
   exportacao: boolean;
   exportacaoData?: string;
   impressao: boolean;
@@ -63,9 +74,10 @@ export function etapaDaFicha(ficha: Ficha): Etapa {
   if (ficha.corte) return "corte";
   if (ficha.prensa) return "prensa";
   if (ficha.impressao) return "impressao";
-  if (ficha.exportacao) return "exportacao";
-  if (ficha.arte) return "arte";
-  return "novo";
+  if (ficha.exportacao || ficha.arteAprovada) return "exportacao";
+  if (ficha.alteracaoSolicitada) return "alteracaoSolicitada";
+  if (ficha.arte) return "aguardandoAprovacao";
+  return "arteParaCriar";
 }
 
 export const VENDEDORES = [
@@ -96,8 +108,9 @@ export interface EtapaConfig {
 }
 
 export const ETAPAS: EtapaConfig[] = [
-  { id: "novo", label: "NOVO PEDIDO", ativo: "bg-blue-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
-  { id: "arte", label: "ARTE", ativo: "bg-purple-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
+  { id: "arteParaCriar", label: "ARTE P/ CRIAR", ativo: "bg-blue-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
+  { id: "aguardandoAprovacao", label: "AGUARDANDO APROVAÇÃO", ativo: "bg-yellow-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
+  { id: "alteracaoSolicitada", label: "ALTERAÇÃO SOLICITADA", ativo: "bg-red-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
   { id: "exportacao", label: "EXPORTAÇÃO", ativo: "bg-indigo-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
   { id: "impressao", label: "IMPRESSÃO", ativo: "bg-cyan-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
   { id: "prensa", label: "PRENSA", ativo: "bg-amber-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
