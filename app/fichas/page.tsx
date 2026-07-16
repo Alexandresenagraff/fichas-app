@@ -642,15 +642,33 @@ function StatusToggle({
 
 </div>
 
-  <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
+  <button
+    onClick={() => {
+      setMenuAberto(false);
+      window.location.href = "/impressao";
+    }}
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  >
     ▸ IMPRESSÃO
   </button>
 
-  <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
+  <button
+    onClick={() => {
+      setMenuAberto(false);
+      window.location.href = "/prensa";
+    }}
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  >
     ▸ PRENSA
   </button>
 
-  <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
+  <button
+    onClick={() => {
+      setMenuAberto(false);
+      window.location.href = "/corte";
+    }}
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  >
     ▸ CORTE
   </button>
 
@@ -674,11 +692,23 @@ function StatusToggle({
     ▸ CONFERÊNCIA
   </button>
 
-  <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
+  <button
+    onClick={() => {
+      setMenuAberto(false);
+      window.location.href = "/envio";
+    }}
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  >
     ▸ ENVIO
   </button>
 
-   <button className="w-full text-left py-2 border-b border-zinc-600 text-xs">
+   <button
+    onClick={() => {
+      setMenuAberto(false);
+      window.location.href = "/adm";
+    }}
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  >
     ▸ ADMINISTRAÇÃO
   </button>
 
