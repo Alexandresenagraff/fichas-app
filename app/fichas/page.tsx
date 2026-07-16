@@ -113,19 +113,22 @@ function categoriaDaFicha(ficha: any): FiltroPedidos {
   return diasRestantes <= 12 ? "urgentes" : "noPrazo";
 }
 
-function statusAtual(ficha: any) {
-  if (ficha.entregaStatus) return "ENTREGUE";
-  if (ficha.conferencia) return "CONFERIDO E EMBALADO";
-  if (ficha.costuraConcluida) return "COSTURA CONCLUÍDA";
-  if (ficha.costura) return "EM COSTURA";
-  if (ficha.corte) return "CORTADO";
-  if (ficha.prensa) return "NA PRENSA";
-  if (ficha.impressao) return "IMPRESSO";
-  if (ficha.exportacao) return "EXPORTADO";
-  if (ficha.arte) return "ARTE CONCLUÍDA";
-  if (ficha.venda) return "VENDA FEITA";
-
-  return "AGUARDANDO VENDA";
+function statusAtual(ficha: any): { completed: string; next: string; finalizado?: boolean } {
+  if (ficha.entregaStatus) {
+    if (ficha.retirada) {
+      return { completed: "DISPONÍVEL PARA RETIRADA", next: "PEDIDO FINALIZADO", finalizado: true };
+    }
+    return { completed: "ENVIADO AO DESTINATÁRIO", next: "PEDIDO FINALIZADO", finalizado: true };
+  }
+  if (ficha.conferencia) return { completed: "CONFERIDO E EMBALADO", next: "AGUARDANDO ENVIO" };
+  if (ficha.costuraConcluida) return { completed: "COSTURA CONCLUÍDA", next: "AGUARDANDO CONFERÊNCIA" };
+  if (ficha.corte) return { completed: "CORTADO", next: "AGUARDANDO COSTURA" };
+  if (ficha.prensa) return { completed: "PRENSAGEM CONCLUÍDA", next: "AGUARDANDO CORTE" };
+  if (ficha.impressao) return { completed: "IMPRESSO", next: "AGUARDANDO PRENSAGEM" };
+  if (ficha.exportacao) return { completed: "EXPORTADO", next: "AGUARDANDO IMPRESSÃO" };
+  if (ficha.arte) return { completed: "ARTE CONCLUÍDA", next: "AGUARDANDO EXPORTAÇÃO" };
+  if (ficha.venda) return { completed: "VENDA REALIZADA", next: "AGUARDANDO ARTE" };
+  return { completed: "AGUARDANDO VENDA", next: "" };
 }
 
 async function carregarResumoPedidos() {
@@ -937,9 +940,14 @@ function StatusToggle({
     : "VISUALIZAR"}
 </button>
 
-<p className="mb-4 text-center text-xs font-semibold text-zinc-400">
-  STATUS ATUAL: <span className="text-lime-400">{statusAtual(ficha)}</span>
-</p>
+<div className="mb-4 text-center text-xs font-semibold">
+  <p className="text-lime-400">🟢 {statusAtual(ficha).completed}</p>
+  {statusAtual(ficha).next && (
+    <p className={statusAtual(ficha).finalizado ? "text-blue-400" : "text-yellow-400"}>
+      {statusAtual(ficha).finalizado ? "🔵" : "🟡"} {statusAtual(ficha).next}
+    </p>
+  )}
+</div>
 
 {pedidosAbertos.includes(ficha.id) && (
 <div id={`detalhes-${ficha.id}`} className="animate-[slideDown_0.25s_ease-out]">
