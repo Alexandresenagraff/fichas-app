@@ -22,10 +22,10 @@ export default function Cliente() {
   const [pedidoAberto, setPedidoAberto] = useState<number | null>(null);
   const [carregando, setCarregando] = useState(false);
 
-  const WHATSAPP_NUMERO = "55XXXXXXXXXXX";
+  const WHATSAPP_NUMERO = "5585991292240";
 
   function getWhatsAppLink() {
-    const base = `https://wa.me/${8599129-2240}`;
+    const base = "https://wa.me/5585991292240";
     let pedidoTexto = "";
     
     if (pedidos.length > 0) {

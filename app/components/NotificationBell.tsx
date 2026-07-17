@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Bell } from "lucide-react";
 
 import app from "../../firebase/config";
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
-import { Ficha, Alteracao } from "../lib/helpers";
+import { Ficha, Alteracao, etapaDaFicha } from "../lib/helpers";
 
 const db = getFirestore(app);
 
@@ -18,15 +18,30 @@ interface NotificacaoItem {
   descricao: string;
 }
 
+function normalizarNome(nome: string): string {
+  return nome
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase();
+}
+
 export default function NotificationBell() {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  
   const [dropdownAberto, setDropdownAberto] = useState(false);
   const [notificacoes, setNotificacoes] = useState<NotificacaoItem[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  const designerParam = searchParams.get("designer") || "";
+  const vendedorParam = searchParams.get("vendedor") || "";
+
   // Escutar alterações pendentes em tempo real
   useEffect(() => {
+    const designerFiltrado = designerParam ? normalizarNome(designerParam) : "";
+    const vendedorFiltrado = vendedorParam ? normalizarNome(vendedorParam) : "";
+
     const unsubscribe = onSnapshot(
       collection(db, "fichas"),
       (snapshot) => {
@@ -35,32 +50,68 @@ export default function NotificationBell() {
           const ficha = docSnap.data() as Ficha;
           ficha.id = docSnap.id;
 
-          // Se a ficha está marcada com alteração solicitada
-          if (ficha.alteracaoSolicitada) {
-            const pendentes = ficha.alteracoes?.filter((alt) => alt.status === "pendente");
-            
-            if (pendentes && pendentes.length > 0) {
-              pendentes.forEach((alt) => {
+          const fichaDesignerNorm = ficha.designer ? normalizarNome(ficha.designer) : "";
+          const fichaVendedorNorm = ficha.vendedor ? normalizarNome(ficha.vendedor) : "";
+
+          const isArtePage = pathname.includes("/arte");
+          const isComercialPage = pathname.includes("/comercial");
+
+          if (isArtePage) {
+            // DESIGNERS: Exibe alterações solicitadas (status = pendente)
+            // Filtra por designer selecionado na página, se houver parâmetro
+            if (designerFiltrado && fichaDesignerNorm !== designerFiltrado) {
+              return;
+            }
+
+            if (ficha.alteracaoSolicitada) {
+              const pendentes = ficha.alteracoes?.filter((alt) => alt.status === "pendente");
+              
+              if (pendentes && pendentes.length > 0) {
+                pendentes.forEach((alt) => {
+                  lista.push({
+                    fichaId: ficha.id || "",
+                    cliente: ficha.cliente,
+                    solicitante: alt.solicitante,
+                    data: alt.dataHora,
+                    descricao: alt.descricao,
+                  });
+                });
+              } else {
+                // Fallback para histórico legado
+                const lastAlteracao = ficha.historicoAprovacao
+                  ?.filter((h) => h.tipo === "alteracao")
+                  .pop();
+
                 lista.push({
                   fichaId: ficha.id || "",
                   cliente: ficha.cliente,
-                  solicitante: alt.solicitante,
-                  data: alt.dataHora,
-                  descricao: alt.descricao,
+                  solicitante: lastAlteracao?.autor || ficha.vendedor || "Vendedor",
+                  data: lastAlteracao?.dataHora || "",
+                  descricao: lastAlteracao?.mensagem || "Alteração solicitada",
                 });
-              });
-            } else {
-              // Fallback para dados legados que não possuem o array estruturado de alteracoes
-              const lastAlteracao = ficha.historicoAprovacao
-                ?.filter((h) => h.tipo === "alteracao")
-                .pop();
+              }
+            }
+          } else if (isComercialPage) {
+            // VENDEDORES: Exibe fichas em "Aguardando Aprovação"
+            // Filtra por vendedor selecionado na página, se houver parâmetro
+            if (vendedorFiltrado && fichaVendedorNorm !== vendedorFiltrado) {
+              return;
+            }
+
+            if (etapaDaFicha(ficha) === "aguardandoAprovacao") {
+              // Pega a última alteração resolvida do histórico para mostrar a resposta do designer, se houver
+              const lastConcluida = ficha.alteracoes
+                ?.filter((alt) => alt.status === "concluida")
+                .sort((a, b) => b.dataHora.localeCompare(a.dataHora))[0];
 
               lista.push({
                 fichaId: ficha.id || "",
                 cliente: ficha.cliente,
-                solicitante: lastAlteracao?.autor || ficha.vendedor || "Vendedor",
-                data: lastAlteracao?.dataHora || "",
-                descricao: lastAlteracao?.mensagem || "Alteração solicitada",
+                solicitante: ficha.designer || "Designer",
+                data: lastConcluida?.concluidoEm || ficha.arteData || "",
+                descricao: lastConcluida?.respostaDesigner
+                  ? `Alteração concluída: "${lastConcluida.respostaDesigner}"`
+                  : "Arte finalizada e enviada para aprovação.",
               });
             }
           }
@@ -79,7 +130,7 @@ export default function NotificationBell() {
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [pathname, designerParam, vendedorParam]);
 
   // Fechar dropdown ao clicar fora
   useEffect(() => {
@@ -97,7 +148,6 @@ export default function NotificationBell() {
   const handleNotificacaoClick = (fichaId: string) => {
     setDropdownAberto(false);
     
-    // Determinar a página de destino apropriada com base na rota atual
     let baseRoute = "/fichas";
     if (pathname.includes("/arte")) {
       baseRoute = "/arte";
@@ -105,9 +155,21 @@ export default function NotificationBell() {
       baseRoute = "/comercial";
     }
 
-    // Redireciona passando fichaId na URL
-    router.push(`${baseRoute}?fichaId=${fichaId}`);
+    // Mantém os parâmetros de designer/vendedor se existirem
+    let queryParams = `?fichaId=${fichaId}`;
+    if (pathname.includes("/arte") && designerParam) {
+      queryParams += `&designer=${designerParam}`;
+    } else if (pathname.includes("/comercial") && vendedorParam) {
+      queryParams += `&vendedor=${vendedorParam}`;
+    }
+
+    router.push(`${baseRoute}${queryParams}`);
   };
+
+  const isArtePage = pathname.includes("/arte");
+  const dropdownTitle = isArtePage ? "ALTERAÇÕES PENDENTES" : "ARTES P/ APROVAR";
+  const emptyText = isArtePage ? "Nenhuma alteração pendente" : "Nenhuma arte aguardando aprovação";
+  const subTextLabel = isArtePage ? "Solicitado por" : "Designer";
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -132,11 +194,11 @@ export default function NotificationBell() {
         <div className="absolute right-0 mt-2.5 w-80 bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-md rounded-2xl shadow-2xl z-50 overflow-hidden animate-[slideDown_0.2s_ease-out]">
           <div className="p-3.5 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between">
             <span className="font-extrabold text-xs tracking-wider uppercase text-zinc-400">
-              ALTERAÇÕES PENDENTES
+              {dropdownTitle}
             </span>
             {totalPendentes > 0 && (
               <span className="bg-red-500/10 text-red-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md">
-                {totalPendentes} pendente{totalPendentes > 1 ? "s" : ""}
+                {totalPendentes} item{totalPendentes > 1 ? "s" : ""}
               </span>
             )}
           </div>
@@ -144,7 +206,6 @@ export default function NotificationBell() {
           <div className="max-h-72 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 divide-y divide-zinc-900/50">
             {totalPendentes > 0 ? (
               notificacoes.map((item, index) => {
-                // Formatar a data para exibição (excluir hora se quiser, ou deixar curto)
                 const dataExibicao = item.data.split(" ")[0] || "";
                 
                 return (
@@ -163,7 +224,7 @@ export default function NotificationBell() {
                     </div>
 
                     <div className="text-[10px] text-zinc-400">
-                      Solicitado por: <span className="text-zinc-300 font-medium">{item.solicitante}</span>
+                      {subTextLabel}: <span className="text-zinc-300 font-medium">{item.solicitante}</span>
                     </div>
 
                     <p className="text-xs text-zinc-400 mt-1 break-words line-clamp-2 italic bg-black/30 px-2 py-1.5 rounded-lg border border-zinc-900/40">
@@ -174,7 +235,7 @@ export default function NotificationBell() {
               })
             ) : (
               <div className="p-8 text-center text-zinc-500 text-xs font-medium">
-                Nenhuma alteração pendente
+                {emptyText}
               </div>
             )}
           </div>

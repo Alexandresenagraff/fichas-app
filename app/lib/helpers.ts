@@ -25,6 +25,7 @@ export interface Alteracao {
   status: "pendente" | "concluida";
   concluidoPor?: string;
   concluidoEm?: string;
+  respostaDesigner?: string;
 }
 
 export interface Ficha {
