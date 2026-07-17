@@ -17,6 +17,14 @@ export interface HistoricoAprovacao {
   tipo: "alteracao" | "resposta" | "aprovacao";
 }
 
+export interface Alteracao {
+  id: string;
+  descricao: string;
+  dataHora: string;
+  solicitante: string;
+  status: "pendente" | "concluida";
+}
+
 export interface Ficha {
   id?: string;
   cliente: string;
@@ -34,6 +42,7 @@ export interface Ficha {
   arteAprovada?: boolean;
   alteracaoSolicitada?: boolean;
   historicoAprovacao?: HistoricoAprovacao[];
+  alteracoes?: Alteracao[];
   exportacao: boolean;
   exportacaoData?: string;
   impressao: boolean;

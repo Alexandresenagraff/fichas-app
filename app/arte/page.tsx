@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Plus, Search, X, Calendar, FileText, Check, Undo2 } from "lucide-react";
+import NotificationBell from "../components/NotificationBell";
 
 import app from "../../firebase/config";
 import {
@@ -70,6 +71,34 @@ function ArteContent() {
     return () => unsubscribe();
   }, []);
 
+  const fichaIdParam = searchParams.get("fichaId");
+
+  useEffect(() => {
+    if (fichaIdParam && fichas.length > 0) {
+      const fichaAlvo = fichas.find((f) => f.id === fichaIdParam);
+      if (fichaAlvo) {
+        const etapa = etapaDaFicha(fichaAlvo);
+        if (etapa) {
+          if (etapa === "arteParaCriar" || etapa === "alteracaoSolicitada" || etapa === "aguardandoAprovacao" || etapa === "exportacao") {
+            const secaoId = (etapa === "exportacao") ? "aguardandoAprovacao" : etapa;
+            setSecaoAtiva(secaoId as SecaoArte);
+          }
+        }
+      }
+
+      setTimeout(() => {
+        const elemento = document.getElementById(`ficha-${fichaIdParam}`);
+        if (elemento) {
+          elemento.scrollIntoView({ behavior: "smooth", block: "center" });
+          elemento.classList.add("ring-2", "ring-blue-500", "scale-[1.01]");
+          setTimeout(() => {
+            elemento.classList.remove("ring-2", "ring-blue-500", "scale-[1.01]");
+          }, 3000);
+        }
+      }, 300);
+    }
+  }, [fichaIdParam, fichas]);
+
   function estaAtrasado(ficha: Ficha): boolean {
     if (!ficha.entrega || ficha.arte) return false;
     const [ano, mes, dia] = ficha.entrega.split("-").map(Number);
@@ -110,12 +139,16 @@ function ArteContent() {
       };
 
       const historico = ficha.historicoAprovacao || [];
+      const alteracoesAtualizadas = (ficha.alteracoes || []).map((alt) =>
+        alt.status === "pendente" ? { ...alt, status: "concluida" as const } : alt
+      );
 
       await updateDoc(fichaRef, {
         arte: true,
         alteracaoSolicitada: false,
         arteData,
         historicoAprovacao: [...historico, novaMensagem],
+        alteracoes: alteracoesAtualizadas,
       });
     } catch (error) {
       console.error(error);
@@ -186,6 +219,7 @@ function ArteContent() {
     return (
       <div
         key={ficha.id}
+        id={`ficha-${ficha.id}`}
         className="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 shadow-lg transition-all duration-200 hover:border-zinc-800/80"
       >
         <div className="flex items-start justify-between mb-3 gap-2">
@@ -227,6 +261,52 @@ function ArteContent() {
           <div className="bg-zinc-900/60 rounded-xl p-2.5 mb-3 text-xs text-zinc-400 border border-zinc-800/40">
             <span className="font-semibold text-zinc-500 block mb-0.5">Observação:</span>
             <p className="break-words">{ficha.observacao}</p>
+          </div>
+        )}
+
+        {ficha.alteracaoSolicitada && (
+          <div className="bg-red-955/10 border border-red-900/45 rounded-xl p-3.5 mb-4 space-y-2 text-xs">
+            <div className="flex items-center justify-between pb-1.5 border-b border-red-900/20">
+              <span className="text-[10px] font-extrabold text-red-400 tracking-wider">
+                ✏️ ALTERAÇÃO SOLICITADA
+              </span>
+              <span className="text-[10px] text-zinc-500 font-bold">
+                Ficha: <span className="text-zinc-300">#{ficha.id}</span>
+              </span>
+            </div>
+            {(() => {
+              const pendentes = ficha.alteracoes?.filter((alt) => alt.status === "pendente");
+              if (pendentes && pendentes.length > 0) {
+                return pendentes.map((alt) => (
+                  <div key={alt.id} className="space-y-1 pt-1.5 first:pt-0">
+                    <p className="text-zinc-400">
+                      Quem solicitou: <span className="text-zinc-200 font-semibold">{alt.solicitante}</span>
+                    </p>
+                    <p className="text-zinc-400">
+                      Data/Hora: <span className="text-zinc-200 font-semibold">{alt.dataHora}</span>
+                    </p>
+                    <p className="text-zinc-200 font-medium bg-black/45 p-2 rounded-lg border border-red-950/60 mt-1 italic">
+                      "{alt.descricao}"
+                    </p>
+                  </div>
+                ));
+              } else {
+                const lastAlt = ficha.historicoAprovacao?.filter((h) => h.tipo === "alteracao").pop();
+                return (
+                  <div className="space-y-1">
+                    <p className="text-zinc-400">
+                      Quem solicitou: <span className="text-zinc-200 font-semibold">{lastAlt?.autor || ficha.vendedor || "Vendedor"}</span>
+                    </p>
+                    <p className="text-zinc-400">
+                      Data/Hora: <span className="text-zinc-200 font-semibold">{lastAlt?.dataHora || "—"}</span>
+                    </p>
+                    <p className="text-zinc-200 font-medium bg-black/45 p-2 rounded-lg border border-red-950/60 mt-1 italic">
+                      "{lastAlt?.mensagem || "Alteração solicitada"}"
+                    </p>
+                  </div>
+                );
+              }
+            })()}
           </div>
         )}
 
@@ -344,12 +424,15 @@ function ArteContent() {
             </div>
           </div>
 
-          <button
-            onClick={() => router.push("/fichas")}
-            className="bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl px-4 py-2 text-xs font-bold text-white flex items-center gap-1"
-          >
-            <Plus size={13} /> Novo
-          </button>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <button
+              onClick={() => router.push("/fichas")}
+              className="bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl px-4 py-2 text-xs font-bold text-white flex items-center gap-1 cursor-pointer"
+            >
+              <Plus size={13} /> Novo
+            </button>
+          </div>
         </div>
 
         {/* PESQUISA */}

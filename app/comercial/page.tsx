@@ -3,6 +3,7 @@
 import { useEffect, useState, Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Plus, Search, X, Calendar, Clipboard, User, Edit3, Check, Save } from "lucide-react";
+import NotificationBell from "../components/NotificationBell";
 
 import app from "../../firebase/config";
 import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc } from "firebase/firestore";
@@ -76,6 +77,31 @@ function ComercialContent() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [modalAberto, modalAlteracao]);
 
+  const fichaIdParam = searchParams.get("fichaId");
+
+  useEffect(() => {
+    if (fichaIdParam && pedidos.length > 0) {
+      const fichaAlvo = pedidos.find((p) => p.id === fichaIdParam);
+      if (fichaAlvo) {
+        const etapa = etapaDaFicha(fichaAlvo);
+        if (etapa) {
+          setAbaAtiva(etapa);
+        }
+      }
+
+      setTimeout(() => {
+        const elemento = document.getElementById(`ficha-${fichaIdParam}`);
+        if (elemento) {
+          elemento.scrollIntoView({ behavior: "smooth", block: "center" });
+          elemento.classList.add("ring-2", "ring-blue-500", "scale-[1.01]");
+          setTimeout(() => {
+            elemento.classList.remove("ring-2", "ring-blue-500", "scale-[1.01]");
+          }, 3000);
+        }
+      }, 300);
+    }
+  }, [fichaIdParam, pedidos]);
+
   async function salvarFicha() {
     if (!cliente) {
       alert("Digite o nome do cliente");
@@ -143,19 +169,32 @@ function ComercialContent() {
     if (!ficha.id) return;
 
     try {
+      const dataHoraFormatada = formatarDataHora();
+      const solicitanteNome = vendedorParam || ficha.vendedor || "Vendedor";
+
       const novaMensagem: HistoricoAprovacao = {
-        dataHora: formatarDataHora(),
-        autor: vendedorParam || ficha.vendedor || "Vendedor",
+        dataHora: dataHoraFormatada,
+        autor: solicitanteNome,
         mensagem: mensagemAlteracao.trim(),
         tipo: "alteracao",
       };
 
+      const novaAlteracao = {
+        id: Math.random().toString(36).substring(2, 11) + "_" + Date.now(),
+        descricao: mensagemAlteracao.trim(),
+        dataHora: dataHoraFormatada,
+        solicitante: solicitanteNome,
+        status: "pendente" as const,
+      };
+
       const historico = ficha.historicoAprovacao || [];
+      const alteracoes = ficha.alteracoes || [];
 
       await updateDoc(doc(db, "fichas", ficha.id), {
         arte: false,
         alteracaoSolicitada: true,
         historicoAprovacao: [...historico, novaMensagem],
+        alteracoes: [...alteracoes, novaAlteracao],
       });
 
       setMensagemAlteracao("");
@@ -238,12 +277,15 @@ function ComercialContent() {
                 : "Acompanhamento de pedidos"}
             </p>
           </div>
-          <button
-            onClick={() => setModalAberto(true)}
-            className="bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-250 rounded-xl px-4 py-2 text-xs font-bold text-white flex items-center gap-1.5 shadow-lg"
-          >
-            <Plus size={14} /> NOVO PEDIDO
-          </button>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <button
+              onClick={() => setModalAberto(true)}
+              className="bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-250 rounded-xl px-4 py-2 text-xs font-bold text-white flex items-center gap-1.5 shadow-lg cursor-pointer"
+            >
+              <Plus size={14} /> NOVO PEDIDO
+            </button>
+          </div>
         </div>
 
         {/* BUSCA */}
@@ -298,6 +340,7 @@ function ComercialContent() {
             pedidosFiltrados.map((ficha) => (
               <div
                 key={ficha.id}
+                id={`ficha-${ficha.id}`}
                 className="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 shadow-lg transition-all duration-200 hover:border-zinc-800/80"
               >
                 <div className="flex items-start justify-between mb-3 gap-2">
@@ -356,15 +399,15 @@ function ComercialContent() {
                   <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-zinc-900/60">
                     <button
                       onClick={() => abrirModalAlteracao(ficha)}
-                      className="bg-red-650/15 border border-red-900/50 hover:bg-red-650/25 active:scale-95 transition-all duration-200 text-red-400 rounded-xl p-2.5 text-xs font-bold cursor-pointer"
+                      className="bg-red-650/15 border border-red-900/50 hover:bg-red-650/25 active:scale-95 transition-all duration-200 text-red-400 rounded-xl p-2.5 text-xs font-bold cursor-pointer flex items-center justify-center gap-1.5"
                     >
-                      SOLICITAR ALTERAÇÃO
+                      ✏️ SOLICITAR ALTERAÇÃO
                     </button>
                     <button
                       onClick={() => aprovarArte(ficha)}
-                      className="bg-green-650/15 border border-green-900/50 hover:bg-green-650/25 active:scale-95 transition-all duration-200 text-green-400 rounded-xl p-2.5 text-xs font-bold cursor-pointer flex items-center justify-center gap-1"
+                      className="bg-green-650/15 border border-green-900/50 hover:bg-green-650/25 active:scale-95 transition-all duration-200 text-green-400 rounded-xl p-2.5 text-xs font-bold cursor-pointer flex items-center justify-center gap-1.5"
                     >
-                      <Check size={13} /> APROVAR ARTE
+                      ✅ APROVAR ARTE
                     </button>
                   </div>
                 )}
@@ -532,9 +575,9 @@ function ComercialContent() {
 
             <button
               onClick={() => solicitarAlteracao(fichaAlteracao)}
-              className="w-full bg-red-650 hover:bg-red-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl p-3 text-xs font-bold text-white shadow-lg cursor-pointer mt-4"
+              className="w-full bg-red-655 hover:bg-red-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl p-3 text-xs font-bold text-white shadow-lg cursor-pointer mt-4"
             >
-              ENVIAR PARA O DESIGNER
+              ENVIAR SOLICITAÇÃO
             </button>
           </div>
         </div>

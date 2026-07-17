@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Menu, RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus, ChevronDown, ChevronUp } from "lucide-react";
 
 import app from "../../firebase/config";
 import { formatarDataHora, categoriaDaFicha, Ficha, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
 import Sidebar from "../components/Sidebar";
 import StatusToggle from "../components/StatusToggle";
+import NotificationBell from "../components/NotificationBell";
 import { CardSkeleton } from "../components/Skeleton";
 
 import {
@@ -53,7 +55,7 @@ function campoData(campo: string): string {
   return mapa[campo] || "";
 }
 
-export default function Home() {
+function HomeContent() {
   const [busca, setBusca] = useState("");
   const [resumoPedidos, setResumoPedidos] = useState<Ficha[]>([]);
   const [filtroAtivo, setFiltroAtivo] = useState<FiltroPedidos | null>(null);
@@ -89,6 +91,28 @@ export default function Home() {
   useEffect(() => {
     carregarResumoPedidos();
   }, []);
+
+  const searchParams = useSearchParams();
+  const fichaIdParam = searchParams.get("fichaId");
+
+  useEffect(() => {
+    if (fichaIdParam && resumoPedidos.length > 0) {
+      setPedidosAbertos((prev) =>
+        prev.includes(fichaIdParam) ? prev : [...prev, fichaIdParam]
+      );
+
+      setTimeout(() => {
+        const elemento = document.getElementById(`ficha-${fichaIdParam}`);
+        if (elemento) {
+          elemento.scrollIntoView({ behavior: "smooth", block: "center" });
+          elemento.classList.add("ring-2", "ring-blue-500", "scale-[1.01]");
+          setTimeout(() => {
+            elemento.classList.remove("ring-2", "ring-blue-500", "scale-[1.01]");
+          }, 3000);
+        }
+      }, 300);
+    }
+  }, [fichaIdParam, resumoPedidos]);
 
   // Optimized client-side filtering for fast query feedback and optimized DB reads
   const fichasFiltradas = useMemo(() => {
@@ -237,6 +261,10 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black p-3 text-white relative">
+      <div className="fixed top-4 right-16 z-40">
+        <NotificationBell />
+      </div>
+
       <button
         onClick={() => setMenuAberto(!menuAberto)}
         className="fixed top-4 right-4 text-white p-2.5 bg-zinc-900/90 border border-zinc-800 hover:bg-zinc-800 active:scale-95 transition-all duration-200 rounded-xl z-40 cursor-pointer shadow-lg"
@@ -336,6 +364,7 @@ export default function Home() {
                 return (
                   <div
                     key={ficha.id}
+                    id={`ficha-${ficha.id}`}
                     className="bg-zinc-950 border border-zinc-900 rounded-2xl p-4.5 shadow-xl transition-all duration-200 hover:border-zinc-800/80"
                   >
                     {/* TOPO */}
@@ -747,5 +776,19 @@ export default function Home() {
         )}
       </div>
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-black p-3 text-white flex items-center justify-center">
+        <div className="max-w-md w-full">
+          <CardSkeleton />
+        </div>
+      </main>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }
