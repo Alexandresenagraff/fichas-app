@@ -648,6 +648,16 @@ function StatusToggle({
   <button
     onClick={() => {
       setMenuAberto(false);
+      window.location.href = "/exportacao";
+    }}
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  >
+    ▸ EXPORTAÇÃO
+  </button>
+
+  <button
+    onClick={() => {
+      setMenuAberto(false);
       window.location.href = "/impressao";
     }}
     className="w-full text-left py-2 border-b border-zinc-600 text-xs"
@@ -1137,24 +1147,8 @@ function StatusToggle({
                         />
 
                         {ficha.exportacao && (
-
                           <div className="ml-4 pl-3 border-l border-zinc-700 space-y-3">
-
-                            <input
-                              type="text"
-                              placeholder="Cole aqui o link do PDF"
-                              defaultValue={ficha.pdfLink || ""}
-                              onBlur={(e) =>
-                                salvarPdfLink(
-                                  ficha.id,
-                                  e.target.value
-                                )
-                              }
-                              className="w-full bg-black border border-zinc-700 rounded-xl p-3 text-sm outline-none"
-                            />
-
-                            {ficha.pdfLink && (
-
+                            {ficha.pdfLink ? (
                               <a
                                 href={ficha.pdfLink}
                                 target="_blank"
@@ -1162,11 +1156,12 @@ function StatusToggle({
                               >
                                 VER PDF
                               </a>
-
+                            ) : (
+                              <p className="text-xs text-zinc-600 bg-zinc-900 rounded-xl p-3 text-center">
+                                PDF ainda não exportado
+                              </p>
                             )}
-
                           </div>
-
                         )}
 
                       </div>

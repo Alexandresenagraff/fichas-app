@@ -196,7 +196,7 @@ function RelatoriosContent() {
               </button>
             </div>
 
-            {["impressao", "prensa", "corte", "costura", "conferencia", "envio"].map((setor) => (
+            {["exportacao", "impressao", "prensa", "corte", "costura", "conferencia", "envio"].map((setor) => (
               <button
                 key={setor}
                 onClick={() => {
@@ -205,7 +205,7 @@ function RelatoriosContent() {
                 }}
                 className="w-full text-left py-2 border-b border-zinc-800 text-xs text-zinc-300 hover:text-white"
               >
-                ▸ {setor.toUpperCase() === "IMPRESSAO" ? "IMPRESSÃO" : setor.toUpperCase() === "CONFERENCIA" ? "CONFERÊNCIA" : setor.toUpperCase()}
+                ▸ {setor.toUpperCase() === "EXPORTACAO" ? "EXPORTAÇÃO" : setor.toUpperCase() === "IMPRESSAO" ? "IMPRESSÃO" : setor.toUpperCase() === "CONFERENCIA" ? "CONFERÊNCIA" : setor.toUpperCase()}
               </button>
             ))}
 

@@ -268,6 +268,18 @@ return (
 
 </div>
 
+{pedido.pdfLink && (
+  <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-2xl text-center shadow-sm">
+    <a
+      href={pedido.pdfLink}
+      target="_blank"
+      className="inline-flex items-center gap-2 text-blue-700 font-bold hover:text-blue-800 transition text-sm sm:text-base"
+    >
+      📄 VISUALIZAR MOLDE (PDF)
+    </a>
+  </div>
+)}
+
 </>
 )}
 

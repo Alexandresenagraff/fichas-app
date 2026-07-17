@@ -81,7 +81,12 @@ function ArteContent() {
     try {
       const fichaRef = doc(db, "fichas", id);
       const arteData = formatarDataHora();
-      await updateDoc(fichaRef, { arte: true, arteData });
+      await updateDoc(fichaRef, {
+        arte: true,
+        arteAprovada: true,
+        exportacao: false,
+        arteData,
+      });
     } catch (error) {
       console.log(error);
       alert("Erro ao atualizar");
@@ -225,7 +230,7 @@ function ArteContent() {
             onClick={() => concluirArte(ficha.id || "")}
             className="w-full bg-lime-600 hover:bg-lime-700 transition rounded-xl py-3 text-sm font-bold"
           >
-            ✅ ARTE CONCLUÍDA
+            ✅ ARTE APROVADA
           </button>
         )}
 
