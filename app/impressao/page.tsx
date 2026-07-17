@@ -1,11 +1,9 @@
 "use client";
 
+import { Check } from "lucide-react";
 import app from "../../firebase/config";
-
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
-
 import SectorDashboard from "../components/SectorDashboard";
-
 import { Ficha, formatarDataHora } from "../lib/helpers";
 
 const db = getFirestore(app);
@@ -22,7 +20,7 @@ async function marcarImpresso(id: string) {
       impressaoData: formatarDataHora(),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     alert("Erro ao atualizar");
   }
 }
@@ -38,9 +36,9 @@ export default function Impressao() {
       actionRenderer={(ficha: Ficha) => (
         <button
           onClick={() => marcarImpresso(ficha.id || "")}
-          className="w-full bg-cyan-600 hover:bg-cyan-700 transition rounded-xl py-3 text-sm font-bold"
+          className="w-full bg-cyan-600 hover:bg-cyan-750 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 rounded-xl py-3 text-xs font-bold text-white flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
         >
-          ✅ IMPRESSO
+          <Check size={14} /> IMPRESSO
         </button>
       )}
     />

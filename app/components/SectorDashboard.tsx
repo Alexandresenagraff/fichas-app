@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowLeft, RotateCw, Search, X } from "lucide-react";
 
 import app from "../../firebase/config";
-
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
-
 import { Ficha, categoriaDaFicha } from "../lib/helpers";
+import { DashboardSkeleton, KpiSkeleton } from "./Skeleton";
 
 const db = getFirestore(app);
 
@@ -52,46 +52,69 @@ function SectorDashboardContent({
         setAtualizadoEm(new Date());
       },
       (error) => {
-        console.log(error);
+        console.error("Error onSnapshot sector:", error);
         setCarregando(false);
       }
     );
     return () => unsubscribe();
   }, [entryCondition]);
 
-  const fichasFiltradas = fichas.filter((ficha) => {
+  const fichasFiltradas = useMemo(() => {
     const termo = busca.trim().toLowerCase();
-    return !termo || (ficha.cliente || "").toLowerCase().includes(termo);
-  });
+    return fichas.filter((ficha) => {
+      return !termo || (ficha.cliente || "").toLowerCase().includes(termo);
+    });
+  }, [fichas, busca]);
 
-  const pendentes = fichasFiltradas.filter((f) => pendingCondition(f));
-  const concluidas = fichasFiltradas.filter((f) => completedCondition(f));
+  const pendentes = useMemo(() => fichasFiltradas.filter((f) => pendingCondition(f)), [fichasFiltradas, pendingCondition]);
+  const concluidas = useMemo(() => fichasFiltradas.filter((f) => completedCondition(f)), [fichasFiltradas, completedCondition]);
 
-  const contagem = {
-    urgentes: pendentes.filter((f) => categoriaDaFicha(f) === "urgentes").length,
-    atrasados: pendentes.filter((f) => categoriaDaFicha(f) === "atrasados").length,
-    noPrazo: pendentes.filter((f) => categoriaDaFicha(f) === "noPrazo").length,
-    finalizados: concluidas.length,
-  };
+  const contagem = useMemo(() => {
+    return {
+      urgentes: pendentes.filter((f) => categoriaDaFicha(f) === "urgentes").length,
+      atrasados: pendentes.filter((f) => categoriaDaFicha(f) === "atrasados").length,
+      noPrazo: pendentes.filter((f) => categoriaDaFicha(f) === "noPrazo").length,
+      finalizados: concluidas.length,
+    };
+  }, [pendentes, concluidas]);
 
   function toggleFiltro(id: string) {
     setFiltroAtivo((prev) => (prev === id ? null : id));
   }
 
-  const listaExibida = (() => {
+  const listaExibida = useMemo(() => {
     if (filtroAtivo === "finalizados") return concluidas;
     if (filtroAtivo === "urgentes") return pendentes.filter((f) => categoriaDaFicha(f) === "urgentes");
     if (filtroAtivo === "atrasados") return pendentes.filter((f) => categoriaDaFicha(f) === "atrasados");
     if (filtroAtivo === "noPrazo") return pendentes.filter((f) => categoriaDaFicha(f) === "noPrazo");
     return pendentes;
-  })();
+  }, [filtroAtivo, pendentes, concluidas]);
 
-  const cardStyle = (id: string, color: string) =>
-    `rounded-xl p-3 text-center cursor-pointer transition border ${
-      filtroAtivo === id
-        ? `bg-${color}-600/20 border-${color}-500 ring-1 ring-${color}-500`
-        : "bg-zinc-900 border-zinc-800 hover:bg-zinc-800"
-    }`;
+  const cardStyle = (id: string) => {
+    const isSelected = filtroAtivo === id;
+    const base = "rounded-xl p-3 text-center cursor-pointer transition-all duration-200 border hover:scale-[1.02] active:scale-[0.98] ";
+    if (id === "urgentes") {
+      return base + (isSelected 
+        ? "bg-red-500/10 border-red-500 ring-1 ring-red-500" 
+        : "bg-zinc-900 border-zinc-800/80 hover:bg-zinc-800");
+    }
+    if (id === "atrasados") {
+      return base + (isSelected 
+        ? "bg-orange-500/10 border-orange-500 ring-1 ring-orange-500" 
+        : "bg-zinc-900 border-zinc-800/80 hover:bg-zinc-800");
+    }
+    if (id === "noPrazo") {
+      return base + (isSelected 
+        ? "bg-blue-500/10 border-blue-500 ring-1 ring-blue-500" 
+        : "bg-zinc-900 border-zinc-800/80 hover:bg-zinc-800");
+    }
+    if (id === "finalizados") {
+      return base + (isSelected 
+        ? "bg-green-500/10 border-green-500 ring-1 ring-green-500" 
+        : "bg-zinc-900 border-zinc-800/80 hover:bg-zinc-800");
+    }
+    return base + "bg-zinc-900 border-zinc-800/80 hover:bg-zinc-800";
+  };
 
   return (
     <main className="min-h-screen bg-black text-white p-3">
@@ -101,152 +124,161 @@ function SectorDashboardContent({
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push("/fichas")}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-zinc-700 transition text-lg"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 active:scale-95 transition-all duration-150 text-zinc-300 hover:text-white"
+              title="Voltar"
             >
-              ←
+              <ArrowLeft size={18} />
             </button>
             <div>
-              <h1 className="text-2xl font-bold">{title}</h1>
-              <p className="text-zinc-400 text-xs">{description}</p>
+              <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
+              <p className="text-zinc-500 text-xs">{description}</p>
             </div>
           </div>
 
           <button
             onClick={() => window.location.reload()}
-            className="bg-zinc-800 hover:bg-zinc-700 transition rounded-full w-10 h-10 flex items-center justify-center text-sm"
+            className="bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 active:scale-95 transition-all duration-150 rounded-full w-10 h-10 flex items-center justify-center text-zinc-400 hover:text-white"
             title="Atualizar"
           >
-            ↻
+            <RotateCw size={16} />
           </button>
         </div>
 
         {/* PESQUISA */}
-        <div className="bg-zinc-900 rounded-2xl p-3 mb-4 border border-zinc-800 relative">
+        <div className="bg-zinc-900 border border-zinc-800/80 rounded-2xl p-3 mb-4 relative flex items-center gap-2">
+          <Search size={16} className="text-zinc-500 ml-1" />
           <input
             type="text"
-            placeholder="🔎 Pesquisar Cliente"
+            placeholder="Pesquisar Cliente"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="w-full bg-black border border-zinc-700 rounded-xl p-3 pr-10 text-sm text-white placeholder-zinc-500 outline-none"
+            className="w-full bg-transparent text-sm text-white placeholder-zinc-500 outline-none"
           />
           {busca && (
             <button
               onClick={() => setBusca("")}
-              className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white text-sm"
+              className="absolute right-5 text-zinc-500 hover:text-white transition-colors"
               title="Limpar busca"
             >
-              ✕
+              <X size={16} />
             </button>
           )}
         </div>
 
         {/* CONTADORES */}
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          <button
-            onClick={() => toggleFiltro("urgentes")}
-            className={cardStyle("urgentes", "red")}
-          >
-            <p className="text-2xl font-bold text-red-400">{contagem.urgentes}</p>
-            <p className="text-xs text-zinc-400">URGENTES</p>
-          </button>
-          <button
-            onClick={() => toggleFiltro("atrasados")}
-            className={cardStyle("atrasados", "orange")}
-          >
-            <p className="text-2xl font-bold text-orange-400">{contagem.atrasados}</p>
-            <p className="text-xs text-zinc-400">ATRASADOS</p>
-          </button>
-          <button
-            onClick={() => toggleFiltro("noPrazo")}
-            className={cardStyle("noPrazo", "blue")}
-          >
-            <p className="text-2xl font-bold text-blue-400">{contagem.noPrazo}</p>
-            <p className="text-xs text-zinc-400">NO PRAZO</p>
-          </button>
-          <button
-            onClick={() => toggleFiltro("finalizados")}
-            className={cardStyle("finalizados", "green")}
-          >
-            <p className="text-2xl font-bold text-green-400">{contagem.finalizados}</p>
-            <p className="text-xs text-zinc-400">FINALIZADOS</p>
-          </button>
-        </div>
+        {carregando ? (
+          <KpiSkeleton />
+        ) : (
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <button
+              onClick={() => toggleFiltro("urgentes")}
+              className={cardStyle("urgentes")}
+            >
+              <p className="text-2xl font-bold text-red-400">{contagem.urgentes}</p>
+              <p className="text-[10px] font-semibold text-zinc-400 tracking-wider">URGENTES</p>
+            </button>
+            <button
+              onClick={() => toggleFiltro("atrasados")}
+              className={cardStyle("atrasados")}
+            >
+              <p className="text-2xl font-bold text-orange-400">{contagem.atrasados}</p>
+              <p className="text-[10px] font-semibold text-zinc-400 tracking-wider">ATRASADOS</p>
+            </button>
+            <button
+              onClick={() => toggleFiltro("noPrazo")}
+              className={cardStyle("noPrazo")}
+            >
+              <p className="text-2xl font-bold text-blue-400">{contagem.noPrazo}</p>
+              <p className="text-[10px] font-semibold text-zinc-400 tracking-wider">NO PRAZO</p>
+            </button>
+            <button
+              onClick={() => toggleFiltro("finalizados")}
+              className={cardStyle("finalizados")}
+            >
+              <p className="text-2xl font-bold text-green-400">{contagem.finalizados}</p>
+              <p className="text-[10px] font-semibold text-zinc-400 tracking-wider">FINALIZADOS</p>
+            </button>
+          </div>
+        )}
 
         <button
           onClick={() => setFiltroAtivo(null)}
-          className={`w-full rounded-xl p-3 text-center cursor-pointer transition border mb-5 ${
+          className={`w-full rounded-xl p-3 text-center cursor-pointer transition-all duration-200 border mb-5 hover:scale-[1.01] active:scale-[0.99] ${
             filtroAtivo === null
-              ? "bg-white/10 border-white/30 ring-1 ring-white/30"
-              : "bg-zinc-900 border-zinc-800 hover:bg-zinc-800"
+              ? "bg-zinc-800/80 border-zinc-700/60 ring-1 ring-zinc-700/60"
+              : "bg-zinc-900 border-zinc-800/80 hover:bg-zinc-800"
           }`}
         >
-          <p className="text-2xl font-bold text-white">{fichasFiltradas.length}</p>
-          <p className="text-xs text-zinc-400">TODOS</p>
+          <p className="text-2xl font-bold text-white">
+            {carregando ? "..." : fichasFiltradas.length}
+          </p>
+          <p className="text-[10px] font-semibold text-zinc-400 tracking-wider">TODOS</p>
         </button>
 
         {/* LISTA */}
         <div className="space-y-3">
           {carregando ? (
-            <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400">
-              Carregando pedidos...
-            </div>
+            <DashboardSkeleton />
           ) : listaExibida.length > 0 ? (
             listaExibida.map((ficha) => (
               <div
                 key={ficha.id}
-                className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-lg"
+                className="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 shadow-lg transition-all duration-200 hover:border-zinc-800/80"
               >
-                <div className="flex items-start justify-between mb-3">
-                  <p className="text-xl font-bold uppercase break-words flex-1">
+                <div className="flex items-start justify-between mb-3 gap-2">
+                  <p className="text-lg font-bold uppercase break-words flex-1 leading-tight text-white">
                     {ficha.cliente}
                   </p>
                   {ficha.entrega && categoriaDaFicha(ficha) === "atrasados" && (
-                    <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-lg flex-shrink-0 ml-2">
+                    <span className="bg-red-650/90 text-white text-[9px] font-extrabold tracking-wider px-2 py-0.5 rounded-md flex-shrink-0">
                       ATRASADO
                     </span>
                   )}
                   {ficha.entrega && categoriaDaFicha(ficha) === "urgentes" && (
-                    <span className="bg-orange-600 text-white text-xs font-bold px-2 py-1 rounded-lg flex-shrink-0 ml-2">
+                    <span className="bg-orange-655/90 text-white text-[9px] font-extrabold tracking-wider px-2 py-0.5 rounded-md flex-shrink-0">
                       URGENTE
                     </span>
                   )}
                 </div>
 
                 {ficha.vendedor && (
-                  <p className="text-sm text-zinc-400 mb-2">
-                    Vendedor: <span className="text-white font-semibold">{ficha.vendedor}</span>
+                  <p className="text-xs text-zinc-400 mb-1">
+                    Vendedor: <span className="text-white font-medium">{ficha.vendedor}</span>
                   </p>
                 )}
 
                 {ficha.designer && (
-                  <p className="text-sm text-zinc-400 mb-2">
-                    Designer: <span className="text-white font-semibold">{ficha.designer}</span>
+                  <p className="text-xs text-zinc-400 mb-1">
+                    Designer: <span className="text-white font-medium">{ficha.designer}</span>
                   </p>
                 )}
 
                 {ficha.pedido && (
-                  <p className="text-sm text-zinc-400 mb-2">
-                    Data: <span className="text-white font-semibold">{ficha.pedido.split("-").reverse().join("/")}</span>
+                  <p className="text-xs text-zinc-400 mb-1">
+                    Data Pedido: <span className="text-white font-medium">{ficha.pedido.split("-").reverse().join("/")}</span>
                   </p>
                 )}
 
                 {ficha.entrega && (
-                  <p className="text-sm text-zinc-400 mb-2">
-                    Entrega: <span className="text-white font-semibold">{ficha.entrega.split("-").reverse().join("/")}</span>
+                  <p className="text-xs text-zinc-400 mb-1.5">
+                    Data Entrega: <span className="text-white font-medium">{ficha.entrega.split("-").reverse().join("/")}</span>
                   </p>
                 )}
 
                 {ficha.observacao && (
-                  <p className="text-sm text-zinc-500 mb-4 break-words">
-                    Obs: {ficha.observacao}
-                  </p>
+                  <div className="bg-zinc-900/60 rounded-xl p-2.5 mb-4 text-xs text-zinc-400 border border-zinc-800/40">
+                    <span className="font-semibold text-zinc-500 block mb-0.5">Observação:</span>
+                    <p className="break-words">{ficha.observacao}</p>
+                  </div>
                 )}
 
-                {actionRenderer(ficha)}
+                <div className="mt-2 transition-all duration-200">
+                  {actionRenderer(ficha)}
+                </div>
               </div>
             ))
           ) : (
-            <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center text-zinc-400 text-xs">
               {busca
                 ? "Nenhum cliente encontrado"
                 : "Nenhum pedido aguardando ação deste setor"}
@@ -255,8 +287,8 @@ function SectorDashboardContent({
         </div>
 
         {atualizadoEm && (
-          <p className="text-center text-zinc-600 text-xs mt-4">
-            Atualizado em {atualizadoEm.toLocaleTimeString()}
+          <p className="text-center text-zinc-600 text-[10px] mt-6 tracking-wide">
+            ATUALIZADO EM {atualizadoEm.toLocaleTimeString()}
           </p>
         )}
       </div>
@@ -270,7 +302,7 @@ export default function SectorDashboard(props: SectorDashboardProps) {
       fallback={
         <main className="min-h-screen bg-black text-white p-3">
           <div className="max-w-md mx-auto">
-            <p className="text-zinc-400 text-center mt-12">Carregando...</p>
+            <DashboardSkeleton />
           </div>
         </main>
       }

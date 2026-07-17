@@ -1,0 +1,245 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import {
+  Menu,
+  X,
+  ChevronDown,
+  ChevronRight,
+  ShoppingBag,
+  Palette,
+  Printer,
+  Flame,
+  Scissors,
+  Shirt,
+  ClipboardCheck,
+  Truck,
+  BarChart3,
+  Settings,
+} from "lucide-react";
+import { VENDEDORES, DESIGNERS } from "../lib/helpers";
+
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+function normalizarNome(nome: string): string {
+  return nome
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase();
+}
+
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [comercialOpen, setComercialOpen] = useState(false);
+  const [designersOpen, setDesignersOpen] = useState(false);
+
+  // Close menus on path changes or click outside
+  useEffect(() => {
+    if (!isOpen) {
+      setComercialOpen(false);
+      setDesignersOpen(false);
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  const navigateTo = (url: string) => {
+    onClose();
+    router.push(url);
+  };
+
+  return (
+    <>
+      {/* Backdrop to close sidebar */}
+      <div
+        className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs transition-opacity"
+        onClick={onClose}
+      />
+
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="fixed top-16 right-4 w-52 bg-zinc-900/95 border border-zinc-800 text-white p-3 z-50 rounded-2xl shadow-2xl max-h-[85vh] overflow-y-auto animate-[slideDown_0.2s_ease-out] scrollbar-thin scrollbar-thumb-zinc-800"
+      >
+        <div className="flex items-center justify-between mb-4 pb-2 border-b border-zinc-800/60">
+          <h2 className="font-bold text-zinc-400 text-xs tracking-wider uppercase">
+            SETORES
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-zinc-500 hover:text-white transition-colors"
+            title="Fechar menu"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        <div className="space-y-1">
+          {/* COMERCIAL */}
+          <div className="relative">
+            <button
+              onClick={() => setComercialOpen(!comercialOpen)}
+              className={`w-full flex items-center justify-between py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
+                comercialOpen ? "bg-zinc-800/50 text-white" : "text-zinc-300 hover:text-white"
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <ShoppingBag size={14} className="text-zinc-400" />
+                COMERCIAL
+              </span>
+              {comercialOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </button>
+
+            {comercialOpen && (
+              <div className="mt-1 ml-2 pl-2 border-l border-zinc-800 space-y-1 animate-[slideDown_0.15s_ease-out]">
+                <button
+                  onClick={() => navigateTo("/comercial")}
+                  className="block w-full text-left py-1.5 px-2 rounded-lg text-[11px] text-blue-400 hover:bg-zinc-800/40 hover:text-blue-300 font-medium transition"
+                >
+                  ▸ Dashboard Geral
+                </button>
+                {VENDEDORES.map((vendedor) => (
+                  <button
+                    key={vendedor}
+                    onClick={() => navigateTo(`/comercial?vendedor=${vendedor}`)}
+                    className="block w-full text-left py-1.5 px-2 rounded-lg text-[11px] text-zinc-400 hover:bg-zinc-800/40 hover:text-white transition"
+                  >
+                    ▸ {vendedor}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* DESIGNERS */}
+          <div className="relative">
+            <button
+              onClick={() => setDesignersOpen(!designersOpen)}
+              className={`w-full flex items-center justify-between py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
+                designersOpen ? "bg-zinc-800/50 text-white" : "text-zinc-300 hover:text-white"
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <Palette size={14} className="text-zinc-400" />
+                DESIGNERS
+              </span>
+              {designersOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </button>
+
+            {designersOpen && (
+              <div className="mt-1 ml-2 pl-2 border-l border-zinc-800 space-y-1 animate-[slideDown_0.15s_ease-out]">
+                <button
+                  onClick={() => navigateTo("/arte")}
+                  className="block w-full text-left py-1.5 px-2 rounded-lg text-[11px] text-amber-400 hover:bg-zinc-800/40 hover:text-amber-300 font-medium transition"
+                >
+                  ▸ Geral Arte
+                </button>
+                {DESIGNERS.map((designer) => (
+                  <button
+                    key={designer}
+                    onClick={() => navigateTo(`/arte?designer=${normalizarNome(designer)}`)}
+                    className="block w-full text-left py-1.5 px-2 rounded-lg text-[11px] text-zinc-400 hover:bg-zinc-800/40 hover:text-white transition"
+                  >
+                    ▸ {designer}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* IMPRESSÃO */}
+          <button
+            onClick={() => navigateTo("/impressao")}
+            className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
+              pathname === "/impressao" ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            <Printer size={14} className={pathname === "/impressao" ? "text-cyan-400" : "text-zinc-400"} />
+            IMPRESSÃO
+          </button>
+
+          {/* PRENSA */}
+          <button
+            onClick={() => navigateTo("/prensa")}
+            className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
+              pathname === "/prensa" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            <Flame size={14} className={pathname === "/prensa" ? "text-amber-400" : "text-zinc-400"} />
+            PRENSA
+          </button>
+
+          {/* CORTE */}
+          <button
+            onClick={() => navigateTo("/corte")}
+            className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
+              pathname === "/corte" ? "bg-orange-500/10 text-orange-400 border border-orange-500/20" : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            <Scissors size={14} className={pathname === "/corte" ? "text-orange-400" : "text-zinc-400"} />
+            CORTE
+          </button>
+
+          {/* COSTURA */}
+          <button
+            onClick={() => navigateTo("/costura")}
+            className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
+              pathname === "/costura" ? "bg-pink-500/10 text-pink-400 border border-pink-500/20" : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            <Shirt size={14} className={pathname === "/costura" ? "text-pink-400" : "text-zinc-400"} />
+            COSTURA
+          </button>
+
+          {/* CONFERÊNCIA */}
+          <button
+            onClick={() => navigateTo("/conferencia")}
+            className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
+              pathname === "/conferencia" ? "bg-teal-500/10 text-teal-400 border border-teal-500/20" : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            <ClipboardCheck size={14} className={pathname === "/conferencia" ? "text-teal-400" : "text-zinc-400"} />
+            CONFERÊNCIA
+          </button>
+
+          {/* ENVIO */}
+          <button
+            onClick={() => navigateTo("/envio")}
+            className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
+              pathname === "/envio" ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            <Truck size={14} className={pathname === "/envio" ? "text-indigo-400" : "text-zinc-400"} />
+            ENVIO / RETIRADA
+          </button>
+
+          {/* RELATÓRIOS */}
+          <button
+            onClick={() => navigateTo("/relatorios")}
+            className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
+              pathname === "/relatorios" ? "bg-blue-500/20 text-blue-400 font-bold border border-blue-500/30" : "text-blue-400 font-bold hover:text-blue-300"
+            }`}
+          >
+            <BarChart3 size={14} />
+            RELATÓRIOS
+          </button>
+
+          {/* ADMINISTRAÇÃO */}
+          <button
+            onClick={() => navigateTo("/adm")}
+            className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
+              pathname === "/adm" ? "bg-zinc-700 text-white" : "text-zinc-300 hover:text-white"
+            }`}
+          >
+            <Settings size={14} className="text-zinc-400" />
+            ADMINISTRAÇÃO
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}

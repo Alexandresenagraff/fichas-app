@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+import { Plus, Search, X, Calendar, Clipboard, User, Edit3, Check, Save } from "lucide-react";
 
 import app from "../../firebase/config";
-
 import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc } from "firebase/firestore";
 
 import {
@@ -17,6 +17,7 @@ import {
   type Etapa,
   type HistoricoAprovacao,
 } from "../lib/helpers";
+import { DashboardSkeleton } from "../components/Skeleton";
 
 const db = getFirestore(app);
 
@@ -57,7 +58,7 @@ function ComercialContent() {
         setCarregando(false);
       },
       (error) => {
-        console.log(error);
+        console.error("Erro onSnapshot comercial:", error);
         setCarregando(false);
       }
     );
@@ -121,14 +122,14 @@ function ComercialContent() {
       alert("Ficha salva!");
       setCliente("");
       setEmail("");
-      setVendedor("");
+      setVendedor(vendedorParam); // Reset back to default seller parameter if present
       setObservacao("");
       setDesigner("");
       setPedido("");
       setEntrega("");
       setModalAberto(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Erro ao salvar");
     }
   }
@@ -161,7 +162,7 @@ function ComercialContent() {
       setFichaAlteracao(null);
       setModalAlteracao(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Erro ao solicitar alteração");
     }
   }
@@ -173,7 +174,7 @@ function ComercialContent() {
       const novaMensagem: HistoricoAprovacao = {
         dataHora: formatarDataHora(),
         autor: vendedorParam || ficha.vendedor || "Vendedor",
-        mensagem: "Artwork approved.",
+        mensagem: "Arte aprovada comercialmente.",
         tipo: "aprovacao",
       };
 
@@ -185,7 +186,7 @@ function ComercialContent() {
         historicoAprovacao: [...historico, novaMensagem],
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Erro ao aprovar arte");
     }
   }
@@ -196,27 +197,33 @@ function ComercialContent() {
     setModalAlteracao(true);
   }
 
-  const pedidosDoVendedor = vendedorParam
-    ? pedidos.filter((ficha) => ficha.vendedor === vendedorParam)
-    : pedidos;
+  const pedidosDoVendedor = useMemo(() => {
+    return vendedorParam
+      ? pedidos.filter((ficha) => ficha.vendedor === vendedorParam)
+      : pedidos;
+  }, [pedidos, vendedorParam]);
 
-  const pedidosFiltrados = pedidosDoVendedor.filter((ficha) => {
+  const pedidosFiltrados = useMemo(() => {
     const termo = busca.trim().toLowerCase();
-    const matchBusca =
-      !termo || (ficha.cliente || "").toLowerCase().includes(termo);
-    const matchEtapa = etapaDaFicha(ficha) === abaAtiva;
-    return matchBusca && matchEtapa;
-  });
+    return pedidosDoVendedor.filter((ficha) => {
+      const matchBusca =
+        !termo || (ficha.cliente || "").toLowerCase().includes(termo);
+      const matchEtapa = etapaDaFicha(ficha) === abaAtiva;
+      return matchBusca && matchEtapa;
+    });
+  }, [pedidosDoVendedor, busca, abaAtiva]);
 
-  const contagens = ETAPAS.reduce(
-    (total, etapa) => ({
-      ...total,
-      [etapa.id]: pedidosDoVendedor.filter(
-        (ficha) => etapaDaFicha(ficha) === etapa.id
-      ).length,
-    }),
-    {} as Record<Etapa, number>
-  );
+  const contagens = useMemo(() => {
+    return ETAPAS.reduce(
+      (total, etapa) => ({
+        ...total,
+        [etapa.id]: pedidosDoVendedor.filter(
+          (ficha) => etapaDaFicha(ficha) === etapa.id
+        ).length,
+      }),
+      {} as Record<Etapa, number>
+    );
+  }, [pedidosDoVendedor]);
 
   return (
     <main className="min-h-screen bg-black p-3 text-white">
@@ -224,8 +231,8 @@ function ComercialContent() {
         {/* HEADER */}
         <div className="flex items-center justify-between mt-5 mb-5">
           <div>
-            <h1 className="text-2xl font-bold">COMERCIAL</h1>
-            <p className="text-zinc-400 text-xs">
+            <h1 className="text-2xl font-bold tracking-tight">COMERCIAL</h1>
+            <p className="text-zinc-500 text-xs mt-0.5">
               {vendedorParam
                 ? `Dashboard de ${vendedorParam}`
                 : "Acompanhamento de pedidos"}
@@ -233,28 +240,29 @@ function ComercialContent() {
           </div>
           <button
             onClick={() => setModalAberto(true)}
-            className="bg-blue-600 hover:bg-blue-700 transition rounded-full px-4 py-2 text-sm font-bold"
+            className="bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-250 rounded-xl px-4 py-2 text-xs font-bold text-white flex items-center gap-1.5 shadow-lg"
           >
-            + NOVO PEDIDO
+            <Plus size={14} /> NOVO PEDIDO
           </button>
         </div>
 
         {/* BUSCA */}
-        <div className="bg-zinc-900 rounded-2xl p-3 mb-4 border border-zinc-800 relative">
+        <div className="bg-zinc-900 border border-zinc-800/80 rounded-2xl p-3 mb-4 relative flex items-center gap-2">
+          <Search size={16} className="text-zinc-500 ml-1" />
           <input
             type="text"
-            placeholder="🔎 Pesquisar Cliente"
+            placeholder="Pesquisar Cliente"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="w-full bg-black border border-zinc-700 rounded-xl p-3 pr-10 text-sm text-white placeholder-zinc-500 outline-none"
+            className="w-full bg-transparent text-sm text-white placeholder-zinc-500 outline-none"
           />
           {busca && (
             <button
               onClick={() => setBusca("")}
-              className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white text-sm"
+              className="absolute right-5 text-zinc-500 hover:text-white transition-colors"
               title="Limpar busca"
             >
-              ✕
+              <X size={16} />
             </button>
           )}
         </div>
@@ -267,12 +275,14 @@ function ComercialContent() {
               <button
                 key={etapa.id}
                 onClick={() => setAbaAtiva(etapa.id)}
-                className={`rounded-xl py-2.5 text-[10px] font-bold transition text-center ${
-                  ativo ? etapa.ativo : etapa.inativo
+                className={`rounded-xl py-2 px-1 text-[9px] font-bold border transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
+                  ativo 
+                    ? "bg-zinc-800 border-zinc-700 text-white" 
+                    : "bg-zinc-900 border-zinc-800/85 text-zinc-400 hover:bg-zinc-850 hover:text-zinc-300"
                 }`}
               >
-                {etapa.label}
-                <span className="block text-xs mt-0.5">
+                <span className="block truncate">{etapa.label}</span>
+                <span className="block text-xs mt-0.5 text-zinc-500">
                   ({contagens[etapa.id]})
                 </span>
               </button>
@@ -283,77 +293,78 @@ function ComercialContent() {
         {/* LISTA */}
         <div className="space-y-3">
           {carregando ? (
-            <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400">
-              Carregando pedidos...
-            </div>
+            <DashboardSkeleton />
           ) : pedidosFiltrados.length > 0 ? (
             pedidosFiltrados.map((ficha) => (
               <div
                 key={ficha.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 shadow-lg"
+                className="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 shadow-lg transition-all duration-200 hover:border-zinc-800/80"
               >
-                <div className="flex items-start justify-between mb-2">
-                  <p className="text-lg font-bold uppercase break-words flex-1">
+                <div className="flex items-start justify-between mb-3 gap-2">
+                  <p className="text-lg font-bold uppercase break-words flex-1 leading-tight text-white">
                     {ficha.cliente}
                   </p>
-                  <span className="text-[10px] font-bold px-2 py-1 rounded-lg bg-zinc-800 text-zinc-400 flex-shrink-0 ml-2">
+                  <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-400 flex-shrink-0">
                     {ficha.designer || "—"}
                   </span>
                 </div>
 
                 {ficha.pedido && (
-                  <p className="text-xs text-zinc-400 mb-1">
+                  <p className="text-xs text-zinc-400 mb-1 flex items-center gap-1.5">
+                    <Calendar size={13} className="text-zinc-500" />
                     Pedido:{" "}
-                    <span className="text-white font-semibold">
+                    <span className="text-white font-medium">
                       {ficha.pedido.split("-").reverse().join("/")}
                     </span>
                   </p>
                 )}
 
                 {ficha.entrega && (
-                  <p className="text-xs text-zinc-400 mb-1">
+                  <p className="text-xs text-zinc-400 mb-1 flex items-center gap-1.5">
+                    <Calendar size={13} className="text-zinc-500" />
                     Entrega:{" "}
-                    <span className="text-white font-semibold">
+                    <span className="text-white font-medium">
                       {ficha.entrega.split("-").reverse().join("/")}
                     </span>
                   </p>
                 )}
 
                 {ficha.vendedor && (
-                  <p className="text-xs text-zinc-400 mb-2">
+                  <p className="text-xs text-zinc-400 mb-2 flex items-center gap-1.5">
+                    <User size={13} className="text-zinc-500" />
                     Vendedor:{" "}
-                    <span className="text-white font-semibold">
+                    <span className="text-white font-medium">
                       {ficha.vendedor}
                     </span>
                   </p>
                 )}
 
                 {ficha.historicoAprovacao && ficha.historicoAprovacao.length > 0 && (
-                  <div className="bg-black/50 rounded-xl p-3 mb-3 space-y-2 max-h-40 overflow-y-auto">
+                  <div className="bg-black/50 border border-zinc-900 rounded-xl p-3.5 mt-3 mb-3 space-y-2 max-h-40 overflow-y-auto scrollbar-thin">
                     {ficha.historicoAprovacao.map((item, index) => (
-                      <div key={index} className="text-xs border-l-2 border-zinc-600 pl-2">
-                        <p className="text-zinc-500 mb-0.5">
+                      <div key={index} className="text-xs border-l-2 border-zinc-700 pl-2.5">
+                        <p className="text-[10px] text-zinc-500 mb-0.5">
                           {item.dataHora} — {item.autor}
                         </p>
-                        <p className="text-zinc-200">{item.mensagem}</p>
+                        <p className="text-zinc-300">{item.mensagem}</p>
                       </div>
                     ))}
                   </div>
                 )}
 
                 {etapaDaFicha(ficha) === "aguardandoAprovacao" && (
-                  <div className="grid grid-cols-2 gap-2 mt-2">
+                  <div className="grid grid-cols-2 gap-2 mt-3 pt-2 border-t border-zinc-900/60">
                     <button
                       onClick={() => abrirModalAlteracao(ficha)}
-                      className="bg-red-600 hover:bg-red-700 transition rounded-xl p-2 text-xs font-bold"
+                      className="bg-red-650/15 border border-red-900/50 hover:bg-red-650/25 active:scale-95 transition-all duration-200 text-red-400 rounded-xl p-2.5 text-xs font-bold cursor-pointer"
                     >
                       SOLICITAR ALTERAÇÃO
                     </button>
                     <button
                       onClick={() => aprovarArte(ficha)}
-                      className="bg-green-600 hover:bg-green-700 transition rounded-xl p-2 text-xs font-bold"
+                      className="bg-green-650/15 border border-green-900/50 hover:bg-green-650/25 active:scale-95 transition-all duration-200 text-green-400 rounded-xl p-2.5 text-xs font-bold cursor-pointer flex items-center justify-center gap-1"
                     >
-                      APROVAR ARTE
+                      <Check size={13} /> APROVAR ARTE
                     </button>
                   </div>
                 )}
@@ -362,7 +373,8 @@ function ComercialContent() {
                   <a
                     href={ficha.pdfLink}
                     target="_blank"
-                    className="block bg-blue-800 hover:bg-blue-900 transition text-center rounded-xl p-2 text-xs font-bold mt-2"
+                    rel="noreferrer"
+                    className="block bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 text-center rounded-xl p-2.5 text-xs font-bold mt-3 text-blue-400 hover:text-blue-300"
                   >
                     📄 VER PDF
                   </a>
@@ -370,7 +382,7 @@ function ComercialContent() {
               </div>
             ))
           ) : (
-            <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center text-zinc-400 text-xs">
               {busca
                 ? "Nenhum cliente encontrado"
                 : `Nenhum pedido em ${ETAPAS.find((e) => e.id === abaAtiva)?.label}`}
@@ -386,16 +398,16 @@ function ComercialContent() {
           onClick={() => setModalAberto(false)}
         >
           <div
-            className="bg-zinc-900 rounded-3xl shadow-2xl p-5 mt-10 border border-zinc-800 w-full max-w-md"
+            className="bg-zinc-900 rounded-3xl shadow-2xl p-6 mt-10 border border-zinc-800/80 w-full max-w-md animate-[slideDown_0.2s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold">NOVO PEDIDO</h2>
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-xl font-extrabold tracking-tight">NOVO PEDIDO</h2>
               <button
                 onClick={() => setModalAberto(false)}
-                className="text-zinc-400 hover:text-white text-xl"
+                className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
               >
-                ✕
+                <X size={20} />
               </button>
             </div>
 
@@ -405,21 +417,21 @@ function ComercialContent() {
                 placeholder="Nome do Cliente"
                 value={cliente}
                 onChange={(e) => setCliente(e.target.value)}
-                className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
+                className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 text-white"
               />
 
               <input
-                type="email"
+                type="text"
                 placeholder="Email, Tel ou Cód cliente"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
+                className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 text-white"
               />
 
               <select
                 value={vendedor}
                 onChange={(e) => setVendedor(e.target.value)}
-                className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none text-white"
+                className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs outline-none text-white focus:border-zinc-500"
               >
                 <option value="">Selecione o Vendedor</option>
                 {VENDEDORES.map((nome) => (
@@ -434,13 +446,13 @@ function ComercialContent() {
                 placeholder="Observação"
                 value={observacao}
                 onChange={(e) => setObservacao(e.target.value)}
-                className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
+                className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 text-white"
               />
 
               <select
                 value={designer}
                 onChange={(e) => setDesigner(e.target.value)}
-                className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none text-white"
+                className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs outline-none text-white focus:border-zinc-500"
               >
                 <option value="">Selecione o Designer</option>
                 {DESIGNERS.map((nome) => (
@@ -451,17 +463,17 @@ function ComercialContent() {
               </select>
 
               <div>
-                <label className="text-sm text-zinc-400">Data do Pedido</label>
+                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-1">Data do Pedido</label>
                 <input
                   type="date"
                   value={pedido}
                   onChange={(e) => setPedido(e.target.value)}
-                  className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
+                  className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs text-white outline-none"
                 />
               </div>
 
               <div>
-                <label className="text-sm text-zinc-400">Data da Entrega *</label>
+                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-1">Data da Entrega *</label>
                 <input
                   type="date"
                   value={entrega}
@@ -471,13 +483,13 @@ function ComercialContent() {
                     });
                     setEntrega(valor);
                   }}
-                  className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none"
+                  className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs text-white outline-none"
                 />
               </div>
 
               <button
                 onClick={salvarFicha}
-                className="w-full bg-blue-600 hover:bg-blue-700 transition rounded-2xl p-3 font-bold"
+                className="w-full bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl p-3 text-xs font-bold text-white shadow-lg cursor-pointer"
               >
                 SALVAR
               </button>
@@ -493,21 +505,21 @@ function ComercialContent() {
           onClick={() => setModalAlteracao(false)}
         >
           <div
-            className="bg-zinc-900 rounded-3xl shadow-2xl p-5 mt-10 border border-zinc-800 w-full max-w-md"
+            className="bg-zinc-900 rounded-3xl shadow-2xl p-6 mt-10 border border-zinc-800 w-full max-w-md animate-[slideDown_0.2s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold">SOLICITAR ALTERAÇÃO</h2>
+              <h2 className="text-lg font-bold tracking-tight">SOLICITAR ALTERAÇÃO</h2>
               <button
                 onClick={() => setModalAlteracao(false)}
-                className="text-zinc-400 hover:text-white text-xl"
+                className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
               >
-                ✕
+                <X size={20} />
               </button>
             </div>
 
-            <p className="text-sm text-zinc-400 mb-3">
-              Cliente: <span className="text-white font-bold">{fichaAlteracao.cliente}</span>
+            <p className="text-xs text-zinc-400 mb-3 bg-black/35 p-2.5 rounded-xl border border-zinc-800">
+              Cliente: <span className="text-white font-extrabold">{fichaAlteracao.cliente}</span>
             </p>
 
             <textarea
@@ -515,12 +527,12 @@ function ComercialContent() {
               value={mensagemAlteracao}
               onChange={(e) => setMensagemAlteracao(e.target.value)}
               rows={5}
-              className="w-full bg-black border border-zinc-700 rounded-2xl p-3 outline-none text-sm resize-none"
+              className="w-full bg-black border border-zinc-750 rounded-xl p-3 outline-none text-xs text-white resize-none focus:border-zinc-500"
             />
 
             <button
               onClick={() => solicitarAlteracao(fichaAlteracao)}
-              className="w-full bg-red-600 hover:bg-red-700 transition rounded-2xl p-3 font-bold mt-4"
+              className="w-full bg-red-650 hover:bg-red-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl p-3 text-xs font-bold text-white shadow-lg cursor-pointer mt-4"
             >
               ENVIAR PARA O DESIGNER
             </button>
@@ -536,7 +548,7 @@ export default function Comercial() {
     <Suspense
       fallback={
         <main className="min-h-screen bg-black p-3 text-white">
-          <p className="text-zinc-400 text-center mt-12">Carregando...</p>
+          <DashboardSkeleton />
         </main>
       }
     >

@@ -1,11 +1,9 @@
 "use client";
 
+import { Truck, Store } from "lucide-react";
 import app from "../../firebase/config";
-
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
-
 import SectorDashboard from "../components/SectorDashboard";
-
 import { Ficha, formatarDataHora } from "../lib/helpers";
 
 const db = getFirestore(app);
@@ -24,7 +22,7 @@ async function marcarEnvio(id: string) {
       entregaData: formatarDataHora(),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     alert("Erro ao atualizar");
   }
 }
@@ -38,7 +36,7 @@ async function marcarRetirada(id: string) {
       entregaData: formatarDataHora(),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     alert("Erro ao atualizar");
   }
 }
@@ -55,15 +53,15 @@ export default function Envio() {
         <div className="grid grid-cols-2 gap-2">
           <button
             onClick={() => marcarEnvio(ficha.id || "")}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 transition rounded-xl py-3 text-sm font-bold"
+            className="w-full bg-indigo-600 hover:bg-indigo-755 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 rounded-xl py-3 text-xs font-bold text-white flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
           >
-            🚚 ENVIO
+            <Truck size={14} /> ENVIO
           </button>
           <button
             onClick={() => marcarRetirada(ficha.id || "")}
-            className="w-full bg-green-600 hover:bg-green-700 transition rounded-xl py-3 text-sm font-bold"
+            className="w-full bg-green-600 hover:bg-green-755 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 rounded-xl py-3 text-xs font-bold text-white flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
           >
-            🏪 RETIRADA
+            <Store size={14} /> RETIRADA
           </button>
         </div>
       )}

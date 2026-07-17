@@ -1,11 +1,9 @@
 "use client";
 
+import { Check } from "lucide-react";
 import app from "../../firebase/config";
-
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
-
 import SectorDashboard from "../components/SectorDashboard";
-
 import { Ficha, formatarDataHora } from "../lib/helpers";
 
 const db = getFirestore(app);
@@ -22,7 +20,7 @@ async function marcarPrensagemConcluida(id: string) {
       prensaData: formatarDataHora(),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     alert("Erro ao atualizar");
   }
 }
@@ -38,9 +36,9 @@ export default function Prensa() {
       actionRenderer={(ficha: Ficha) => (
         <button
           onClick={() => marcarPrensagemConcluida(ficha.id || "")}
-          className="w-full bg-amber-600 hover:bg-amber-700 transition rounded-xl py-3 text-sm font-bold"
+          className="w-full bg-amber-600 hover:bg-amber-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 rounded-xl py-3 text-xs font-bold text-white flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
         >
-          ✅ PRENSAGEM CONCLUÍDA
+          <Check size={14} /> PRENSAGEM CONCLUÍDA
         </button>
       )}
     />

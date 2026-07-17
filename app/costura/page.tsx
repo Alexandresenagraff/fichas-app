@@ -1,11 +1,9 @@
 "use client";
 
+import { Check } from "lucide-react";
 import app from "../../firebase/config";
-
 import { getFirestore, doc, updateDoc } from "firebase/firestore";
-
 import SectorDashboard from "../components/SectorDashboard";
-
 import { Ficha, formatarDataHora } from "../lib/helpers";
 
 const db = getFirestore(app);
@@ -26,7 +24,7 @@ async function selecionarCostureiro(
       costureiroCelina: celina,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     alert("Erro ao atualizar");
   }
 }
@@ -38,7 +36,7 @@ async function marcarCosturaConcluida(id: string) {
       costuraData: formatarDataHora(),
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     alert("Erro ao atualizar");
   }
 }
@@ -56,20 +54,20 @@ export default function Costura() {
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => selecionarCostureiro(ficha.id || "", true, false)}
-              className={`rounded-xl py-2 text-xs font-bold transition ${
+              className={`rounded-xl py-2 text-xs font-bold transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] cursor-pointer ${
                 ficha.costureiroPaulo
-                  ? "bg-pink-600 text-white"
-                  : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                  ? "bg-pink-600 text-white shadow-md"
+                  : "bg-zinc-900 border border-zinc-800 text-zinc-400 hover:bg-zinc-800"
               }`}
             >
               PAULO
             </button>
             <button
               onClick={() => selecionarCostureiro(ficha.id || "", false, true)}
-              className={`rounded-xl py-2 text-xs font-bold transition ${
+              className={`rounded-xl py-2 text-xs font-bold transition-all duration-200 hover:scale-[1.03] active:scale-[0.97] cursor-pointer ${
                 ficha.costureiroCelina
-                  ? "bg-pink-600 text-white"
-                  : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                  ? "bg-pink-600 text-white shadow-md"
+                  : "bg-zinc-900 border border-zinc-800 text-zinc-400 hover:bg-zinc-800"
               }`}
             >
               CELINA
@@ -78,9 +76,9 @@ export default function Costura() {
 
           <button
             onClick={() => marcarCosturaConcluida(ficha.id || "")}
-            className="w-full bg-pink-600 hover:bg-pink-700 transition rounded-xl py-3 text-sm font-bold"
+            className="w-full bg-pink-600 hover:bg-pink-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 rounded-xl py-3 text-xs font-bold text-white flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
           >
-            ✅ COSTURA CONCLUÍDA
+            <Check size={14} /> COSTURA CONCLUÍDA
           </button>
         </div>
       )}

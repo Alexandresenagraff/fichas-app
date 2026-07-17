@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowLeft, Plus, Search, X, Calendar, FileText, Check, Undo2 } from "lucide-react";
 
 import app from "../../firebase/config";
-
 import {
   getFirestore,
   collection,
@@ -20,6 +20,7 @@ import {
   type Etapa,
   type HistoricoAprovacao,
 } from "../lib/helpers";
+import { DashboardSkeleton } from "../components/Skeleton";
 
 const db = getFirestore(app);
 
@@ -62,7 +63,7 @@ function ArteContent() {
         setCarregando(false);
       },
       (error) => {
-        console.log(error);
+        console.error("Erro onSnapshot arte:", error);
         setCarregando(false);
       }
     );
@@ -89,7 +90,7 @@ function ArteContent() {
         arteData,
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Erro ao atualizar");
     }
   }
@@ -117,7 +118,7 @@ function ArteContent() {
         historicoAprovacao: [...historico, novaMensagem],
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Erro ao atualizar");
     }
   }
@@ -127,7 +128,7 @@ function ArteContent() {
       const fichaRef = doc(db, "fichas", id);
       await updateDoc(fichaRef, { arte: false, arteAprovada: false, exportacao: false, arteData: "" });
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Erro ao atualizar");
     }
   }
@@ -148,28 +149,36 @@ function ArteContent() {
       });
       alert("Exportação confirmada com sucesso!");
     } catch (error) {
-      console.log(error);
+      console.error(error);
       alert("Erro ao confirmar exportação");
     }
   }
 
-  const fichasFiltradas = fichas.filter((ficha) => {
-    const matchBusca = ficha.cliente?.toLowerCase().includes(busca.toLowerCase());
-    const matchDesigner = !designerAtivo || ficha.designer?.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === designerAtivo;
-    return matchBusca && matchDesigner;
-  });
+  // Memoized filters for UI performance optimization
+  const fichasFiltradas = useMemo(() => {
+    const termo = busca.trim().toLowerCase();
+    return fichas.filter((ficha) => {
+      const matchBusca = !termo || (ficha.cliente || "").toLowerCase().includes(termo);
+      const matchDesigner = !designerAtivo || ficha.designer?.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === designerAtivo;
+      return matchBusca && matchDesigner;
+    });
+  }, [fichas, busca, designerAtivo]);
 
-  const arteParaCriar = fichasFiltradas.filter((f) => etapaDaFicha(f) === "arteParaCriar");
-  const alteracaoSolicitada = fichasFiltradas.filter((f) => etapaDaFicha(f) === "alteracaoSolicitada");
-  const aguardandoAprovacao = fichasFiltradas.filter(
-    (f) => etapaDaFicha(f) === "aguardandoAprovacao" || etapaDaFicha(f) === "exportacao"
-  );
+  const arteParaCriar = useMemo(() => fichasFiltradas.filter((f) => etapaDaFicha(f) === "arteParaCriar"), [fichasFiltradas]);
+  const alteracaoSolicitada = useMemo(() => fichasFiltradas.filter((f) => etapaDaFicha(f) === "alteracaoSolicitada"), [fichasFiltradas]);
+  const aguardandoAprovacao = useMemo(() => {
+    return fichasFiltradas.filter(
+      (f) => etapaDaFicha(f) === "aguardandoAprovacao" || etapaDaFicha(f) === "exportacao"
+    );
+  }, [fichasFiltradas]);
 
-  const secoes: { id: SecaoArte; label: string; lista: Ficha[]; cor: string }[] = [
-    { id: "arteParaCriar", label: "ARTE P/ CRIAR", lista: arteParaCriar, cor: "text-amber-400" },
-    { id: "alteracaoSolicitada", label: "ALTERAÇÃO SOLICITADA", lista: alteracaoSolicitada, cor: "text-red-400" },
-    { id: "aguardandoAprovacao", label: "EXPORTANDO", lista: aguardandoAprovacao, cor: "text-yellow-400" },
-  ];
+  const secoes = useMemo(() => {
+    return [
+      { id: "arteParaCriar" as const, label: "ARTE P/ CRIAR", lista: arteParaCriar, cor: "text-amber-400" },
+      { id: "alteracaoSolicitada" as const, label: "ALTERAÇÃO SOLICITADA", lista: alteracaoSolicitada, cor: "text-red-400" },
+      { id: "aguardandoAprovacao" as const, label: "EXPORTANDO", lista: aguardandoAprovacao, cor: "text-yellow-400" },
+    ];
+  }, [arteParaCriar, alteracaoSolicitada, aguardandoAprovacao]);
 
   function renderSecao(ficha: Ficha) {
     const etapa = etapaDaFicha(ficha);
@@ -177,57 +186,58 @@ function ArteContent() {
     return (
       <div
         key={ficha.id}
-        className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-lg"
+        className="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 shadow-lg transition-all duration-200 hover:border-zinc-800/80"
       >
-        <div className="flex items-start justify-between mb-3">
-          <p className="text-xl font-bold uppercase break-words flex-1">
+        <div className="flex items-start justify-between mb-3 gap-2">
+          <p className="text-lg font-bold uppercase break-words flex-1 leading-tight text-white">
             {ficha.cliente}
           </p>
           {estaAtrasado(ficha) && (
-            <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-lg flex-shrink-0 ml-2">
+            <span className="bg-red-655 text-white text-[9px] font-extrabold tracking-wider px-2 py-0.5 rounded-md flex-shrink-0">
               ATRASADO
             </span>
           )}
         </div>
 
         {ficha.designer && (
-          <p className="text-sm text-zinc-400 mb-2">
-            Designer: <span className="text-white font-semibold">{ficha.designer}</span>
+          <p className="text-xs text-zinc-400 mb-1">
+            Designer: <span className="text-white font-medium">{ficha.designer}</span>
           </p>
         )}
 
         {ficha.vendedor && (
-          <p className="text-sm text-zinc-400 mb-2">
-            Vendedor: <span className="text-white font-semibold">{ficha.vendedor}</span>
+          <p className="text-xs text-zinc-400 mb-1">
+            Vendedor: <span className="text-white font-medium">{ficha.vendedor}</span>
           </p>
         )}
 
         {ficha.pedido && (
-          <p className="text-sm text-zinc-400 mb-2">
-            Data: <span className="text-white font-semibold">{ficha.pedido.split("-").reverse().join("/")}</span>
+          <p className="text-xs text-zinc-400 mb-1">
+            Data Pedido: <span className="text-white font-medium">{ficha.pedido.split("-").reverse().join("/")}</span>
           </p>
         )}
 
         {ficha.entrega && (
-          <p className="text-sm text-zinc-400 mb-2">
-            Entrega: <span className="text-white font-semibold">{ficha.entrega.split("-").reverse().join("/")}</span>
+          <p className="text-xs text-zinc-400 mb-2">
+            Data Entrega: <span className="text-white font-medium">{ficha.entrega.split("-").reverse().join("/")}</span>
           </p>
         )}
 
         {ficha.observacao && (
-          <p className="text-sm text-zinc-500 mb-4 break-words">
-            Obs: {ficha.observacao}
-          </p>
+          <div className="bg-zinc-900/60 rounded-xl p-2.5 mb-3 text-xs text-zinc-400 border border-zinc-800/40">
+            <span className="font-semibold text-zinc-500 block mb-0.5">Observação:</span>
+            <p className="break-words">{ficha.observacao}</p>
+          </div>
         )}
 
         {ficha.historicoAprovacao && ficha.historicoAprovacao.length > 0 && (
-          <div className="bg-black/50 rounded-xl p-3 mb-4 space-y-2 max-h-48 overflow-y-auto">
+          <div className="bg-black/50 border border-zinc-900 rounded-xl p-3 mb-4 space-y-2 max-h-40 overflow-y-auto scrollbar-thin">
             {ficha.historicoAprovacao.map((item, index) => (
-              <div key={index} className="text-xs border-l-2 border-zinc-600 pl-2">
-                <p className="text-zinc-500 mb-0.5">
+              <div key={index} className="text-xs border-l-2 border-zinc-700 pl-2.5">
+                <p className="text-[9px] text-zinc-500 mb-0.5">
                   {item.dataHora} — {item.autor}
                 </p>
-                <p className="text-zinc-200">{item.mensagem}</p>
+                <p className="text-zinc-300">{item.mensagem}</p>
               </div>
             ))}
           </div>
@@ -238,42 +248,44 @@ function ArteContent() {
             <a
               href={ficha.pdfLink}
               target="_blank"
-              className="block bg-blue-800 hover:bg-blue-900 transition text-center rounded-xl p-3 text-sm font-bold"
+              rel="noreferrer"
+              className="block bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 text-center rounded-xl p-2.5 text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center justify-center gap-1.5"
             >
-              📄 VER MOLDE (PDF)
+              <FileText size={14} /> VER MOLDE (PDF)
             </a>
           ) : (
-            <p className="text-xs text-zinc-600 text-center bg-zinc-900 rounded-xl p-3">
+            <div className="text-[11px] text-zinc-500 text-center bg-zinc-900/40 border border-zinc-900 rounded-xl p-3 font-medium">
               Molde ainda não disponível
-            </p>
+            </div>
           )}
         </div>
 
         {etapa === "arteParaCriar" && (
           <button
             onClick={() => concluirArte(ficha.id || "")}
-            className="w-full bg-lime-600 hover:bg-lime-700 transition rounded-xl py-3 text-sm font-bold"
+            className="w-full bg-lime-600 hover:bg-lime-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-white rounded-xl py-3 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
           >
-            ✅ ARTE APROVADA
+            <Check size={15} /> CONCLUIR ARTE
           </button>
         )}
 
         {etapa === "alteracaoSolicitada" && (
           <button
             onClick={() => concluirAlteracao(ficha)}
-            className="w-full bg-red-600 hover:bg-red-700 transition rounded-xl py-3 text-sm font-bold"
+            className="w-full bg-red-600 hover:bg-red-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-white rounded-xl py-3 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
           >
-            ✅ ALTERAÇÃO CONCLUÍDA
+            <Check size={15} /> ALTERAÇÃO CONCLUÍDA
           </button>
         )}
 
         {(etapa === "aguardandoAprovacao" || etapa === "exportacao") && (
-          <div className="space-y-3">
+          <div className="space-y-3.5 pt-1">
             <button
               disabled
-              className="w-full bg-yellow-600 text-white rounded-xl py-3 text-sm font-bold opacity-90 cursor-default"
+              className="w-full bg-yellow-600/10 border border-yellow-500/20 text-yellow-400 rounded-xl py-3 text-xs font-bold cursor-default flex items-center justify-center gap-1.5"
             >
-              ⏳ EXPORTANDO
+              <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full inline-block animate-pulse"></span>
+              EXPORTANDO MOLDE
             </button>
 
             <div className="flex gap-2 items-center">
@@ -284,27 +296,32 @@ function ArteContent() {
                 onChange={(e) =>
                   setPdfLinks((prev) => ({ ...prev, [ficha.id || ""]: e.target.value }))
                 }
-                className="flex-1 bg-black border border-zinc-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"
+                className="flex-1 bg-black border border-zinc-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-zinc-500"
               />
               <button
                 onClick={() => confirmarExportacao(ficha.id || "", pdfLinks[ficha.id || ""] || "")}
-                className="bg-indigo-600 hover:bg-indigo-700 transition text-white text-xs font-bold py-3.5 px-4 rounded-xl whitespace-nowrap"
+                className="bg-indigo-600 hover:bg-indigo-700 hover:scale-105 active:scale-95 text-white text-[10px] font-bold py-3 px-3.5 rounded-xl whitespace-nowrap transition-all cursor-pointer"
               >
-                CONFIRMAR EXPORTAÇÃO
+                SALVAR PDF
               </button>
             </div>
 
             <button
               onClick={() => desfazerArte(ficha.id || "")}
-              className="w-full bg-zinc-800 hover:bg-zinc-700 transition rounded-xl py-2 text-xs font-medium text-zinc-400"
+              className="w-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-850 hover:text-zinc-300 active:scale-95 transition-all duration-200 rounded-xl py-2 text-[10px] font-semibold text-zinc-500 flex items-center justify-center gap-1 cursor-pointer"
             >
-              DESFAZER
+              <Undo2 size={12} /> DESFAZER ARTE
             </button>
           </div>
         )}
       </div>
     );
   }
+
+  const activeSectionList = useMemo(() => {
+    const found = secoes.find((s) => s.id === secaoAtiva);
+    return found ? found.lista : [];
+  }, [secoes, secaoAtiva]);
 
   return (
     <main className="min-h-screen bg-black text-white p-3">
@@ -314,13 +331,14 @@ function ArteContent() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push("/fichas")}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-800 hover:bg-zinc-700 transition text-lg"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 active:scale-95 transition-all duration-150 text-zinc-300 hover:text-white"
+              title="Voltar"
             >
-              ←
+              <ArrowLeft size={18} />
             </button>
             <div>
-              <h1 className="text-2xl font-bold">ARTE</h1>
-              <p className="text-zinc-400 text-xs">
+              <h1 className="text-2xl font-bold tracking-tight">ARTE</h1>
+              <p className="text-zinc-500 text-xs mt-0.5">
                 {designerAtivo ? `Designer: ${designerAtivo}` : "Aprovação de arte"}
               </p>
             </div>
@@ -328,28 +346,29 @@ function ArteContent() {
 
           <button
             onClick={() => router.push("/fichas")}
-            className="bg-blue-600 hover:bg-blue-700 transition rounded-full px-4 py-2 text-sm font-bold"
+            className="bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl px-4 py-2 text-xs font-bold text-white flex items-center gap-1"
           >
-            + Novo
+            <Plus size={13} /> Novo
           </button>
         </div>
 
         {/* PESQUISA */}
-        <div className="bg-zinc-900 rounded-2xl p-3 mb-4 border border-zinc-800 relative">
+        <div className="bg-zinc-900 border border-zinc-800/80 rounded-2xl p-3 mb-4 relative flex items-center gap-2">
+          <Search size={16} className="text-zinc-500 ml-1" />
           <input
             type="text"
-            placeholder="🔎 Pesquisar Cliente"
+            placeholder="Pesquisar Cliente"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="w-full bg-black border border-zinc-700 rounded-xl p-3 pr-10 text-sm text-white placeholder-zinc-500 outline-none"
+            className="w-full bg-transparent text-sm text-white placeholder-zinc-500 outline-none"
           />
           {busca && (
             <button
               onClick={() => setBusca("")}
-              className="absolute right-5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white text-sm"
+              className="absolute right-5 text-zinc-500 hover:text-white transition-colors"
               title="Limpar busca"
             >
-              ✕
+              <X size={16} />
             </button>
           )}
         </div>
@@ -362,13 +381,13 @@ function ArteContent() {
               <button
                 key={secao.id}
                 onClick={() => setSecaoAtiva(secao.id)}
-                className={`rounded-xl py-2.5 text-[10px] font-bold transition text-center ${
+                className={`rounded-xl py-2.5 text-[9px] font-bold border transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-center ${
                   ativo
-                    ? "bg-zinc-700 text-white"
-                    : "bg-zinc-900 text-zinc-400 hover:bg-zinc-800"
+                    ? "bg-zinc-800 border-zinc-700 text-white animate-pulse-once"
+                    : "bg-zinc-900 border-zinc-800/80 text-zinc-400 hover:bg-zinc-850 hover:text-zinc-300"
                 }`}
               >
-                {secao.label}
+                <span className="block truncate">{secao.label}</span>
                 <span className={`block text-xs mt-0.5 ${ativo ? "text-white" : secao.cor}`}>
                   ({secao.lista.length})
                 </span>
@@ -380,15 +399,11 @@ function ArteContent() {
         {/* LISTA */}
         <div className="space-y-3">
           {carregando ? (
-            <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400">
-              Carregando pedidos...
-            </div>
-          ) : secoes.find((s) => s.id === secaoAtiva)?.lista.length ? (
-            secoes
-              .find((s) => s.id === secaoAtiva)
-              ?.lista.map((ficha) => renderSecao(ficha))
+            <DashboardSkeleton />
+          ) : activeSectionList.length > 0 ? (
+            activeSectionList.map((ficha) => renderSecao(ficha))
           ) : (
-            <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center text-zinc-400 text-xs">
               {busca
                 ? "Nenhum cliente encontrado"
                 : `Nenhum pedido em ${secoes.find((s) => s.id === secaoAtiva)?.label}`}
@@ -402,7 +417,7 @@ function ArteContent() {
 
 export default function Arte() {
   return (
-    <Suspense fallback={<main className="min-h-screen bg-black text-white p-3"><div className="max-w-md mx-auto"><p className="text-zinc-400 text-center mt-12">Carregando...</p></div></main>}>
+    <Suspense fallback={<main className="min-h-screen bg-black text-white p-3"><DashboardSkeleton /></main>}>
       <ArteContent />
     </Suspense>
   );
