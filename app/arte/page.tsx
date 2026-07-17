@@ -114,7 +114,7 @@ function ArteContent() {
       const arteData = formatarDataHora();
       await updateDoc(fichaRef, {
         arte: true,
-        arteAprovada: true,
+        arteAprovada: false,
         exportacao: false,
         arteData,
       });
@@ -130,22 +130,31 @@ function ArteContent() {
     try {
       const fichaRef = doc(db, "fichas", ficha.id);
       const arteData = formatarDataHora();
+      const designerNome = ficha.designer || "Designer";
 
       const novaMensagem: HistoricoAprovacao = {
         dataHora: arteData,
-        autor: ficha.designer || "Designer",
+        autor: designerNome,
         mensagem: "Alteração concluída.",
         tipo: "resposta",
       };
 
       const historico = ficha.historicoAprovacao || [];
       const alteracoesAtualizadas = (ficha.alteracoes || []).map((alt) =>
-        alt.status === "pendente" ? { ...alt, status: "concluida" as const } : alt
+        alt.status === "pendente"
+          ? {
+              ...alt,
+              status: "concluida" as const,
+              concluidoPor: designerNome,
+              concluidoEm: arteData,
+            }
+          : alt
       );
 
       await updateDoc(fichaRef, {
         arte: true,
         alteracaoSolicitada: false,
+        arteAprovada: false,
         arteData,
         historicoAprovacao: [...historico, novaMensagem],
         alteracoes: alteracoesAtualizadas,
@@ -222,10 +231,26 @@ function ArteContent() {
         id={`ficha-${ficha.id}`}
         className="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 shadow-lg transition-all duration-200 hover:border-zinc-800/80"
       >
-        <div className="flex items-start justify-between mb-3 gap-2">
-          <p className="text-lg font-bold uppercase break-words flex-1 leading-tight text-white">
-            {ficha.cliente}
-          </p>
+        <div className="flex items-start justify-between mb-3 gap-3">
+          <div className="flex-1 min-w-0">
+            <p className="text-lg font-bold uppercase break-words leading-tight text-white">
+              {ficha.cliente}
+            </p>
+            <div className="flex flex-wrap gap-1.5 mt-1.5">
+              {etapaDaFicha(ficha) === "aguardandoAprovacao" && (
+                <span className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse"></span>
+                  AGUARDANDO APROVAÇÃO
+                </span>
+              )}
+              {etapaDaFicha(ficha) === "alteracaoSolicitada" && (
+                <span className="bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></span>
+                  ALTERAÇÃO SOLICITADA
+                </span>
+              )}
+            </div>
+          </div>
           {estaAtrasado(ficha) && (
             <span className="bg-red-655 text-white text-[9px] font-extrabold tracking-wider px-2 py-0.5 rounded-md flex-shrink-0">
               ATRASADO
@@ -345,7 +370,7 @@ function ArteContent() {
             onClick={() => concluirArte(ficha.id || "")}
             className="w-full bg-lime-600 hover:bg-lime-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-white rounded-xl py-3 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
           >
-            <Check size={15} /> CONCLUIR ARTE
+            📤 Enviar para Aprovação
           </button>
         )}
 
@@ -360,31 +385,40 @@ function ArteContent() {
 
         {(etapa === "aguardandoAprovacao" || etapa === "exportacao") && (
           <div className="space-y-3.5 pt-1">
-            <button
-              disabled
-              className="w-full bg-yellow-600/10 border border-yellow-500/20 text-yellow-400 rounded-xl py-3 text-xs font-bold cursor-default flex items-center justify-center gap-1.5"
-            >
-              <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full inline-block animate-pulse"></span>
-              EXPORTANDO MOLDE
-            </button>
+            {etapa === "aguardandoAprovacao" ? (
+              <div className="text-xs text-yellow-400 bg-yellow-950/20 border border-yellow-900/50 rounded-xl p-3 text-center font-bold flex items-center justify-center gap-2">
+                <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
+                AGUARDANDO APROVAÇÃO DO COMERCIAL
+              </div>
+            ) : (
+              <>
+                <button
+                  disabled
+                  className="w-full bg-yellow-600/10 border border-yellow-500/20 text-yellow-400 rounded-xl py-3 text-xs font-bold cursor-default flex items-center justify-center gap-1.5"
+                >
+                  <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full inline-block animate-pulse"></span>
+                  EXPORTANDO MOLDE
+                </button>
 
-            <div className="flex gap-2 items-center">
-              <input
-                type="text"
-                placeholder="Cole aqui o link do PDF"
-                value={pdfLinks[ficha.id || ""] || ""}
-                onChange={(e) =>
-                  setPdfLinks((prev) => ({ ...prev, [ficha.id || ""]: e.target.value }))
-                }
-                className="flex-1 bg-black border border-zinc-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-zinc-500"
-              />
-              <button
-                onClick={() => confirmarExportacao(ficha.id || "", pdfLinks[ficha.id || ""] || "")}
-                className="bg-indigo-600 hover:bg-indigo-700 hover:scale-105 active:scale-95 text-white text-[10px] font-bold py-3 px-3.5 rounded-xl whitespace-nowrap transition-all cursor-pointer"
-              >
-                SALVAR PDF
-              </button>
-            </div>
+                <div className="flex gap-2 items-center">
+                  <input
+                    type="text"
+                    placeholder="Cole aqui o link do PDF"
+                    value={pdfLinks[ficha.id || ""] || ""}
+                    onChange={(e) =>
+                      setPdfLinks((prev) => ({ ...prev, [ficha.id || ""]: e.target.value }))
+                    }
+                    className="flex-1 bg-black border border-zinc-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-zinc-500"
+                  />
+                  <button
+                    onClick={() => confirmarExportacao(ficha.id || "", pdfLinks[ficha.id || ""] || "")}
+                    className="bg-indigo-600 hover:bg-indigo-700 hover:scale-105 active:scale-95 text-white text-[10px] font-bold py-3 px-3.5 rounded-xl whitespace-nowrap transition-all cursor-pointer"
+                  >
+                    SALVAR PDF
+                  </button>
+                </div>
+              </>
+            )}
 
             <button
               onClick={() => desfazerArte(ficha.id || "")}

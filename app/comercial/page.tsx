@@ -343,10 +343,26 @@ function ComercialContent() {
                 id={`ficha-${ficha.id}`}
                 className="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 shadow-lg transition-all duration-200 hover:border-zinc-800/80"
               >
-                <div className="flex items-start justify-between mb-3 gap-2">
-                  <p className="text-lg font-bold uppercase break-words flex-1 leading-tight text-white">
-                    {ficha.cliente}
-                  </p>
+                <div className="flex items-start justify-between mb-3 gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-lg font-bold uppercase break-words leading-tight text-white">
+                      {ficha.cliente}
+                    </p>
+                    <div className="flex flex-wrap gap-1.5 mt-1.5">
+                      {etapaDaFicha(ficha) === "aguardandoAprovacao" && (
+                        <span className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse"></span>
+                          AGUARDANDO APROVAÇÃO
+                        </span>
+                      )}
+                      {etapaDaFicha(ficha) === "alteracaoSolicitada" && (
+                        <span className="bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></span>
+                          ALTERAÇÃO SOLICITADA
+                        </span>
+                      )}
+                    </div>
+                  </div>
                   <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-md bg-zinc-900 border border-zinc-800 text-zinc-400 flex-shrink-0">
                     {ficha.designer || "—"}
                   </span>

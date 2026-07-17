@@ -23,6 +23,8 @@ export interface Alteracao {
   dataHora: string;
   solicitante: string;
   status: "pendente" | "concluida";
+  concluidoPor?: string;
+  concluidoEm?: string;
 }
 
 export interface Ficha {

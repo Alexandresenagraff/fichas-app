@@ -5,10 +5,9 @@ import { useSearchParams } from "next/navigation";
 import { Menu, RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus, ChevronDown, ChevronUp } from "lucide-react";
 
 import app from "../../firebase/config";
-import { formatarDataHora, categoriaDaFicha, Ficha, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
+import { formatarDataHora, categoriaDaFicha, etapaDaFicha, Ficha, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
 import Sidebar from "../components/Sidebar";
 import StatusToggle from "../components/StatusToggle";
-import NotificationBell from "../components/NotificationBell";
 import { CardSkeleton } from "../components/Skeleton";
 
 import {
@@ -140,6 +139,14 @@ function HomeContent() {
   }
 
   async function alterarStatus(id: string, campo: keyof Ficha, valorAtual: boolean) {
+    const ficha = resumoPedidos.find((p) => p.id === id);
+    if (campo === "exportacao" && !valorAtual) {
+      if (ficha && !ficha.arteAprovada) {
+        alert("A arte precisa ser aprovada pelo comercial antes de ir para exportação!");
+        return;
+      }
+    }
+
     try {
       const fichaRef = doc(db, "fichas", id);
       const campoDataHora = campoData(String(campo));
@@ -261,10 +268,6 @@ function HomeContent() {
 
   return (
     <main className="min-h-screen bg-black p-3 text-white relative">
-      <div className="fixed top-4 right-16 z-40">
-        <NotificationBell />
-      </div>
-
       <button
         onClick={() => setMenuAberto(!menuAberto)}
         className="fixed top-4 right-4 text-white p-2.5 bg-zinc-900/90 border border-zinc-800 hover:bg-zinc-800 active:scale-95 transition-all duration-200 rounded-xl z-40 cursor-pointer shadow-lg"
@@ -379,9 +382,25 @@ function HomeContent() {
                             className="flex-1 bg-black border border-zinc-700 rounded-xl p-2 text-sm text-white focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 outline-none"
                           />
                         ) : (
-                          <p className="text-xl font-extrabold break-words leading-tight flex-1 uppercase text-white">
-                            {ficha.cliente}
-                          </p>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xl font-extrabold break-words leading-tight uppercase text-white">
+                              {ficha.cliente}
+                            </p>
+                            <div className="flex flex-wrap gap-1.5 mt-1.5">
+                              {etapaDaFicha(ficha) === "aguardandoAprovacao" && (
+                                <span className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                                  <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse"></span>
+                                  AGUARDANDO APROVAÇÃO
+                                </span>
+                              )}
+                              {etapaDaFicha(ficha) === "alteracaoSolicitada" && (
+                                <span className="bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md inline-flex items-center gap-1">
+                                  <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></span>
+                                  ALTERAÇÃO SOLICITADA
+                                </span>
+                              )}
+                            </div>
+                          </div>
                         )}
                         <div className="flex gap-2 flex-shrink-0">
                           <button
