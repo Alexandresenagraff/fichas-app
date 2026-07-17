@@ -17,6 +17,9 @@ import {
   Truck,
   BarChart3,
   Settings,
+  Users,
+  Database,
+  ClipboardList,
 } from "lucide-react";
 import { VENDEDORES, DESIGNERS } from "../lib/helpers";
 
@@ -37,12 +40,14 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [comercialOpen, setComercialOpen] = useState(false);
   const [designersOpen, setDesignersOpen] = useState(false);
+  const [adminOpen, setAdminOpen] = useState(false);
 
   // Close menus on path changes or click outside
   useEffect(() => {
     if (!isOpen) {
       setComercialOpen(false);
       setDesignersOpen(false);
+      setAdminOpen(false);
     }
   }, [isOpen]);
 
@@ -52,6 +57,41 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     onClose();
     router.push(url);
   };
+
+  // Structured menu items for ease of future activation
+  const adminSubmenuItems = [
+    {
+      id: "relatorios",
+      label: "Relatórios",
+      icon: <BarChart3 size={12} />,
+      route: "/relatorios",
+      disabled: false,
+    },
+    {
+      id: "usuarios",
+      label: "Usuários (Em breve)",
+      icon: <Users size={12} />,
+      disabled: true,
+    },
+    {
+      id: "configuracoes",
+      label: "Configurações (Em breve)",
+      icon: <Settings size={12} />,
+      disabled: true,
+    },
+    {
+      id: "backup",
+      label: "Backup (Em breve)",
+      icon: <Database size={12} />,
+      disabled: true,
+    },
+    {
+      id: "logs",
+      label: "Logs (Em breve)",
+      icon: <ClipboardList size={12} />,
+      disabled: true,
+    },
+  ];
 
   return (
     <>
@@ -217,27 +257,56 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             ENVIO / RETIRADA
           </button>
 
-          {/* RELATÓRIOS */}
-          <button
-            onClick={() => navigateTo("/relatorios")}
-            className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
-              pathname === "/relatorios" ? "bg-blue-500/20 text-blue-400 font-bold border border-blue-500/30" : "text-blue-400 font-bold hover:text-blue-300"
-            }`}
-          >
-            <BarChart3 size={14} />
-            RELATÓRIOS
-          </button>
-
           {/* ADMINISTRAÇÃO */}
-          <button
-            onClick={() => navigateTo("/adm")}
-            className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
-              pathname === "/adm" ? "bg-zinc-700 text-white" : "text-zinc-300 hover:text-white"
-            }`}
-          >
-            <Settings size={14} className="text-zinc-400" />
-            ADMINISTRAÇÃO
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setAdminOpen(!adminOpen)}
+              className={`w-full flex items-center justify-between py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 cursor-pointer ${
+                adminOpen ? "bg-zinc-800/50 text-white animate-pulse-once" : "text-zinc-300 hover:text-white"
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <Settings size={14} className="text-zinc-400" />
+                ADMINISTRAÇÃO
+              </span>
+              {adminOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </button>
+
+            {adminOpen && (
+              <div className="mt-1 ml-2 pl-2 border-l border-zinc-800 space-y-1 animate-[slideDown_0.15s_ease-out]">
+                {adminSubmenuItems.map((item) => {
+                  if (item.disabled) {
+                    return (
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-2 py-1.5 px-2 rounded-lg text-[11px] text-zinc-600 font-semibold cursor-not-allowed select-none opacity-50"
+                        title="Em breve"
+                      >
+                        {item.icon}
+                        {item.label}
+                      </div>
+                    );
+                  }
+
+                  const isSelected = pathname === item.route;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => item.route && navigateTo(item.route)}
+                      className={`w-full flex items-center gap-2 py-1.5 px-2 rounded-lg text-[11px] font-bold text-left transition duration-200 cursor-pointer ${
+                        isSelected
+                          ? "bg-zinc-800/60 text-blue-400 border border-zinc-700/35"
+                          : "text-zinc-400 hover:bg-zinc-800/40 hover:text-white"
+                      }`}
+                    >
+                      {item.icon}
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
