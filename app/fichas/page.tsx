@@ -705,6 +705,16 @@ function StatusToggle({
     ▸ ENVIO
   </button>
 
+  <button
+    onClick={() => {
+      setMenuAberto(false);
+      window.location.href = "/relatorios";
+    }}
+    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
+  >
+    ▸ RELATÓRIOS
+  </button>
+
    <button
     onClick={() => {
       setMenuAberto(false);

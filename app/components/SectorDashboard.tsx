@@ -32,6 +32,7 @@ function SectorDashboardContent({
   const [fichas, setFichas] = useState<Ficha[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [busca, setBusca] = useState("");
+  const [filtroAtivo, setFiltroAtivo] = useState<string | null>(null);
   const [atualizadoEm, setAtualizadoEm] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -72,6 +73,25 @@ function SectorDashboardContent({
     noPrazo: pendentes.filter((f) => categoriaDaFicha(f) === "noPrazo").length,
     finalizados: concluidas.length,
   };
+
+  function toggleFiltro(id: string) {
+    setFiltroAtivo((prev) => (prev === id ? null : id));
+  }
+
+  const listaExibida = (() => {
+    if (filtroAtivo === "finalizados") return concluidas;
+    if (filtroAtivo === "urgentes") return pendentes.filter((f) => categoriaDaFicha(f) === "urgentes");
+    if (filtroAtivo === "atrasados") return pendentes.filter((f) => categoriaDaFicha(f) === "atrasados");
+    if (filtroAtivo === "noPrazo") return pendentes.filter((f) => categoriaDaFicha(f) === "noPrazo");
+    return pendentes;
+  })();
+
+  const cardStyle = (id: string, color: string) =>
+    `rounded-xl p-3 text-center cursor-pointer transition border ${
+      filtroAtivo === id
+        ? `bg-${color}-600/20 border-${color}-500 ring-1 ring-${color}-500`
+        : "bg-zinc-900 border-zinc-800 hover:bg-zinc-800"
+    }`;
 
   return (
     <main className="min-h-screen bg-black text-white p-3">
@@ -121,24 +141,48 @@ function SectorDashboardContent({
         </div>
 
         {/* CONTADORES */}
-        <div className="grid grid-cols-2 gap-3 mb-5">
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
+        <div className="grid grid-cols-2 gap-3 mb-3">
+          <button
+            onClick={() => toggleFiltro("urgentes")}
+            className={cardStyle("urgentes", "red")}
+          >
             <p className="text-2xl font-bold text-red-400">{contagem.urgentes}</p>
             <p className="text-xs text-zinc-400">URGENTES</p>
-          </div>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
+          </button>
+          <button
+            onClick={() => toggleFiltro("atrasados")}
+            className={cardStyle("atrasados", "orange")}
+          >
             <p className="text-2xl font-bold text-orange-400">{contagem.atrasados}</p>
             <p className="text-xs text-zinc-400">ATRASADOS</p>
-          </div>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
+          </button>
+          <button
+            onClick={() => toggleFiltro("noPrazo")}
+            className={cardStyle("noPrazo", "blue")}
+          >
             <p className="text-2xl font-bold text-blue-400">{contagem.noPrazo}</p>
             <p className="text-xs text-zinc-400">NO PRAZO</p>
-          </div>
-          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-center">
+          </button>
+          <button
+            onClick={() => toggleFiltro("finalizados")}
+            className={cardStyle("finalizados", "green")}
+          >
             <p className="text-2xl font-bold text-green-400">{contagem.finalizados}</p>
             <p className="text-xs text-zinc-400">FINALIZADOS</p>
-          </div>
+          </button>
         </div>
+
+        <button
+          onClick={() => setFiltroAtivo(null)}
+          className={`w-full rounded-xl p-3 text-center cursor-pointer transition border mb-5 ${
+            filtroAtivo === null
+              ? "bg-white/10 border-white/30 ring-1 ring-white/30"
+              : "bg-zinc-900 border-zinc-800 hover:bg-zinc-800"
+          }`}
+        >
+          <p className="text-2xl font-bold text-white">{fichasFiltradas.length}</p>
+          <p className="text-xs text-zinc-400">TODOS</p>
+        </button>
 
         {/* LISTA */}
         <div className="space-y-3">
@@ -146,8 +190,8 @@ function SectorDashboardContent({
             <div className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center text-zinc-400">
               Carregando pedidos...
             </div>
-          ) : pendentes.length > 0 ? (
-            pendentes.map((ficha) => (
+          ) : listaExibida.length > 0 ? (
+            listaExibida.map((ficha) => (
               <div
                 key={ficha.id}
                 className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 shadow-lg"
