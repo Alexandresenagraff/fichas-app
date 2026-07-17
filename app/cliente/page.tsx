@@ -22,6 +22,24 @@ export default function Cliente() {
   const [pedidoAberto, setPedidoAberto] = useState<number | null>(null);
   const [carregando, setCarregando] = useState(false);
 
+  const WHATSAPP_NUMERO = "55XXXXXXXXXXX";
+
+  function getWhatsAppLink() {
+    const base = `https://wa.me/${WHATSAPP_NUMERO}`;
+    let pedidoTexto = "";
+    
+    if (pedidos.length > 0) {
+      const idx = pedidoAberto !== null ? pedidoAberto : 0;
+      const pedido = pedidos[idx];
+      if (pedido && pedido.id) {
+        pedidoTexto = `\nPedido: #${pedido.id}`;
+      }
+    }
+
+    const messaging = `Olá!\n\nGostaria de informações sobre meu pedido.${pedidoTexto}`;
+    return `${base}?text=${encodeURIComponent(messaging)}`;
+  }
+
   async function buscarPedido() {
     if (!email.trim()) {
       setPedidos([]);
@@ -229,6 +247,19 @@ export default function Cliente() {
           )}
         </div>
       </div>
+
+      {/* Botão flutuante do WhatsApp */}
+      <a
+        href={getWhatsAppLink()}
+        target="_blank"
+        rel="noreferrer"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-[#25D366] hover:bg-[#20ba5a] text-white rounded-full flex items-center justify-center shadow-lg hover:shadow-xl hover:scale-110 active:scale-95 transition-all duration-300 z-50 cursor-pointer"
+        title="Fale conosco no WhatsApp"
+      >
+        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12.012 2c-5.506 0-9.988 4.482-9.988 9.988 0 1.761.46 3.473 1.332 4.978L2 22l5.22-.1.371.365a9.904 9.904 0 004.819 1.22c5.506 0 9.988-4.482 9.988-9.988S17.518 2 12.012 2zm0 18.294c-1.579 0-3.13-.424-4.483-1.228l-.322-.19-3.333.65.66-3.256-.208-.33a8.212 8.212 0 01-1.26-4.385c0-4.545 3.7-8.243 8.246-8.243 4.545 0 8.243 3.698 8.243 8.243s-3.698 8.243-8.243 8.243zm4.52-6.168c-.247-.123-1.464-.722-1.692-.805-.228-.083-.394-.123-.56.123-.166.247-.64.805-.785.97-.145.166-.29.186-.537.063a6.762 6.762 0 01-1.99-1.228 7.458 7.458 0 01-1.377-1.714c-.145-.247-.015-.38.109-.503.111-.11.247-.29.37-.435.124-.145.166-.247.247-.413.083-.166.04-.31-.02-.435-.06-.123-.56-1.35-.767-1.85-.2-.486-.403-.42-.56-.42h-.478c-.166 0-.435.062-.663.31-.228.247-.87.848-.87 2.067s.89 2.398.992 2.537c.1.139 1.751 2.674 4.24 3.747.592.256 1.055.408 1.417.523.595.19 1.137.163 1.565.1.478-.07 1.464-.598 1.67-1.176.208-.578.208-1.074.145-1.176-.062-.1-.228-.166-.475-.29z"/>
+        </svg>
+      </a>
     </main>
   );
 }
