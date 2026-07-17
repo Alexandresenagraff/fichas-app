@@ -25,7 +25,7 @@ export default function Cliente() {
   const WHATSAPP_NUMERO = "55XXXXXXXXXXX";
 
   function getWhatsAppLink() {
-    const base = `https://wa.me/${WHATSAPP_NUMERO}`;
+    const base = `https://wa.me/${8599129-2240}`;
     let pedidoTexto = "";
     
     if (pedidos.length > 0) {
