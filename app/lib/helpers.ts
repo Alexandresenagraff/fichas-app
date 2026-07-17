@@ -128,7 +128,6 @@ export const DESIGNERS = [
   "LÁZARO",
   "EDIVAN",
   "PAULÃO",
-  "DIEGO",
 ];
 
 export interface EtapaConfig {

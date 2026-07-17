@@ -645,15 +645,7 @@ function StatusToggle({
 
 </div>
 
-  <button
-    onClick={() => {
-      setMenuAberto(false);
-      window.location.href = "/exportacao";
-    }}
-    className="w-full text-left py-2 border-b border-zinc-600 text-xs"
-  >
-    ▸ EXPORTAÇÃO
-  </button>
+
 
   <button
     onClick={() => {

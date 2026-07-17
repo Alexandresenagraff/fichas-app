@@ -33,6 +33,7 @@ function ArteContent() {
   const [carregando, setCarregando] = useState(true);
   const [busca, setBusca] = useState("");
   const [secaoAtiva, setSecaoAtiva] = useState<SecaoArte>("arteParaCriar");
+  const [pdfLinks, setPdfLinks] = useState<Record<string, string>>({});
 
   useEffect(() => {
     setCarregando(true);
@@ -124,10 +125,31 @@ function ArteContent() {
   async function desfazerArte(id: string) {
     try {
       const fichaRef = doc(db, "fichas", id);
-      await updateDoc(fichaRef, { arte: false, arteData: "" });
+      await updateDoc(fichaRef, { arte: false, arteAprovada: false, exportacao: false, arteData: "" });
     } catch (error) {
       console.log(error);
       alert("Erro ao atualizar");
+    }
+  }
+
+  async function confirmarExportacao(id: string, link: string) {
+    if (!link.trim()) {
+      alert("Por favor, cole o link do PDF.");
+      return;
+    }
+
+    try {
+      const fichaRef = doc(db, "fichas", id);
+      const exportacaoData = formatarDataHora();
+      await updateDoc(fichaRef, {
+        exportacao: true,
+        exportacaoData,
+        pdfLink: link.trim(),
+      });
+      alert("Exportação confirmada com sucesso!");
+    } catch (error) {
+      console.log(error);
+      alert("Erro ao confirmar exportação");
     }
   }
 
@@ -139,12 +161,14 @@ function ArteContent() {
 
   const arteParaCriar = fichasFiltradas.filter((f) => etapaDaFicha(f) === "arteParaCriar");
   const alteracaoSolicitada = fichasFiltradas.filter((f) => etapaDaFicha(f) === "alteracaoSolicitada");
-  const aguardandoAprovacao = fichasFiltradas.filter((f) => etapaDaFicha(f) === "aguardandoAprovacao");
+  const aguardandoAprovacao = fichasFiltradas.filter(
+    (f) => etapaDaFicha(f) === "aguardandoAprovacao" || etapaDaFicha(f) === "exportacao"
+  );
 
   const secoes: { id: SecaoArte; label: string; lista: Ficha[]; cor: string }[] = [
     { id: "arteParaCriar", label: "ARTE P/ CRIAR", lista: arteParaCriar, cor: "text-amber-400" },
     { id: "alteracaoSolicitada", label: "ALTERAÇÃO SOLICITADA", lista: alteracaoSolicitada, cor: "text-red-400" },
-    { id: "aguardandoAprovacao", label: "AGUARDANDO APROVAÇÃO", lista: aguardandoAprovacao, cor: "text-yellow-400" },
+    { id: "aguardandoAprovacao", label: "EXPORTANDO", lista: aguardandoAprovacao, cor: "text-yellow-400" },
   ];
 
   function renderSecao(ficha: Ficha) {
@@ -243,13 +267,40 @@ function ArteContent() {
           </button>
         )}
 
-        {etapa === "aguardandoAprovacao" && (
-          <button
-            onClick={() => desfazerArte(ficha.id || "")}
-            className="w-full bg-zinc-800 hover:bg-zinc-700 transition rounded-xl py-2 text-xs font-medium text-zinc-400"
-          >
-            DESFAZER
-          </button>
+        {(etapa === "aguardandoAprovacao" || etapa === "exportacao") && (
+          <div className="space-y-3">
+            <button
+              disabled
+              className="w-full bg-yellow-600 text-white rounded-xl py-3 text-sm font-bold opacity-90 cursor-default"
+            >
+              ⏳ EXPORTANDO
+            </button>
+
+            <div className="flex gap-2 items-center">
+              <input
+                type="text"
+                placeholder="Cole aqui o link do PDF"
+                value={pdfLinks[ficha.id || ""] || ""}
+                onChange={(e) =>
+                  setPdfLinks((prev) => ({ ...prev, [ficha.id || ""]: e.target.value }))
+                }
+                className="flex-1 bg-black border border-zinc-700 rounded-xl p-3 text-xs text-white outline-none focus:border-indigo-500"
+              />
+              <button
+                onClick={() => confirmarExportacao(ficha.id || "", pdfLinks[ficha.id || ""] || "")}
+                className="bg-indigo-600 hover:bg-indigo-700 transition text-white text-xs font-bold py-3.5 px-4 rounded-xl whitespace-nowrap"
+              >
+                CONFIRMAR EXPORTAÇÃO
+              </button>
+            </div>
+
+            <button
+              onClick={() => desfazerArte(ficha.id || "")}
+              className="w-full bg-zinc-800 hover:bg-zinc-700 transition rounded-xl py-2 text-xs font-medium text-zinc-400"
+            >
+              DESFAZER
+            </button>
+          </div>
         )}
       </div>
     );
