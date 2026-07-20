@@ -8,6 +8,12 @@ export interface NotificationSoundEvent {
   type: NotificationSoundType;
   notificationId: string;
   designer?: string;
+  vendedor?: string;
+}
+
+export interface NotificationSoundAudience {
+  role: "designer" | "vendedor";
+  name?: string;
 }
 
 const NOTIFICATION_SOUNDS_ENABLED_KEY = "notificationSoundsEnabled";
@@ -63,6 +69,16 @@ function normalizarDesigner(designer?: string) {
     ?.normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toUpperCase();
+}
+
+export function shouldPlayNotificationSound(
+  event: NotificationSoundEvent,
+  audience?: NotificationSoundAudience
+) {
+  if (!audience?.name) return true;
+
+  const destinatario = audience.role === "designer" ? event.designer : event.vendedor;
+  return normalizarDesigner(destinatario) === normalizarDesigner(audience.name);
 }
 
 function getPlayedNotificationIds(): string[] {

@@ -11,6 +11,7 @@ import {
   type NotificationSoundEvent,
   playNotificationSound,
   primeNotificationSounds,
+  shouldPlayNotificationSound,
 } from "../lib/notificationSounds";
 
 const db = getFirestore(app);
@@ -38,6 +39,7 @@ function getSoundEvents(
       type: "change-request",
       notificationId: `${fichaId}:change-request:${ultimaAlteracao?.id || ultimaAlteracao?.dataHora || "active"}`,
       designer: ficha.designer,
+      vendedor: ficha.vendedor,
     });
   }
 
@@ -46,6 +48,7 @@ function getSoundEvents(
       type: "art-approved",
       notificationId: `${fichaId}:art-approved:${ultimaAprovacao?.dataHora || ficha.arteData || "active"}`,
       designer: ficha.designer,
+      vendedor: ficha.vendedor,
     });
   }
 
@@ -57,6 +60,7 @@ function getSoundEvents(
       type: "new-art",
       notificationId: `${fichaId}:new-art:${ficha.vendaData || ficha.pedido || "active"}`,
       designer: ficha.designer,
+      vendedor: ficha.vendedor,
     });
   }
 
@@ -65,6 +69,7 @@ function getSoundEvents(
       type: "urgent",
       notificationId: `${fichaId}:urgent:${ficha.entrega || "active"}`,
       designer: ficha.designer,
+      vendedor: ficha.vendedor,
     });
   }
 
@@ -194,7 +199,12 @@ export default function NotificationBell() {
 
             if (!pertenceAoFiltro) return;
 
+            const audienciaDaArea = isArtePage
+              ? { role: "designer" as const, name: designerParam }
+              : { role: "vendedor" as const, name: vendedorParam };
+
             getSoundEvents(ficha, fichasAnterioresRef.current.get(change.doc.id), change.doc.id)
+              .filter((event) => shouldPlayNotificationSound(event, audienciaDaArea))
               .forEach(playNotificationSound);
           });
         }
