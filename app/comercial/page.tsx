@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Plus, Search, X, Calendar, User } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
+import ClientPdfLink from "../components/ClientPdfLink";
 
 import app from "../../firebase/config";
 import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc } from "firebase/firestore";
@@ -348,9 +349,12 @@ function ComercialContent() {
               >
                 <div className="flex items-start justify-between mb-3 gap-3">
                   <div className="flex-1 min-w-0">
-                    <p className="text-lg font-bold uppercase break-words leading-tight text-white">
+                    <ClientPdfLink
+                      pdfLink={ficha.pdfLink}
+                      className="text-lg font-bold uppercase break-words leading-tight text-white"
+                    >
                       {ficha.cliente}
-                    </p>
+                    </ClientPdfLink>
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
                       {etapaDaFicha(ficha) === "aguardandoAprovacao" && (
                         <span className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md inline-flex items-center gap-1">

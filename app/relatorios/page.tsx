@@ -15,6 +15,7 @@ import {
 } from "../lib/helpers";
 import Sidebar from "../components/Sidebar";
 import { RelatoriosSkeleton } from "../components/Skeleton";
+import ClientPdfLink from "../components/ClientPdfLink";
 
 const db = getFirestore(app);
 
@@ -374,7 +375,14 @@ function RelatoriosContent() {
 
                       return (
                         <tr key={ficha.id} className="hover:bg-zinc-950/40 transition-colors duration-150">
-                          <td className="py-3.5 px-2 font-extrabold text-white uppercase">{ficha.cliente}</td>
+                          <td className="py-3.5 px-2">
+                            <ClientPdfLink
+                              pdfLink={ficha.pdfLink}
+                              className="font-extrabold text-white uppercase"
+                            >
+                              {ficha.cliente}
+                            </ClientPdfLink>
+                          </td>
                           <td className="py-3.5 px-2 text-zinc-300 font-medium">{ficha.vendedor || "N/A"}</td>
                           <td className="py-3.5 px-2 text-zinc-300 font-medium">{ficha.designer || "N/A"}</td>
                           <td className="py-3.5 px-2 text-zinc-400">{entregaFmt}</td>

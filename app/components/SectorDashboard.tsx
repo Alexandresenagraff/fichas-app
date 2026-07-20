@@ -8,6 +8,7 @@ import app from "../../firebase/config";
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import { Ficha, categoriaDaFicha } from "../lib/helpers";
 import { DashboardSkeleton, KpiSkeleton } from "./Skeleton";
+import ClientPdfLink from "./ClientPdfLink";
 
 const db = getFirestore(app);
 
@@ -225,9 +226,12 @@ function SectorDashboardContent({
                 className="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 shadow-lg transition-all duration-200 hover:border-zinc-800/80"
               >
                 <div className="flex items-start justify-between mb-3 gap-2">
-                  <p className="text-lg font-bold uppercase break-words flex-1 leading-tight text-white">
+                  <ClientPdfLink
+                    pdfLink={ficha.pdfLink}
+                    className="text-lg font-bold uppercase break-words flex-1 leading-tight text-white"
+                  >
                     {ficha.cliente}
-                  </p>
+                  </ClientPdfLink>
                   {ficha.entrega && categoriaDaFicha(ficha) === "atrasados" && (
                     <span className="bg-red-650/90 text-white text-[9px] font-extrabold tracking-wider px-2 py-0.5 rounded-md flex-shrink-0">
                       ATRASADO

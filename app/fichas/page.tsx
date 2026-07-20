@@ -9,6 +9,7 @@ import { formatarDataHora, categoriaDaFicha, etapaDaFicha, Ficha, CategoriaPedid
 import Sidebar from "../components/Sidebar";
 import StatusToggle from "../components/StatusToggle";
 import { CardSkeleton } from "../components/Skeleton";
+import ClientPdfLink from "../components/ClientPdfLink";
 
 import {
   getFirestore,
@@ -389,9 +390,12 @@ function HomeContent() {
                           />
                         ) : (
                           <div className="flex-1 min-w-0">
-                            <p className="text-xl font-extrabold break-words leading-tight uppercase text-white">
+                            <ClientPdfLink
+                              pdfLink={ficha.pdfLink}
+                              className="text-xl font-extrabold break-words leading-tight uppercase text-white"
+                            >
                               {ficha.cliente}
-                            </p>
+                            </ClientPdfLink>
                             <div className="flex flex-wrap gap-1.5 mt-1.5">
                               {etapaDaFicha(ficha) === "aguardandoAprovacao" && (
                                 <span className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md inline-flex items-center gap-1">

@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { Ficha } from "../lib/helpers";
 import { DashboardSkeleton } from "../components/Skeleton";
+import ClientPdfLink from "../components/ClientPdfLink";
 
 const db = getFirestore(app);
 
@@ -154,9 +155,12 @@ export default function Cliente() {
                 key={pedido.id || index}
                 className="bg-white border border-zinc-200/80 rounded-2xl p-5 sm:p-6 shadow-xs overflow-hidden transition hover:shadow-md duration-200"
               >
-                <h2 className="text-lg font-bold mb-3 text-black break-words text-center border-b border-zinc-100 pb-2">
+                <ClientPdfLink
+                  pdfLink={pedido.pdfLink}
+                  className="block text-lg font-bold mb-3 text-black break-words text-center border-b border-zinc-100 pb-2"
+                >
                   {pedido.cliente} - Pedido {index + 1}
-                </h2>
+                </ClientPdfLink>
 
                 <div className="mb-4 text-xs text-zinc-600 space-y-1">
                   <p>
