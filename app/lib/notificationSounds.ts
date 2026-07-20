@@ -56,7 +56,7 @@ function playFallbackTone(type: NotificationSoundType) {
   oscillator.frequency.value = frequencies[type];
   oscillator.type = type === "urgent" ? "square" : "sine";
   gain.gain.setValueAtTime(0.0001, context.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.09, context.currentTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.15, context.currentTime + 0.02);
   gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.26);
   oscillator.connect(gain);
   gain.connect(context.destination);
