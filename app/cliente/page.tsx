@@ -25,7 +25,7 @@ export default function Cliente() {
   const WHATSAPP_NUMERO = "5585991292240";
 
   function getWhatsAppLink() {
-    const base = "https://wa.me/5585991292240";
+    const base = `https://wa.me/${WHATSAPP_NUMERO}`;
     let pedidoTexto = "";
     
     if (pedidos.length > 0) {
@@ -94,6 +94,8 @@ export default function Cliente() {
   useEffect(() => {
     const emailSalvo = localStorage.getItem("clienteEmail");
     if (emailSalvo) {
+      // Restaura o campo com o último identificador informado pelo cliente.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEmail(emailSalvo);
     }
   }, []);

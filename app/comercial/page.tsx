@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Plus, Search, X, Calendar, Clipboard, User, Edit3, Check, Save } from "lucide-react";
+import { Plus, Search, X, Calendar, User } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 
 import app from "../../firebase/config";
@@ -44,7 +44,6 @@ function ComercialContent() {
   const [entrega, setEntrega] = useState("");
 
   useEffect(() => {
-    setCarregando(true);
     const unsubscribe = onSnapshot(
       collection(db, "fichas"),
       (snapshot) => {
@@ -85,6 +84,8 @@ function ComercialContent() {
       if (fichaAlvo) {
         const etapa = etapaDaFicha(fichaAlvo);
         if (etapa) {
+          // Mantém a aba alinhada à ficha aberta pelo link de notificação.
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setAbaAtiva(etapa);
         }
       }

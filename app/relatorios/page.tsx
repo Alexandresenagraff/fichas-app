@@ -30,7 +30,6 @@ function RelatoriosContent() {
   const [menuAberto, setMenuAberto] = useState(false);
 
   useEffect(() => {
-    setCarregando(true);
     const unsubscribe = onSnapshot(
       collection(db, "fichas"),
       (snapshot) => {

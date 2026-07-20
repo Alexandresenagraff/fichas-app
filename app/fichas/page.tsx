@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Menu, RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { Menu, RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus } from "lucide-react";
 
 import app from "../../firebase/config";
 import { formatarDataHora, categoriaDaFicha, etapaDaFicha, Ficha, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
@@ -39,8 +39,8 @@ function statusAtual(ficha: Ficha): { completed: string; next: string; finalizad
   return { completed: "AGUARDANDO VENDA", next: "" };
 }
 
-function campoData(campo: string): string {
-  const mapa: Record<string, string> = {
+function campoData(campo: string): keyof Ficha | undefined {
+  const mapa: Partial<Record<keyof Ficha, keyof Ficha>> = {
     venda: "vendaData",
     arte: "arteData",
     exportacao: "exportacaoData",
@@ -51,8 +51,15 @@ function campoData(campo: string): string {
     conferencia: "conferenciaData",
     entregaStatus: "entregaData",
   };
-  return mapa[campo] || "";
+  return mapa[campo as keyof Ficha];
 }
+
+const filtros = [
+  { id: "urgentes" as const, label: "URGENTES", cor: "amber" },
+  { id: "atrasados" as const, label: "ATRASADOS", cor: "red" },
+  { id: "noPrazo" as const, label: "NO PRAZO", cor: "blue" },
+  { id: "finalizados" as const, label: "FINALIZADOS", cor: "green" },
+];
 
 function HomeContent() {
   const [busca, setBusca] = useState("");
@@ -88,6 +95,8 @@ function HomeContent() {
   }
 
   useEffect(() => {
+    // Carrega as fichas uma vez ao abrir a página.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     carregarResumoPedidos();
   }, []);
 
@@ -96,6 +105,8 @@ function HomeContent() {
 
   useEffect(() => {
     if (fichaIdParam && resumoPedidos.length > 0) {
+      // Abre a ficha indicada no link de notificação.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPedidosAbertos((prev) =>
         prev.includes(fichaIdParam) ? prev : [...prev, fichaIdParam]
       );
@@ -153,7 +164,9 @@ function HomeContent() {
       const atualizacao: Partial<Ficha> = { [campo]: !valorAtual };
       
       if (campoDataHora) {
-        atualizacao[campoDataHora as keyof Ficha] = (!valorAtual ? formatarDataHora() : "") as any;
+        Object.assign(atualizacao, {
+          [campoDataHora]: !valorAtual ? formatarDataHora() : "",
+        });
       }
       
       await updateDoc(fichaRef, atualizacao);
@@ -246,13 +259,6 @@ function HomeContent() {
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
     );
   }
-
-  const filtros = [
-    { id: "urgentes" as const, label: "URGENTES", cor: "amber" },
-    { id: "atrasados" as const, label: "ATRASADOS", cor: "red" },
-    { id: "noPrazo" as const, label: "NO PRAZO", cor: "blue" },
-    { id: "finalizados" as const, label: "FINALIZADOS", cor: "green" },
-  ];
 
   const contagens = useMemo(() => {
     return filtros.reduce(

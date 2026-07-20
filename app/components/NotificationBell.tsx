@@ -6,7 +6,7 @@ import { Bell } from "lucide-react";
 
 import app from "../../firebase/config";
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
-import { Ficha, Alteracao, etapaDaFicha } from "../lib/helpers";
+import { Ficha, etapaDaFicha } from "../lib/helpers";
 
 const db = getFirestore(app);
 
@@ -228,7 +228,7 @@ export default function NotificationBell() {
                     </div>
 
                     <p className="text-xs text-zinc-400 mt-1 break-words line-clamp-2 italic bg-black/30 px-2 py-1.5 rounded-lg border border-zinc-900/40">
-                      "{item.descricao}"
+                      &quot;{item.descricao}&quot;
                     </p>
                   </button>
                 );

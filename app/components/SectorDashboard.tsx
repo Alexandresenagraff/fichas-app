@@ -36,7 +36,6 @@ function SectorDashboardContent({
   const [atualizadoEm, setAtualizadoEm] = useState<Date | null>(null);
 
   useEffect(() => {
-    setCarregando(true);
     const unsubscribe = onSnapshot(
       collection(db, "fichas"),
       (snapshot) => {

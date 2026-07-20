@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Plus, Search, X, Calendar, FileText, Check, Undo2 } from "lucide-react";
+import { ArrowLeft, Plus, Search, X, FileText, Check, Undo2 } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 
 import app from "../../firebase/config";
@@ -18,7 +18,6 @@ import {
   formatarDataHora,
   etapaDaFicha,
   type Ficha,
-  type Etapa,
   type HistoricoAprovacao,
 } from "../lib/helpers";
 import { DashboardSkeleton } from "../components/Skeleton";
@@ -38,7 +37,6 @@ function ArteContent() {
   const [pdfLinks, setPdfLinks] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    setCarregando(true);
     const unsubscribe = onSnapshot(
       collection(db, "fichas"),
       (snapshot) => {
@@ -81,6 +79,8 @@ function ArteContent() {
         if (etapa) {
           if (etapa === "arteParaCriar" || etapa === "alteracaoSolicitada" || etapa === "aguardandoAprovacao" || etapa === "exportacao") {
             const secaoId = (etapa === "exportacao") ? "aguardandoAprovacao" : etapa;
+            // Mantém a seção alinhada à ficha aberta pelo link de notificação.
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setSecaoAtiva(secaoId as SecaoArte);
           }
         }
@@ -311,7 +311,7 @@ function ArteContent() {
                       Data/Hora: <span className="text-zinc-200 font-semibold">{alt.dataHora}</span>
                     </p>
                     <p className="text-zinc-200 font-medium bg-black/45 p-2 rounded-lg border border-red-950/60 mt-1 italic">
-                      "{alt.descricao}"
+                      &quot;{alt.descricao}&quot;
                     </p>
                   </div>
                 ));
@@ -326,7 +326,7 @@ function ArteContent() {
                       Data/Hora: <span className="text-zinc-200 font-semibold">{lastAlt?.dataHora || "—"}</span>
                     </p>
                     <p className="text-zinc-200 font-medium bg-black/45 p-2 rounded-lg border border-red-950/60 mt-1 italic">
-                      "{lastAlt?.mensagem || "Alteração solicitada"}"
+                      &quot;{lastAlt?.mensagem || "Alteração solicitada"}&quot;
                     </p>
                   </div>
                 );

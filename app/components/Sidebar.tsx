@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {
-  Menu,
   X,
   ChevronDown,
   ChevronRight,
@@ -45,6 +44,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   // Close menus on path changes or click outside
   useEffect(() => {
     if (!isOpen) {
+      // Redefine os grupos sempre que o menu é fechado.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setComercialOpen(false);
       setDesignersOpen(false);
       setAdminOpen(false);
