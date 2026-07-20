@@ -279,10 +279,12 @@ function ComercialContent() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <NotificationBell />
+            <div className="order-2 sm:order-none">
+              <NotificationBell />
+            </div>
             <button
               onClick={() => setModalAberto(true)}
-              className="bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-250 rounded-xl px-4 py-2 text-xs font-bold text-white flex items-center gap-1.5 shadow-lg cursor-pointer"
+              className="order-1 sm:order-none bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-250 rounded-xl px-4 py-2 text-xs font-bold text-white flex items-center gap-1.5 shadow-lg cursor-pointer"
             >
               <Plus size={14} /> NOVO PEDIDO
             </button>
