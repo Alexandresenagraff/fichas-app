@@ -6,7 +6,12 @@ import { Bell } from "lucide-react";
 
 import app from "../../firebase/config";
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
-import { Ficha, etapaDaFicha } from "../lib/helpers";
+import { Ficha, categoriaDaFicha, etapaDaFicha } from "../lib/helpers";
+import {
+  type NotificationSoundEvent,
+  playNotificationSound,
+  primeNotificationSounds,
+} from "../lib/notificationSounds";
 
 const db = getFirestore(app);
 
@@ -16,6 +21,54 @@ interface NotificacaoItem {
   solicitante: string;
   data: string;
   descricao: string;
+}
+
+function getSoundEvents(
+  ficha: Ficha,
+  previousFicha: Ficha | undefined,
+  fichaId: string
+): NotificationSoundEvent[] {
+  const events: NotificationSoundEvent[] = [];
+  const ultimaAlteracao = ficha.alteracoes?.filter((alteracao) => alteracao.status === "pendente").at(-1);
+  const ultimaAprovacao = ficha.historicoAprovacao?.filter((item) => item.tipo === "aprovacao").at(-1);
+  const eraUrgente = previousFicha ? categoriaDaFicha(previousFicha) === "urgentes" : false;
+
+  if (ficha.alteracaoSolicitada && !previousFicha?.alteracaoSolicitada) {
+    events.push({
+      type: "change-request",
+      notificationId: `${fichaId}:change-request:${ultimaAlteracao?.id || ultimaAlteracao?.dataHora || "active"}`,
+      designer: ficha.designer,
+    });
+  }
+
+  if (ficha.arteAprovada && !previousFicha?.arteAprovada) {
+    events.push({
+      type: "art-approved",
+      notificationId: `${fichaId}:art-approved:${ultimaAprovacao?.dataHora || ficha.arteData || "active"}`,
+      designer: ficha.designer,
+    });
+  }
+
+  if (
+    etapaDaFicha(ficha) === "arteParaCriar" &&
+    (!previousFicha || etapaDaFicha(previousFicha) !== "arteParaCriar")
+  ) {
+    events.push({
+      type: "new-art",
+      notificationId: `${fichaId}:new-art:${ficha.vendaData || ficha.pedido || "active"}`,
+      designer: ficha.designer,
+    });
+  }
+
+  if (categoriaDaFicha(ficha) === "urgentes" && !eraUrgente) {
+    events.push({
+      type: "urgent",
+      notificationId: `${fichaId}:urgent:${ficha.entrega || "active"}`,
+      designer: ficha.designer,
+    });
+  }
+
+  return events;
 }
 
 function normalizarNome(nome: string): string {
@@ -33,28 +86,32 @@ export default function NotificationBell() {
   const [dropdownAberto, setDropdownAberto] = useState(false);
   const [notificacoes, setNotificacoes] = useState<NotificacaoItem[]>([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const fichasAnterioresRef = useRef<Map<string, Ficha>>(new Map());
+  const recebeuPrimeiroSnapshotRef = useRef(false);
 
   const designerParam = searchParams.get("designer") || "";
   const vendedorParam = searchParams.get("vendedor") || "";
 
   // Escutar alterações pendentes em tempo real
   useEffect(() => {
+    recebeuPrimeiroSnapshotRef.current = false;
     const designerFiltrado = designerParam ? normalizarNome(designerParam) : "";
     const vendedorFiltrado = vendedorParam ? normalizarNome(vendedorParam) : "";
 
     const unsubscribe = onSnapshot(
       collection(db, "fichas"),
       (snapshot) => {
+        const fichasDoSnapshot = new Map<string, Ficha>();
         const lista: NotificacaoItem[] = [];
+        const isArtePage = pathname.includes("/arte");
+        const isComercialPage = pathname.includes("/comercial");
         snapshot.forEach((docSnap) => {
           const ficha = docSnap.data() as Ficha;
           ficha.id = docSnap.id;
+          fichasDoSnapshot.set(docSnap.id, ficha);
 
           const fichaDesignerNorm = ficha.designer ? normalizarNome(ficha.designer) : "";
           const fichaVendedorNorm = ficha.vendedor ? normalizarNome(ficha.vendedor) : "";
-
-          const isArtePage = pathname.includes("/arte");
-          const isComercialPage = pathname.includes("/comercial");
 
           if (isArtePage) {
             // DESIGNERS: Exibe alterações solicitadas (status = pendente)
@@ -122,6 +179,28 @@ export default function NotificationBell() {
           return b.data.localeCompare(a.data);
         });
 
+        if (recebeuPrimeiroSnapshotRef.current) {
+          snapshot.docChanges().forEach((change) => {
+            if (change.type === "removed" || change.doc.metadata.hasPendingWrites) return;
+
+            const ficha = fichasDoSnapshot.get(change.doc.id);
+            if (!ficha) return;
+
+            const fichaDesignerNorm = ficha.designer ? normalizarNome(ficha.designer) : "";
+            const fichaVendedorNorm = ficha.vendedor ? normalizarNome(ficha.vendedor) : "";
+            const pertenceAoFiltro =
+              (isArtePage && (!designerFiltrado || fichaDesignerNorm === designerFiltrado)) ||
+              (isComercialPage && (!vendedorFiltrado || fichaVendedorNorm === vendedorFiltrado));
+
+            if (!pertenceAoFiltro) return;
+
+            getSoundEvents(ficha, fichasAnterioresRef.current.get(change.doc.id), change.doc.id)
+              .forEach(playNotificationSound);
+          });
+        }
+
+        fichasAnterioresRef.current = fichasDoSnapshot;
+        recebeuPrimeiroSnapshotRef.current = true;
         setNotificacoes(lista);
       },
       (error) => {
@@ -175,7 +254,10 @@ export default function NotificationBell() {
     <div className="relative" ref={dropdownRef}>
       {/* Botão do Sino */}
       <button
-        onClick={() => setDropdownAberto(!dropdownAberto)}
+        onClick={() => {
+          primeNotificationSounds();
+          setDropdownAberto(!dropdownAberto);
+        }}
         className="relative text-zinc-300 hover:text-white p-2.5 bg-zinc-900/90 border border-zinc-800 hover:bg-zinc-800 active:scale-95 transition-all duration-200 rounded-xl cursor-pointer shadow-lg flex items-center justify-center"
         title="Notificações"
       >
@@ -191,7 +273,7 @@ export default function NotificationBell() {
 
       {/* Dropdown de Notificações */}
       {dropdownAberto && (
-        <div className="absolute right-0 mt-2.5 w-80 bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-md rounded-2xl shadow-2xl z-50 overflow-hidden animate-[slideDown_0.2s_ease-out]">
+        <div className="absolute right-0 mt-2.5 w-[92vw] max-w-[92vw] sm:w-80 sm:max-w-none bg-zinc-950/95 border border-zinc-800/80 backdrop-blur-md rounded-2xl shadow-2xl z-50 overflow-hidden animate-[slideDown_0.2s_ease-out]">
           <div className="p-3.5 border-b border-zinc-900 bg-zinc-950 flex items-center justify-between">
             <span className="font-extrabold text-xs tracking-wider uppercase text-zinc-400">
               {dropdownTitle}
@@ -203,7 +285,7 @@ export default function NotificationBell() {
             )}
           </div>
 
-          <div className="max-h-72 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 divide-y divide-zinc-900/50">
+          <div className="max-h-[min(18rem,calc(100dvh-7rem))] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-800 divide-y divide-zinc-900/50">
             {totalPendentes > 0 ? (
               notificacoes.map((item, index) => {
                 const dataExibicao = item.data.split(" ")[0] || "";

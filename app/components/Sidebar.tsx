@@ -76,9 +76,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     },
     {
       id: "configuracoes",
-      label: "Configurações (Em breve)",
+      label: "Configurações",
       icon: <Settings size={12} />,
-      disabled: true,
+      route: "/configuracoes",
+      disabled: false,
     },
     {
       id: "backup",
