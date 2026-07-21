@@ -104,8 +104,7 @@ export default function Cliente() {
   return (
     <main className="min-h-screen bg-white text-black">
       <div className="w-full max-w-2xl mx-auto">
-        <div className="bg-gradient-to-br from-blue-900 to-blue-800 px-4 py-8 relative shadow-lg header-shine text-white">
-          <button
+<div className="bg-gradient-to-br from-neutral-900 via-zinc-900 to-black px-4 py-8 relative shadow-lg text-white">          <button
             onClick={() => router.push("/")}
             className="absolute top-4 left-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all active:scale-90 text-white text-lg cursor-pointer"
             title="Voltar"
@@ -170,11 +169,11 @@ className="bg-zinc-200 border border-zinc-300 rounded-2xl p-5 sm:p-6 shadow-xs o
                   </p>
                 </div>
 
-                <button
+              <button
   onClick={() =>
     setPedidoAberto(pedidoAberto === index ? null : index)
   }
-  className="w-full bg-black-600 hover:bg-black-700 hover:scale-[1.01] active:scale-[0.99] text-white font-bold rounded-xl py-3 mb-4 transition duration-200 shadow-sm text-xs uppercase tracking-wider"
+  className="w-full bg-blue-600 hover:bg-blue-700 hover:scale-[1.01] active:scale-[0.99] text-white font-bold rounded-xl py-3 mb-4 transition duration-200 shadow-sm text-xs uppercase tracking-wider"
 >
   {pedidoAberto === index ? "RECOLHER" : "VISUALIZAR PROGRESSO"}
 </button>
