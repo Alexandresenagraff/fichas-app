@@ -104,7 +104,7 @@ export default function Cliente() {
   return (
     <main className="min-h-screen bg-white text-black">
       <div className="w-full max-w-2xl mx-auto">
-        <div className="bg-gradient-to-br from-black-900 to-black-800 px-4 py-8 relative shadow-lg header-shine text-white">
+        <div className="bg-gradient-to-br from-blue-900 to-blue-800 px-4 py-8 relative shadow-lg header-shine text-white">
           <button
             onClick={() => router.push("/")}
             className="absolute top-4 left-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all active:scale-90 text-white text-lg cursor-pointer"
@@ -118,7 +118,7 @@ export default function Cliente() {
           </h2>
 
           <p className="text-center text-blue-200 text-xs mb-5">
-            Aqui, você acompanha o status do seu pedido 
+            Aqui você acompanha o status do seu pedido 
           </p>
 
           <div className="flex items-center bg-white rounded-xl px-4 py-3 mb-5 shadow-inner border border-zinc-200/50 max-w-md mx-auto">
