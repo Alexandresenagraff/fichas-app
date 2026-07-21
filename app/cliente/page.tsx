@@ -172,16 +172,13 @@ export default function Cliente() {
                 </div>
 
                 <button
-                  onClick={() =>
-                    setPedidoAberto(pedidoAberto === index ? null : index)
-                  }
-                  className="relative overflow-hidden w-full bg-blue-650 hover:bg-blue-700 hover:scale-[1.01] active:scale-[0.99] text-white font-bold rounded-xl py-3 mb-4 transition duration-200 shadow-sm cursor-pointer text-xs uppercase tracking-wider"
-                >
-                  <span className="relative z-10">
-                    {pedidoAberto === index ? "RECOLHER" : "VISUALIZAR PROGRESSO"}
-                  </span>
-                  <span className="shine"></span>
-                </button>
+  onClick={() =>
+    setPedidoAberto(pedidoAberto === index ? null : index)
+  }
+  className="w-full bg-blue-600 hover:bg-blue-700 hover:scale-[1.01] active:scale-[0.99] text-white font-bold rounded-xl py-3 mb-4 transition duration-200 shadow-sm text-xs uppercase tracking-wider"
+>
+  {pedidoAberto === index ? "RECOLHER" : "VISUALIZAR PROGRESSO"}
+</button>
 
                 {pedidoAberto === index && (
                   <div className="animate-[slideDown_0.2s_ease-out] space-y-4">
