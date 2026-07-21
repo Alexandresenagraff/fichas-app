@@ -153,8 +153,7 @@ export default function Cliente() {
             pedidos.map((pedido, index) => (
               <div
                 key={pedido.id || index}
-                className="bg-white border border-zinc-200/80 rounded-2xl p-5 sm:p-6 shadow-xs overflow-hidden transition hover:shadow-md duration-200"
-              >
+className="bg-zinc-200 border border-zinc-300 rounded-2xl p-5 sm:p-6 shadow-xs overflow-hidden transition hover:shadow-md duration-200"              >
                 <ClientPdfLink
                   pdfLink={pedido.pdfLink}
                   className="block text-lg font-bold mb-3 text-black break-words text-center border-b border-zinc-100 pb-2"
