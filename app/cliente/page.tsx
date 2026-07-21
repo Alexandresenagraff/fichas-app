@@ -196,14 +196,14 @@ className="bg-zinc-200 border border-zinc-300 rounded-2xl p-5 sm:p-6 shadow-xs o
                     <div className="space-y-2 text-xs">
                       {[
                         { key: pedido.venda, label: "COMPRA REALIZADA" },
-                        { key: pedido.arte, label: "ARTE CONCLUÍDA" },
-                        { key: pedido.exportacao, label: "APLICADO NO MOLDE" },
-                        { key: pedido.impressao, label: "IMPRESSO" },
-                        { key: pedido.prensa, label: "PRENSAGEM CONCLUÍDA" },
-                        { key: pedido.corte, label: "CORTE CONCLUÍDO" },
-                        { key: pedido.costuraConcluida, label: "COSTURA CONCLUÍDA" },
-                        { key: pedido.conferencia, label: "CONFERIDO" },
-                        { key: pedido.entregaStatus, label: "PEDIDO DESPACHADO" },
+                        { key: pedido.arte, label: "ARTE/LAYOUT" },
+                        { key: pedido.exportacao, label: "APLICAÇÃO NO MOLDE" },
+                        { key: pedido.impressao, label: "IMPRESSÃO" },
+                        { key: pedido.prensa, label: "PRENSAGEM" },
+                        { key: pedido.corte, label: "CORTE" },
+                        { key: pedido.costuraConcluida, label: "COSTURA" },
+                        { key: pedido.conferencia, label: "CONFERÊNCIA" },
+                        { key: pedido.entregaStatus, label: "ENVIO" },
                       ].map((item, idx) => (
                         <div
                           key={idx}
