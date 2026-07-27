@@ -9,6 +9,8 @@ import {
   getFirestore,
   collection,
   getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 import { Ficha } from "../lib/helpers";
 import { DashboardSkeleton } from "../components/Skeleton";
@@ -42,7 +44,8 @@ export default function Cliente() {
   }
 
   async function buscarPedido() {
-    if (!email.trim()) {
+    const valor = email.trim();
+    if (!valor) {
       setPedidos([]);
       alert("Digite seu e-mail, telefone ou código.");
       return;
@@ -50,20 +53,23 @@ export default function Cliente() {
 
     setCarregando(true);
     try {
-      const snapshot = await getDocs(collection(db, "fichas"));
+      const fichasRef = collection(db, "fichas");
+      const buscaPorEmail = valor.includes("@");
+      const consulta = buscaPorEmail
+        ? query(fichasRef, where("email", "==", valor.toLowerCase()))
+        : query(fichasRef, where("pedido", "==", valor));
+
+      const snapshot = await getDocs(consulta);
       const encontrados: Ficha[] = [];
 
       snapshot.forEach((doc) => {
-        const dados = doc.data() as Ficha;
-        if (dados.email?.toLowerCase() === email.toLowerCase()) {
-          encontrados.push({ id: doc.id, ...dados });
-        }
+        encontrados.push({ id: doc.id, ...(doc.data() as Ficha) });
       });
 
       setPedidos(encontrados);
 
       if (encontrados.length > 0) {
-        localStorage.setItem("clienteEmail", email);
+        localStorage.setItem("clienteEmail", valor);
       } else {
         alert("Nenhum pedido encontrado para o código/e-mail informado.");
       }
