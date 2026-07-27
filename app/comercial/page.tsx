@@ -442,7 +442,7 @@ function ComercialContent() {
                     rel="noreferrer"
                     className="block bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 text-center rounded-xl p-2.5 text-xs font-bold mt-3 text-blue-400 hover:text-blue-300"
                   >
-                    📄 VER PDF
+                    📄 VISUALIZAR FICHA
                   </a>
                 )}
               </div>

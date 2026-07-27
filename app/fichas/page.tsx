@@ -672,7 +672,7 @@ function HomeContent() {
                                     rel="noreferrer"
                                     className="block bg-indigo-600 hover:bg-indigo-700 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 text-center rounded-xl p-2.5 text-xs font-bold text-white shadow-md"
                                   >
-                                    📄 VER PDF
+                                    📄 VISUALIZAR FICHA
                                   </a>
                                 ) : (
                                   <div className="flex gap-2 items-center">
