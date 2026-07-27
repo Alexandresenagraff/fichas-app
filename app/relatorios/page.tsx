@@ -26,6 +26,9 @@ function RelatoriosContent() {
   const [buscaVendedor, setBuscaVendedor] = useState("");
   const [buscaDesigner, setBuscaDesigner] = useState("");
   const [buscaStatus, setBuscaStatus] = useState<string>("todos"); // todos, ativos, finalizados, atrasados, urgentes
+  const [buscaFuncao, setBuscaFuncao] = useState<string>("todos");
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
 
   // Menu States
   const [menuAberto, setMenuAberto] = useState(false);
@@ -49,6 +52,83 @@ function RelatoriosContent() {
     return () => unsubscribe();
   }, []);
 
+  function parseDataHora(campo?: string): Date | null {
+    if (!campo) return null;
+    const [datePart, timePart] = campo.split(" ");
+    if (!datePart) return null;
+    const [dia, mes, ano] = datePart.split("/").map(Number);
+    const [horas, minutos] = (timePart || "").split(":").map((value) => Number(value) || 0);
+    if (!ano || !mes || !dia) return null;
+    return new Date(ano, mes - 1, dia, horas, minutos);
+  }
+
+  function getDataCampoPorFuncao(funcao: string): keyof Ficha | null {
+    switch (funcao) {
+      case "comercial":
+        return "vendaData";
+      case "designer":
+        return "arteData";
+      case "exportacao":
+        return "exportacaoData";
+      case "impressao":
+        return "impressaoData";
+      case "prensa":
+        return "prensaData";
+      case "corte":
+        return "corteData";
+      case "costura":
+        return "costuraData";
+      case "conferencia":
+        return "conferenciaData";
+      case "entrega":
+        return "entregaData";
+      default:
+        return null;
+    }
+  }
+
+  function fichaNaFuncao(ficha: Ficha, funcao: string): boolean {
+    if (funcao === "todos") return true;
+    switch (funcao) {
+      case "comercial":
+        return ficha.venda === true;
+      case "designer":
+        return Boolean(ficha.designer);
+      case "exportacao":
+        return ficha.exportacao === true;
+      case "impressao":
+        return ficha.impressao === true;
+      case "prensa":
+        return ficha.prensa === true;
+      case "corte":
+        return ficha.corte === true;
+      case "costura":
+        return ficha.costuraConcluida === true || ficha.costura === true;
+      case "conferencia":
+        return ficha.conferencia === true;
+      case "entrega":
+        return ficha.entregaStatus === true;
+      default:
+        return true;
+    }
+  }
+
+  function estaNoPeriodo(ficha: Ficha, funcao: string, inicio: string, fim: string): boolean {
+    if (!inicio && !fim) return true;
+    const campo = getDataCampoPorFuncao(funcao);
+    if (!campo) return true;
+
+    const dataCampo = parseDataHora(ficha[campo] as string);
+    if (!dataCampo) return false;
+
+    const inicioDate = inicio ? new Date(inicio) : null;
+    const fimDate = fim ? new Date(fim) : null;
+    if (inicioDate && dataCampo < inicioDate) return false;
+    if (fimDate && dataCampo > fimDate) return false;
+
+    return true;
+  }
+
   // Filter Logic memoized for performance optimization
   const fichasFiltradas = useMemo(() => {
     return fichas.filter((ficha) => {
@@ -61,10 +141,14 @@ function RelatoriosContent() {
       if (buscaStatus === "finalizados" && !ficha.entregaStatus) return false;
       if (buscaStatus === "atrasados" && categoriaDaFicha(ficha) !== "atrasados") return false;
       if (buscaStatus === "urgentes" && categoriaDaFicha(ficha) !== "urgentes") return false;
-      
+      // Função Filter
+      if (!fichaNaFuncao(ficha, buscaFuncao)) return false;
+      // Data Filter
+      if (!estaNoPeriodo(ficha, buscaFuncao, dataInicio, dataFim)) return false;
+
       return true;
     });
-  }, [fichas, buscaVendedor, buscaDesigner, buscaStatus]);
+  }, [fichas, buscaVendedor, buscaDesigner, buscaStatus, buscaFuncao, dataInicio, dataFim]);
 
   // Calculate Metrics memoized
   const metricas = useMemo(() => {
@@ -158,7 +242,7 @@ function RelatoriosContent() {
         </div>
 
         {/* FILTERS */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 shadow-xl">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-4 gap-4 shadow-xl">
           <div>
             <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Vendedor</label>
             <select
@@ -192,6 +276,26 @@ function RelatoriosContent() {
           </div>
 
           <div>
+            <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Função</label>
+            <select
+              value={buscaFuncao}
+              onChange={(e) => setBuscaFuncao(e.target.value)}
+              className="w-full bg-black border border-zinc-750 rounded-xl p-2.5 text-xs text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            >
+              <option value="todos">TODAS AS FUNÇÕES</option>
+              <option value="comercial">Comercial</option>
+              <option value="designer">Designer</option>
+              <option value="exportacao">Exportação</option>
+              <option value="impressao">Impressão</option>
+              <option value="prensa">Prensa</option>
+              <option value="corte">Corte</option>
+              <option value="costura">Costura</option>
+              <option value="conferencia">Conferência</option>
+              <option value="entrega">Entrega</option>
+            </select>
+          </div>
+
+          <div>
             <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Status / Prazo</label>
             <select
               value={buscaStatus}
@@ -204,6 +308,42 @@ function RelatoriosContent() {
               <option value="atrasados">ATRASADOS</option>
               <option value="urgentes">URGENTES (PRAZO ≤ 12 DIAS)</option>
             </select>
+          </div>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 shadow-xl">
+          <div>
+            <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Data início</label>
+            <input
+              type="date"
+              value={dataInicio}
+              onChange={(e) => setDataInicio(e.target.value)}
+              className="w-full bg-black border border-zinc-750 rounded-xl p-2.5 text-xs text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Data fim</label>
+            <input
+              type="date"
+              value={dataFim}
+              onChange={(e) => setDataFim(e.target.value)}
+              className="w-full bg-black border border-zinc-750 rounded-xl p-2.5 text-xs text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          <div className="flex items-end justify-end">
+            <button
+              type="button"
+              onClick={() => {
+                setBuscaFuncao("todos");
+                setDataInicio("");
+                setDataFim("");
+              }}
+              className="w-full bg-zinc-800 border border-zinc-700 text-zinc-300 hover:text-white hover:border-zinc-600 rounded-xl py-2.5 text-xs font-semibold transition-all duration-200"
+            >
+              Limpar período
+            </button>
           </div>
         </div>
 
