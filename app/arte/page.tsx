@@ -241,6 +241,16 @@ function ArteContent() {
             >
               {ficha.cliente}
             </ClientPdfLink>
+            {ficha.pdfLink && (
+              <a
+                href={ficha.pdfLink}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-blue-300 hover:text-blue-200"
+              >
+                <FileText size={12} /> Ver PDF da ficha
+              </a>
+            )}
             <div className="flex flex-wrap gap-1.5 mt-1.5">
               {etapaDaFicha(ficha) === "aguardandoAprovacao" && (
                 <span className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md inline-flex items-center gap-1">
