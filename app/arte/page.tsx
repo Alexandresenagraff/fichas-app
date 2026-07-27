@@ -18,7 +18,6 @@ import {
 import {
   formatarDataHora,
   etapaDaFicha,
-  categoriaDaFicha,
   type Ficha,
   type HistoricoAprovacao,
   DESIGNERS,
@@ -38,8 +37,6 @@ function ArteContent() {
   const [busca, setBusca] = useState("");
   const [secaoAtiva, setSecaoAtiva] = useState<SecaoArte>("arteParaCriar");
   const [pdfLinks, setPdfLinks] = useState<Record<string, string>>({});
-  const [dataInicio, setDataInicio] = useState("");
-  const [dataFim, setDataFim] = useState("");
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -75,42 +72,6 @@ function ArteContent() {
   }, []);
 
   const fichaIdParam = searchParams.get("fichaId");
-  const designerExibicao = nomeDoDesignerExibicao(designerAtivo);
-
-  function nomeDoDesignerExibicao(nomeNormalizado: string): string {
-    if (!nomeNormalizado) return "Designer";
-    return (
-      DESIGNERS.find(
-        (d) =>
-          d
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .toUpperCase() === nomeNormalizado
-      ) || nomeNormalizado
-    );
-  }
-
-  function parseDataHora(dataHora?: string): Date | null {
-    if (!dataHora) return null;
-    const [dataPart] = dataHora.split(" ");
-    const [dia, mes, ano] = dataPart.split("/").map(Number);
-    if (!ano || !mes || !dia) return null;
-    return new Date(ano, mes - 1, dia);
-  }
-
-  function estaNoPeriodo(dataCampo?: string): boolean {
-    if (!dataInicio && !dataFim) return true;
-    const data = parseDataHora(dataCampo);
-    if (!data) return false;
-
-    const inicio = dataInicio ? new Date(dataInicio) : null;
-    const fim = dataFim ? new Date(dataFim) : null;
-    const fimDoDia = fim ? new Date(fim.getFullYear(), fim.getMonth(), fim.getDate(), 23, 59, 59) : null;
-
-    if (inicio && data < inicio) return false;
-    if (fimDoDia && data > fimDoDia) return false;
-    return true;
-  }
 
   useEffect(() => {
     if (fichaIdParam && fichas.length > 0) {
@@ -243,10 +204,9 @@ function ArteContent() {
     return fichas.filter((ficha) => {
       const matchBusca = !termo || (ficha.cliente || "").toLowerCase().includes(termo);
       const matchDesigner = !designerAtivo || ficha.designer?.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === designerAtivo;
-      const matchPeriodo = estaNoPeriodo(ficha.arteData);
-      return matchBusca && matchDesigner && matchPeriodo;
+      return matchBusca && matchDesigner;
     });
-  }, [fichas, busca, designerAtivo, dataInicio, dataFim]);
+  }, [fichas, busca, designerAtivo]);
 
   const arteParaCriar = useMemo(() => fichasFiltradas.filter((f) => etapaDaFicha(f) === "arteParaCriar"), [fichasFiltradas]);
   const alteracaoSolicitada = useMemo(() => fichasFiltradas.filter((f) => etapaDaFicha(f) === "alteracaoSolicitada"), [fichasFiltradas]);
@@ -535,62 +495,6 @@ function ArteContent() {
               <X size={16} />
             </button>
           )}
-        </div>
-
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-5 space-y-4">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-1">Relatório</p>
-              <h2 className="text-xl font-bold text-white tracking-tight">
-                Designer {designerExibicao}
-              </h2>
-              <p className="text-xs text-zinc-500">Resumo das fichas de arte do designer no período selecionado.</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 w-full md:w-auto">
-              <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-3">
-                <p className="text-[10px] uppercase tracking-wider text-zinc-400">Total</p>
-                <p className="text-2xl font-bold text-white">{fichasFiltradas.length}</p>
-              </div>
-              <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-3">
-                <p className="text-[10px] uppercase tracking-wider text-zinc-400">Atrasadas</p>
-                <p className="text-2xl font-bold text-red-400">{fichasFiltradas.filter((f) => categoriaDaFicha(f) === "atrasados").length}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2">Data início</label>
-              <input
-                type="date"
-                value={dataInicio}
-                onChange={(e) => setDataInicio(e.target.value)}
-                className="w-full bg-black border border-zinc-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-2">Data fim</label>
-              <input
-                type="date"
-                value={dataFim}
-                onChange={(e) => setDataFim(e.target.value)}
-                className="w-full bg-black border border-zinc-800 rounded-xl p-2.5 text-xs text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              />
-            </div>
-            <div className="lg:col-span-2 flex items-end">
-              <button
-                type="button"
-                onClick={() => {
-                  setDataInicio("");
-                  setDataFim("");
-                }}
-                className="w-full bg-zinc-800 border border-zinc-700 rounded-xl py-3 text-xs font-semibold text-zinc-300 hover:text-white hover:border-zinc-600 transition-all duration-200"
-              >
-                Limpar período
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* ABAS */}
