@@ -212,7 +212,10 @@ function ArteContent() {
   const alteracaoSolicitada = useMemo(() => fichasFiltradas.filter((f) => etapaDaFicha(f) === "alteracaoSolicitada"), [fichasFiltradas]);
   const aguardandoAprovacao = useMemo(() => {
     return fichasFiltradas.filter(
-      (f) => etapaDaFicha(f) === "aguardandoAprovacao" || etapaDaFicha(f) === "exportacao"
+      (f) =>
+        etapaDaFicha(f) === "aguardandoAprovacao" ||
+        etapaDaFicha(f) === "exportacao" ||
+        etapaDaFicha(f) === "impressao"
     );
   }, [fichasFiltradas]);
 
