@@ -244,16 +244,6 @@ function ArteContent() {
             >
               {ficha.cliente}
             </ClientPdfLink>
-            {ficha.pdfLink && (
-              <a
-                href={ficha.pdfLink}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-blue-300 hover:text-blue-200"
-              >
-                <FileText size={12} /> Ver PDF da ficha
-              </a>
-            )}
             <div className="flex flex-wrap gap-1.5 mt-1.5">
               {etapaDaFicha(ficha) === "aguardandoAprovacao" && (
                 <span className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md inline-flex items-center gap-1">
@@ -374,7 +364,7 @@ function ArteContent() {
               rel="noreferrer"
               className="block bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 hover:scale-[1.01] active:scale-[0.99] transition-all duration-200 text-center rounded-xl p-2.5 text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center justify-center gap-1.5"
             >
-              <FileText size={14} /> VER MOLDE (PDF)
+              <FileText size={14} /> VISUALIZAR FICHA
             </a>
           ) : (
             <div className="text-[11px] text-zinc-500 text-center bg-zinc-900/40 border border-zinc-900 rounded-xl p-3 font-medium">
