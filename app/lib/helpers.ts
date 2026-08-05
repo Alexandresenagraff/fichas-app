@@ -68,6 +68,15 @@ export interface Ficha {
   criadoEm?: Date;
 }
 
+export type Costureiro = "paulo" | "celina";
+
+export function atribuicaoDoCostureiro(costureiro: Costureiro) {
+  return {
+    costureiroPaulo: costureiro === "paulo",
+    costureiroCelina: costureiro === "celina",
+  };
+}
+
 export function formatarDataHora(): string {
   const agora = new Date();
   const dia = String(agora.getDate()).padStart(2, "0");

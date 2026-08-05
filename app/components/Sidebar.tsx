@@ -39,6 +39,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [comercialOpen, setComercialOpen] = useState(false);
   const [designersOpen, setDesignersOpen] = useState(false);
+  const [costuraOpen, setCosturaOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
 
   // Close menus on path changes or click outside
@@ -48,6 +49,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setComercialOpen(false);
       setDesignersOpen(false);
+      setCosturaOpen(false);
       setAdminOpen(false);
     }
   }, [isOpen]);
@@ -227,15 +229,37 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </button>
 
           {/* COSTURA */}
-          <button
-            onClick={() => navigateTo("/costura")}
-            className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
-              pathname === "/costura" ? "bg-pink-500/10 text-pink-400 border border-pink-500/20" : "text-zinc-300 hover:text-white"
-            }`}
-          >
-            <Shirt size={14} className={pathname === "/costura" ? "text-pink-400" : "text-zinc-400"} />
-            COSTURA
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setCosturaOpen(!costuraOpen)}
+              className={`w-full flex items-center justify-between py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 ${
+                costuraOpen || pathname === "/costura" ? "bg-pink-500/10 text-pink-400 border border-pink-500/20" : "text-zinc-300 hover:text-white"
+              }`}
+            >
+              <span className="flex items-center gap-2">
+                <Shirt size={14} className={costuraOpen || pathname === "/costura" ? "text-pink-400" : "text-zinc-400"} />
+                COSTURA
+              </span>
+              {costuraOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+            </button>
+
+            {costuraOpen && (
+              <div className="mt-1 ml-2 pl-2 border-l border-zinc-800 space-y-1 animate-[slideDown_0.15s_ease-out]">
+                <button
+                  onClick={() => navigateTo("/costura?costureiro=celina")}
+                  className="block w-full text-left py-1.5 px-2 rounded-lg text-[11px] text-zinc-400 hover:bg-zinc-800/40 hover:text-white transition"
+                >
+                  ▸ CELINA
+                </button>
+                <button
+                  onClick={() => navigateTo("/costura?costureiro=paulo")}
+                  className="block w-full text-left py-1.5 px-2 rounded-lg text-[11px] text-zinc-400 hover:bg-zinc-800/40 hover:text-white transition"
+                >
+                  ▸ PAULO
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* CONFERÊNCIA */}
           <button

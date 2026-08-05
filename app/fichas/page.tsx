@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Menu, RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus } from "lucide-react";
 
 import app from "../../firebase/config";
-import { formatarDataHora, categoriaDaFicha, etapaDaFicha, Ficha, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
+import { atribuicaoDoCostureiro, formatarDataHora, categoriaDaFicha, etapaDaFicha, Ficha, type Costureiro, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
 import Sidebar from "../components/Sidebar";
 import StatusToggle from "../components/StatusToggle";
 import { CardSkeleton } from "../components/Skeleton";
@@ -186,6 +186,20 @@ function HomeContent() {
     } catch (error) {
       console.error(error);
       alert("Erro ao atualizar");
+    }
+  }
+
+  async function selecionarCostureiro(id: string, costureiro: Costureiro) {
+    const atribuicao = atribuicaoDoCostureiro(costureiro);
+
+    try {
+      await updateDoc(doc(db, "fichas", id), atribuicao);
+      setResumoPedidos((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, ...atribuicao } : item))
+      );
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao selecionar costureiro(a)");
     }
   }
 
@@ -734,16 +748,19 @@ function HomeContent() {
 
                             {ficha.costura && (
                               <div className="ml-4 pl-3 border-l border-zinc-800 space-y-2 animate-[slideDown_0.15s_ease-out]">
+                                <p className="text-zinc-500 text-[10px] font-bold tracking-wider pt-1">
+                                  COSTUREIRO(A) RESPONSÁVEL:
+                                </p>
                                 <StatusToggle
                                   label="PAULO"
                                   ativo={!!ficha.costureiroPaulo}
-                                  onClick={() => alterarStatus(ficha.id || "", "costureiroPaulo", !!ficha.costureiroPaulo)}
+                                  onClick={() => selecionarCostureiro(ficha.id || "", "paulo")}
                                 />
 
                                 <StatusToggle
                                   label="CELINA"
                                   ativo={!!ficha.costureiroCelina}
-                                  onClick={() => alterarStatus(ficha.id || "", "costureiroCelina", !!ficha.costureiroCelina)}
+                                  onClick={() => selecionarCostureiro(ficha.id || "", "celina")}
                                 />
 
                                 {(ficha.costureiroPaulo || ficha.costureiroCelina) && (
