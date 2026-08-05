@@ -31,6 +31,7 @@ export interface Alteracao {
 export interface Ficha {
   id?: string;
   cliente: string;
+  empresa?: string;
   email?: string;
   vendedor?: string;
   observacao?: string;

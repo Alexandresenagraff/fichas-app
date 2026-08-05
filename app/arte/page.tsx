@@ -37,6 +37,13 @@ function situacaoDoPainelDesigner(ficha: Ficha): SituacaoPainelDesigner | null {
   return null;
 }
 
+function normalizarTexto(texto?: string) {
+  return (texto || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 function ArteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -210,9 +217,16 @@ function ArteContent() {
 
   // Memoized filters for UI performance optimization
   const fichasFiltradas = useMemo(() => {
-    const termo = busca.trim().toLowerCase();
+    const termo = normalizarTexto(busca.trim());
     return fichas.filter((ficha) => {
-      const matchBusca = !termo || (ficha.cliente || "").toLowerCase().includes(termo);
+      const camposDeBusca = [
+        ficha.cliente,
+        ficha.empresa,
+        ficha.pedido,
+        ficha.id,
+      ];
+      const matchBusca =
+        !termo || camposDeBusca.some((campo) => normalizarTexto(campo).includes(termo));
       const matchDesigner = !designerAtivo || ficha.designer?.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === designerAtivo;
       return matchBusca && matchDesigner;
     });
