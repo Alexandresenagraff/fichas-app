@@ -27,6 +27,15 @@ import { DashboardSkeleton } from "../components/Skeleton";
 const db = getFirestore(app);
 
 type SecaoArte = "arteParaCriar" | "alteracaoSolicitada" | "aguardandoAprovacao";
+type SituacaoPainelDesigner = "aCriar" | "emAprovacao" | "aprovados" | "emProducao";
+
+function situacaoDoPainelDesigner(ficha: Ficha): SituacaoPainelDesigner | null {
+  if (ficha.pdfLink) return "emProducao";
+  if (ficha.arteAprovada) return "aprovados";
+  if (etapaDaFicha(ficha) === "aguardandoAprovacao") return "emAprovacao";
+  if (etapaDaFicha(ficha) === "arteParaCriar") return "aCriar";
+  return null;
+}
 
 function ArteContent() {
   const router = useRouter();
@@ -36,6 +45,7 @@ function ArteContent() {
   const [carregando, setCarregando] = useState(true);
   const [busca, setBusca] = useState("");
   const [secaoAtiva, setSecaoAtiva] = useState<SecaoArte>("arteParaCriar");
+  const [situacaoPainelAtiva, setSituacaoPainelAtiva] = useState<SituacaoPainelDesigner | null>(null);
   const [pdfLinks, setPdfLinks] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -207,6 +217,29 @@ function ArteContent() {
       return matchBusca && matchDesigner;
     });
   }, [fichas, busca, designerAtivo]);
+
+  const fichasDoDesigner = useMemo(() => {
+    if (!designerAtivo) return [];
+
+    return fichas.filter(
+      (ficha) =>
+        ficha.designer?.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === designerAtivo
+    );
+  }, [fichas, designerAtivo]);
+
+  const painelGeral = useMemo(() => {
+    const situacoes: Array<{ id: SituacaoPainelDesigner; label: string; cor: string }> = [
+      { id: "aCriar", label: "À CRIAR", cor: "text-amber-400" },
+      { id: "emAprovacao", label: "EM APROVAÇÃO", cor: "text-yellow-400" },
+      { id: "aprovados", label: "APROVADOS", cor: "text-lime-400" },
+      { id: "emProducao", label: "EM PRODUÇÃO", cor: "text-indigo-400" },
+    ];
+
+    return situacoes.map((situacao) => ({
+      ...situacao,
+      quantidade: fichasDoDesigner.filter((ficha) => situacaoDoPainelDesigner(ficha) === situacao.id).length,
+    }));
+  }, [fichasDoDesigner]);
 
   const arteParaCriar = useMemo(() => fichasFiltradas.filter((f) => etapaDaFicha(f) === "arteParaCriar"), [fichasFiltradas]);
   const alteracaoSolicitada = useMemo(() => fichasFiltradas.filter((f) => etapaDaFicha(f) === "alteracaoSolicitada"), [fichasFiltradas]);
@@ -445,6 +478,13 @@ function ArteContent() {
     return found ? found.lista : [];
   }, [secoes, secaoAtiva]);
 
+  const listaExibida = useMemo(() => {
+    if (!situacaoPainelAtiva) return activeSectionList;
+    return fichasFiltradas.filter(
+      (ficha) => situacaoDoPainelDesigner(ficha) === situacaoPainelAtiva
+    );
+  }, [activeSectionList, fichasFiltradas, situacaoPainelAtiva]);
+
   return (
     <main className="min-h-screen bg-black text-white p-3">
       <div className="max-w-md mx-auto">
@@ -500,6 +540,42 @@ function ArteContent() {
           )}
         </div>
 
+        {designerAtivo && (
+          <section className="bg-zinc-950 border border-zinc-900 rounded-2xl p-3.5 mb-4 shadow-lg">
+            <div className="flex items-center justify-between mb-3 px-0.5">
+              <p className="text-[10px] font-extrabold tracking-wider text-zinc-400">PAINEL GERAL</p>
+              <span className="text-[10px] font-bold text-zinc-600">{designerAtivo}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {painelGeral.map((situacao) => {
+                const ativa = situacaoPainelAtiva === situacao.id;
+                return (
+                  <button
+                    key={situacao.id}
+                    onClick={() =>
+                      setSituacaoPainelAtiva((atual) =>
+                        atual === situacao.id ? null : situacao.id
+                      )
+                    }
+                    className={`rounded-xl border px-3 py-2.5 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
+                      ativa
+                        ? "bg-zinc-800 border-zinc-700 text-white animate-pulse-once"
+                        : "bg-zinc-900/80 border-zinc-800/80 hover:bg-zinc-850"
+                    }`}
+                  >
+                    <span className="block text-[9px] font-bold tracking-wide text-zinc-400 truncate">
+                      {situacao.label}
+                    </span>
+                    <span className={`block text-lg font-extrabold mt-0.5 ${ativa ? "text-white" : situacao.cor}`}>
+                      {situacao.quantidade}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         {/* ABAS */}
         <div className="grid grid-cols-3 gap-2 mb-5">
           {secoes.map((secao) => {
@@ -507,7 +583,10 @@ function ArteContent() {
             return (
               <button
                 key={secao.id}
-                onClick={() => setSecaoAtiva(secao.id)}
+                onClick={() => {
+                  setSituacaoPainelAtiva(null);
+                  setSecaoAtiva(secao.id);
+                }}
                 className={`rounded-xl py-2.5 text-[9px] font-bold border transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] text-center ${
                   ativo
                     ? "bg-zinc-800 border-zinc-700 text-white animate-pulse-once"
@@ -527,13 +606,15 @@ function ArteContent() {
         <div className="space-y-3">
           {carregando ? (
             <DashboardSkeleton />
-          ) : activeSectionList.length > 0 ? (
-            activeSectionList.map((ficha) => renderSecao(ficha))
+          ) : listaExibida.length > 0 ? (
+            listaExibida.map((ficha) => renderSecao(ficha))
           ) : (
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center text-zinc-400 text-xs">
               {busca
                 ? "Nenhum cliente encontrado"
-                : `Nenhum pedido em ${secoes.find((s) => s.id === secaoAtiva)?.label}`}
+                : situacaoPainelAtiva
+                  ? `Nenhum pedido em ${painelGeral.find((s) => s.id === situacaoPainelAtiva)?.label}`
+                  : `Nenhum pedido em ${secoes.find((s) => s.id === secaoAtiva)?.label}`}
             </div>
           )}
         </div>
