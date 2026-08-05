@@ -29,6 +29,11 @@ const db = getFirestore(app);
 type SecaoArte = "arteParaCriar" | "alteracaoSolicitada" | "aguardandoAprovacao";
 type SituacaoPainelDesigner = "aCriar" | "emAprovacao" | "aprovados" | "emProducao";
 
+const meses = [
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+];
+
 function situacaoDoPainelDesigner(ficha: Ficha): SituacaoPainelDesigner | null {
   if (ficha.pdfLink) return "emProducao";
   if (ficha.arteAprovada) return "aprovados";
@@ -44,6 +49,25 @@ function normalizarTexto(texto?: string) {
     .toLowerCase();
 }
 
+function dataDoPedido(ficha: Ficha) {
+  const correspondencia = ficha.pedido?.match(/^(\d{4})-(\d{2})-/);
+  if (!correspondencia) return null;
+
+  return {
+    ano: Number(correspondencia[1]),
+    mes: Number(correspondencia[2]),
+  };
+}
+
+function pertenceAoPeriodo(ficha: Ficha, anoSelecionado: string, mesSelecionado: string) {
+  if (anoSelecionado === "todos") return true;
+
+  const data = dataDoPedido(ficha);
+  if (!data || data.ano !== Number(anoSelecionado)) return false;
+
+  return mesSelecionado === "todos" || data.mes === Number(mesSelecionado);
+}
+
 function ArteContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,6 +77,8 @@ function ArteContent() {
   const [busca, setBusca] = useState("");
   const [secaoAtiva, setSecaoAtiva] = useState<SecaoArte>("arteParaCriar");
   const [situacaoPainelAtiva, setSituacaoPainelAtiva] = useState<SituacaoPainelDesigner | null>(null);
+  const [anoSelecionado, setAnoSelecionado] = useState("todos");
+  const [mesSelecionado, setMesSelecionado] = useState("todos");
   const [pdfLinks, setPdfLinks] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -228,9 +254,10 @@ function ArteContent() {
       const matchBusca =
         !termo || camposDeBusca.some((campo) => normalizarTexto(campo).includes(termo));
       const matchDesigner = !designerAtivo || ficha.designer?.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === designerAtivo;
-      return matchBusca && matchDesigner;
+      const matchPeriodo = pertenceAoPeriodo(ficha, anoSelecionado, mesSelecionado);
+      return matchBusca && matchDesigner && matchPeriodo;
     });
-  }, [fichas, busca, designerAtivo]);
+  }, [fichas, busca, designerAtivo, anoSelecionado, mesSelecionado]);
 
   const fichasDoDesigner = useMemo(() => {
     if (!designerAtivo) return [];
@@ -240,6 +267,20 @@ function ArteContent() {
         ficha.designer?.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === designerAtivo
     );
   }, [fichas, designerAtivo]);
+
+  const anosDisponiveis = useMemo(() => {
+    return [...new Set(
+      fichasDoDesigner
+        .map((ficha) => dataDoPedido(ficha)?.ano)
+        .filter((ano): ano is number => Boolean(ano))
+    )].sort((a, b) => b - a);
+  }, [fichasDoDesigner]);
+
+  const fichasDoDesignerNoPeriodo = useMemo(() => {
+    return fichasDoDesigner.filter((ficha) =>
+      pertenceAoPeriodo(ficha, anoSelecionado, mesSelecionado)
+    );
+  }, [fichasDoDesigner, anoSelecionado, mesSelecionado]);
 
   const painelGeral = useMemo(() => {
     const situacoes: Array<{ id: SituacaoPainelDesigner; label: string; cor: string }> = [
@@ -251,9 +292,9 @@ function ArteContent() {
 
     return situacoes.map((situacao) => ({
       ...situacao,
-      quantidade: fichasDoDesigner.filter((ficha) => situacaoDoPainelDesigner(ficha) === situacao.id).length,
+      quantidade: fichasDoDesignerNoPeriodo.filter((ficha) => situacaoDoPainelDesigner(ficha) === situacao.id).length,
     }));
-  }, [fichasDoDesigner]);
+  }, [fichasDoDesignerNoPeriodo]);
 
   const arteParaCriar = useMemo(() => fichasFiltradas.filter((f) => etapaDaFicha(f) === "arteParaCriar"), [fichasFiltradas]);
   const alteracaoSolicitada = useMemo(() => fichasFiltradas.filter((f) => etapaDaFicha(f) === "alteracaoSolicitada"), [fichasFiltradas]);
@@ -553,6 +594,37 @@ function ArteContent() {
             </button>
           )}
         </div>
+
+        {designerAtivo && (
+          <div className="grid grid-cols-2 gap-2 mb-4">
+            <select
+              value={anoSelecionado}
+              onChange={(event) => {
+                setAnoSelecionado(event.target.value);
+                setMesSelecionado("todos");
+              }}
+              className="w-full bg-zinc-900 border border-zinc-800/80 rounded-xl px-3 py-2.5 text-xs font-semibold text-zinc-300 outline-none focus:border-zinc-600"
+              aria-label="Filtrar por ano"
+            >
+              <option value="todos">Todos os anos</option>
+              {anosDisponiveis.map((ano) => (
+                <option key={ano} value={ano}>{ano}</option>
+              ))}
+            </select>
+            <select
+              value={mesSelecionado}
+              onChange={(event) => setMesSelecionado(event.target.value)}
+              disabled={anoSelecionado === "todos"}
+              className="w-full bg-zinc-900 border border-zinc-800/80 rounded-xl px-3 py-2.5 text-xs font-semibold text-zinc-300 outline-none focus:border-zinc-600 disabled:cursor-not-allowed disabled:opacity-50"
+              aria-label="Filtrar por mês"
+            >
+              <option value="todos">Todos os meses</option>
+              {meses.map((mes, index) => (
+                <option key={mes} value={index + 1}>{mes}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {designerAtivo && (
           <section className="bg-zinc-950 border border-zinc-900 rounded-2xl p-3.5 mb-4 shadow-lg">
