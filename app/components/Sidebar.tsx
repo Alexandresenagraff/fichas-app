@@ -40,7 +40,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const [comercialOpen, setComercialOpen] = useState(false);
   const [designersOpen, setDesignersOpen] = useState(false);
   const [costuraOpen, setCosturaOpen] = useState(false);
-  const [adminOpen, setAdminOpen] = useState(false);
 
   // Close menus on path changes or click outside
   useEffect(() => {
@@ -50,7 +49,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       setComercialOpen(false);
       setDesignersOpen(false);
       setCosturaOpen(false);
-      setAdminOpen(false);
     }
   }, [isOpen]);
 
@@ -62,37 +60,44 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   };
 
   // Structured menu items for ease of future activation
-  const adminSubmenuItems = [
+  const adminItems = [
+    {
+      id: "pendencias",
+      label: "Pendências",
+      icon: <ClipboardCheck size={14} />,
+      route: "/pendencias",
+      disabled: false,
+    },
     {
       id: "relatorios",
       label: "Relatórios",
-      icon: <BarChart3 size={12} />,
+      icon: <BarChart3 size={14} />,
       route: "/relatorios",
       disabled: false,
     },
     {
       id: "usuarios",
       label: "Usuários (Em breve)",
-      icon: <Users size={12} />,
+      icon: <Users size={14} />,
       disabled: true,
     },
     {
       id: "configuracoes",
       label: "Configurações",
-      icon: <Settings size={12} />,
+      icon: <Settings size={14} />,
       route: "/configuracoes",
       disabled: false,
     },
     {
       id: "backup",
       label: "Backup (Em breve)",
-      icon: <Database size={12} />,
+      icon: <Database size={14} />,
       disabled: true,
     },
     {
       id: "logs",
       label: "Logs (Em breve)",
-      icon: <ClipboardList size={12} />,
+      icon: <ClipboardList size={14} />,
       disabled: true,
     },
   ];
@@ -283,56 +288,45 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             ENVIO / RETIRADA
           </button>
 
-          {/* ADMINISTRAÇÃO */}
-          <div className="relative">
-            <button
-              onClick={() => setAdminOpen(!adminOpen)}
-              className={`w-full flex items-center justify-between py-2 px-2.5 rounded-xl text-xs font-semibold transition-all duration-200 hover:bg-zinc-800 cursor-pointer ${
-                adminOpen ? "bg-zinc-800/50 text-white animate-pulse-once" : "text-zinc-300 hover:text-white"
-              }`}
-            >
-              <span className="flex items-center gap-2">
-                <Settings size={14} className="text-zinc-400" />
-                ADMINISTRAÇÃO
-              </span>
-              {adminOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-            </button>
+          <div className="my-4 border-t border-zinc-800/60" />
 
-            {adminOpen && (
-              <div className="mt-1 ml-2 pl-2 border-l border-zinc-800 space-y-1 animate-[slideDown_0.15s_ease-out]">
-                {adminSubmenuItems.map((item) => {
-                  if (item.disabled) {
-                    return (
-                      <div
-                        key={item.id}
-                        className="flex items-center gap-2 py-1.5 px-2 rounded-lg text-[11px] text-zinc-600 font-semibold cursor-not-allowed select-none opacity-50"
-                        title="Em breve"
-                      >
-                        {item.icon}
-                        {item.label}
-                      </div>
-                    );
-                  }
-
-                  const isSelected = pathname === item.route;
+          <section aria-label="Administração">
+            <h2 className="mb-2 px-2.5 text-xs font-bold tracking-wider text-zinc-500 uppercase">
+              ADMINISTRAÇÃO
+            </h2>
+            <div className="space-y-1">
+              {adminItems.map((item) => {
+                if (item.disabled) {
                   return (
-                    <button
+                    <div
                       key={item.id}
-                      onClick={() => item.route && navigateTo(item.route)}
-                      className={`w-full flex items-center gap-2 py-1.5 px-2 rounded-lg text-[11px] font-bold text-left transition duration-200 cursor-pointer ${
-                        isSelected
-                          ? "bg-zinc-800/60 text-blue-400 border border-zinc-700/35"
-                          : "text-zinc-400 hover:bg-zinc-800/40 hover:text-white"
-                      }`}
+                      className="flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs text-zinc-600 font-semibold cursor-not-allowed select-none opacity-50"
+                      title="Em breve"
                     >
                       {item.icon}
                       {item.label}
-                    </button>
+                    </div>
                   );
-                })}
-              </div>
-            )}
-          </div>
+                }
+
+                const isSelected = pathname === item.route;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => item.route && navigateTo(item.route)}
+                    className={`w-full flex items-center gap-2 py-2 px-2.5 rounded-xl text-xs font-semibold text-left transition-all duration-200 ${
+                      isSelected
+                        ? "bg-zinc-800/60 text-blue-400 border border-zinc-700/35"
+                        : "text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                    }`}
+                  >
+                    {item.icon}
+                    {item.label}
+                  </button>
+                );
+              })}
+            </div>
+          </section>
         </div>
       </div>
     </>
