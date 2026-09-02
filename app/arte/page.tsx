@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Plus, Search, X, FileText, Check, Undo2 } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 import ClientPdfLink from "../components/ClientPdfLink";
+import AdminNavigation from "../components/AdminNavigation";
 
 import app from "../../firebase/config";
 import {
@@ -540,7 +541,7 @@ function ArteContent() {
   }, [activeSectionList, fichasFiltradas, situacaoPainelAtiva]);
 
   return (
-    <main className="min-h-screen bg-black text-white p-3">
+    <main className="min-h-screen bg-slate-100 p-3 pb-28 text-slate-900">
       <div className="max-w-md mx-auto">
         {/* HEADER */}
         <div className="flex items-center justify-between mb-5 mt-2">
@@ -704,6 +705,7 @@ function ArteContent() {
           )}
         </div>
       </div>
+      <AdminNavigation />
     </main>
   );
 }

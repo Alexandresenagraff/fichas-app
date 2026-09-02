@@ -9,6 +9,7 @@ import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import { Ficha, categoriaDaFicha } from "../lib/helpers";
 import { DashboardSkeleton, KpiSkeleton } from "./Skeleton";
 import ClientPdfLink from "./ClientPdfLink";
+import AdminNavigation from "./AdminNavigation";
 
 const db = getFirestore(app);
 
@@ -117,7 +118,7 @@ function SectorDashboardContent({
   };
 
   return (
-    <main className="min-h-screen bg-black text-white p-3">
+    <main className="min-h-screen bg-slate-100 p-3 pb-28 text-slate-900">
       <div className="max-w-md mx-auto">
         {/* HEADER */}
         <div className="flex items-center justify-between mb-5 mt-2">
@@ -295,6 +296,7 @@ function SectorDashboardContent({
           </p>
         )}
       </div>
+      <AdminNavigation />
     </main>
   );
 }

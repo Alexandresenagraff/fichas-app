@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Plus, Search, X, Calendar, User } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 import ClientPdfLink from "../components/ClientPdfLink";
+import AdminNavigation from "../components/AdminNavigation";
 
 import app from "../../firebase/config";
 import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc } from "firebase/firestore";
@@ -267,7 +268,7 @@ function ComercialContent() {
   }, [pedidosDoVendedor]);
 
   return (
-    <main className="min-h-screen bg-black p-3 text-white">
+    <main className="min-h-screen bg-slate-100 p-3 pb-28 text-slate-900">
       <div className="max-w-md mx-auto">
         {/* HEADER */}
         <div className="flex items-center justify-between mt-5 mb-5">
@@ -605,6 +606,7 @@ function ComercialContent() {
           </div>
         </div>
       )}
+      <AdminNavigation />
     </main>
   );
 }

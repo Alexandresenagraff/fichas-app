@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Menu, RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus } from "lucide-react";
+import { RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus } from "lucide-react";
 
 import app from "../../firebase/config";
 import { atribuicaoDoCostureiro, formatarDataHora, categoriaDaFicha, etapaDaFicha, Ficha, type Costureiro, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
-import Sidebar from "../components/Sidebar";
+import AdminNavigation from "../components/AdminNavigation";
 import StatusToggle from "../components/StatusToggle";
 import { CardSkeleton } from "../components/Skeleton";
 import ClientPdfLink from "../components/ClientPdfLink";
@@ -70,7 +70,6 @@ function HomeContent() {
   const [carregando, setCarregando] = useState(true);
   
   const [pedidosAbertos, setPedidosAbertos] = useState<string[]>([]);
-  const [menuAberto, setMenuAberto] = useState(false);
 
   const [editCliente, setEditCliente] = useState("");
   const [editEmail, setEditEmail] = useState("");
@@ -288,16 +287,7 @@ function HomeContent() {
   }, [resumoPedidos]);
 
   return (
-    <main className="min-h-screen bg-black p-3 text-white relative">
-      <button
-        onClick={() => setMenuAberto(!menuAberto)}
-        className="fixed top-4 right-4 text-white p-2.5 bg-zinc-900/90 border border-zinc-800 hover:bg-zinc-800 active:scale-95 transition-all duration-200 rounded-xl z-40 cursor-pointer shadow-lg"
-        title="Menu"
-      >
-        <Menu size={22} />
-      </button>
-
-      <Sidebar isOpen={menuAberto} onClose={() => setMenuAberto(false)} />
+    <main className="min-h-screen bg-slate-100 p-3 pb-28 text-slate-900 relative">
 
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mt-12 mb-4 px-1">
@@ -821,6 +811,7 @@ function HomeContent() {
           </div>
         )}
       </div>
+      <AdminNavigation />
     </main>
   );
 }

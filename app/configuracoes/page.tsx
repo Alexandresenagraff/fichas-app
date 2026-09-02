@@ -8,6 +8,7 @@ import {
   primeNotificationSounds,
   setNotificationSoundsEnabled,
 } from "../lib/notificationSounds";
+import AdminNavigation from "../components/AdminNavigation";
 
 export default function Configuracoes() {
   const router = useRouter();
@@ -26,7 +27,7 @@ export default function Configuracoes() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white p-4">
+    <main className="min-h-screen bg-slate-100 p-4 pb-28 text-slate-900">
       <div className="max-w-xl mx-auto pt-2">
         <button
           onClick={() => router.back()}
@@ -70,6 +71,7 @@ export default function Configuracoes() {
           </div>
         </section>
       </div>
+      <AdminNavigation />
     </main>
   );
 }

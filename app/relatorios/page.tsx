@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Menu, ArrowLeft, BarChart3, TrendingUp, Calendar, AlertTriangle, Users, Palette } from "lucide-react";
+import { ArrowLeft, BarChart3, TrendingUp, Calendar, AlertTriangle, Users, Palette } from "lucide-react";
 import app from "../../firebase/config";
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import {
@@ -13,7 +13,7 @@ import {
   DESIGNERS,
   ETAPAS,
 } from "../lib/helpers";
-import Sidebar from "../components/Sidebar";
+import AdminNavigation from "../components/AdminNavigation";
 import { RelatoriosSkeleton } from "../components/Skeleton";
 import ClientPdfLink from "../components/ClientPdfLink";
 
@@ -31,7 +31,6 @@ function RelatoriosContent() {
   const [dataFim, setDataFim] = useState("");
 
   // Menu States
-  const [menuAberto, setMenuAberto] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -212,17 +211,8 @@ function RelatoriosContent() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-white p-4 relative">
+    <main className="min-h-screen bg-slate-100 p-4 pb-28 text-slate-900 relative">
       {/* MENU HAMBÚRGUER */}
-      <button
-        onClick={() => setMenuAberto(!menuAberto)}
-        className="fixed top-4 right-4 text-white p-2.5 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 active:scale-95 transition-all duration-200 rounded-xl z-40 cursor-pointer shadow-lg animate-pulse-once"
-      >
-        <Menu size={22} />
-      </button>
-
-      <Sidebar isOpen={menuAberto} onClose={() => setMenuAberto(false)} />
-
       <div className="max-w-4xl mx-auto">
         {/* HEADER */}
         <div className="flex items-center gap-4 mb-8 mt-2">
