@@ -55,20 +55,33 @@ export default function Cliente() {
     try {
       const fichasRef = collection(db, "fichas");
       const buscaPorEmail = valor.includes("@");
-      const consulta = buscaPorEmail
-        ? query(fichasRef, where("email", "==", valor.toLowerCase()))
-        : query(fichasRef, where("pedido", "==", valor));
+      const valorDaConsulta = buscaPorEmail ? valor.toLowerCase() : valor;
+      const consultas = [getDocs(query(fichasRef, where("email", "==", valorDaConsulta)))];
 
-      const snapshot = await getDocs(consulta);
-      const encontrados: Ficha[] = [];
+      // Fichas antigas podem ter recebido o código como número no Firestore.
+      // A consulta por texto cobre os cadastros atuais; esta cobre os anteriores sem alterar dados.
+      if (!buscaPorEmail && /^\d+$/.test(valor)) {
+        const consultaCodigoNumerico = query(
+          fichasRef,
+          where("email", "==", Number(valor))
+        );
+        consultas.push(getDocs(consultaCodigoNumerico));
+      }
 
-      snapshot.forEach((doc) => {
-        encontrados.push({ id: doc.id, ...(doc.data() as Ficha) });
+      const snapshots = await Promise.all(consultas);
+      const encontrados = new Map<string, Ficha>();
+
+      snapshots.forEach((snapshot) => {
+        snapshot.forEach((doc) => {
+          encontrados.set(doc.id, { id: doc.id, ...(doc.data() as Ficha) });
+        });
       });
 
-      setPedidos(encontrados);
+      const pedidosEncontrados = [...encontrados.values()];
 
-      if (encontrados.length > 0) {
+      setPedidos(pedidosEncontrados);
+
+      if (pedidosEncontrados.length > 0) {
         localStorage.setItem("clienteEmail", valor);
       } else {
         alert("Nenhum pedido encontrado para o código/e-mail informado.");
