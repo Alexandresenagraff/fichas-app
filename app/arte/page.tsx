@@ -20,7 +20,6 @@ import {
   etapaDaFicha,
   type Ficha,
   type HistoricoAprovacao,
-  DESIGNERS,
 } from "../lib/helpers";
 import { DashboardSkeleton } from "../components/Skeleton";
 

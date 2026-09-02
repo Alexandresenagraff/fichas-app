@@ -113,24 +113,24 @@ function RelatoriosContent() {
     }
   }
 
-  function estaNoPeriodo(ficha: Ficha, funcao: string, inicio: string, fim: string): boolean {
-    if (!inicio && !fim) return true;
-    const campo = getDataCampoPorFuncao(funcao);
-    if (!campo) return true;
-
-    const dataCampo = parseDataHora(ficha[campo] as string);
-    if (!dataCampo) return false;
-
-    const inicioDate = inicio ? new Date(inicio) : null;
-    const fimDate = fim ? new Date(fim) : null;
-    if (inicioDate && dataCampo < inicioDate) return false;
-    if (fimDate && dataCampo > fimDate) return false;
-
-    return true;
-  }
-
   // Filter Logic memoized for performance optimization
   const fichasFiltradas = useMemo(() => {
+    function estaNoPeriodo(ficha: Ficha, funcao: string, inicio: string, fim: string): boolean {
+      if (!inicio && !fim) return true;
+      const campo = getDataCampoPorFuncao(funcao);
+      if (!campo) return true;
+
+      const dataCampo = parseDataHora(ficha[campo] as string);
+      if (!dataCampo) return false;
+
+      const inicioDate = inicio ? new Date(inicio) : null;
+      const fimDate = fim ? new Date(fim) : null;
+      if (inicioDate && dataCampo < inicioDate) return false;
+      if (fimDate && dataCampo > fimDate) return false;
+
+      return true;
+    }
+
     return fichas.filter((ficha) => {
       // Vendedor Filter
       if (buscaVendedor && ficha.vendedor !== buscaVendedor) return false;
