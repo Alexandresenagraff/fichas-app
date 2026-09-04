@@ -46,7 +46,7 @@ export default function Inicio() {
   ];
 
   return (
-    <main className="min-h-screen bg-slate-100 pb-28 text-slate-900">
+    <main className="min-h-screen bg-slate-800 pb-28 text-slate-900">
       <div className="mx-auto max-w-5xl px-4 pb-6 pt-7 sm:px-6">
         <header className="rounded-3xl bg-gradient-to-br from-blue-800 via-blue-700 to-sky-600 p-6 text-white shadow-lg shadow-blue-950/20">
           <p className="text-xs font-bold tracking-[0.18em] text-blue-100">FICHAS · ADMINISTRAÇÃO</p>
