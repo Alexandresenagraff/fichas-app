@@ -6,9 +6,16 @@ import { AlertTriangle, ArrowRight, CheckCircle2, Clock3, ListTodo } from "lucid
 import { collection, getFirestore, onSnapshot } from "firebase/firestore";
 import app from "../../firebase/config";
 import AdminNavigation from "../components/AdminNavigation";
-import { categoriaDaFicha, Ficha } from "../lib/helpers";
+import { categoriaDaFicha, DESIGNERS, Ficha } from "../lib/helpers";
 
 const db = getFirestore(app);
+
+function normalizarDesigner(nome?: string) {
+  return (nome || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase();
+}
 
 export default function Inicio() {
   const router = useRouter();
@@ -37,6 +44,16 @@ export default function Inicio() {
     atrasados: fichas.filter((ficha) => !ficha.entregaStatus && categoriaDaFicha(ficha) === "atrasados").length,
     finalizados: fichas.filter((ficha) => ficha.entregaStatus).length,
   }), [fichas]);
+
+  const artesPendentesPorDesigner = useMemo(() => {
+    return DESIGNERS.reduce<Record<string, number>>((contagens, designer) => {
+      const designerNormalizado = normalizarDesigner(designer);
+      contagens[designer] = fichas.filter(
+        (ficha) => normalizarDesigner(ficha.designer) === designerNormalizado && !ficha.arte
+      ).length;
+      return contagens;
+    }, {});
+  }, [fichas]);
 
   const indicadores = [
     { label: "Em andamento", value: resumo.ativos, Icon: Clock3, className: "text-blue-700 bg-blue-50 border-blue-100" },
@@ -89,6 +106,25 @@ export default function Inicio() {
                 </span>
                 <ArrowRight size={17} className="text-blue-600" />
               </button>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm" aria-label="Distribuição de artes pendentes por designer">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-base font-bold">Distribuição de artes</h2>
+              <p className="mt-1 text-sm text-slate-500">Pedidos atribuídos que ainda não possuem Arte Concluída.</p>
+            </div>
+            <ListTodo className="shrink-0 text-blue-600" size={22} />
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {DESIGNERS.map((designer) => (
+              <div key={designer} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <p className="truncate text-xs font-bold tracking-wide text-slate-700">{designer}</p>
+                <p className="mt-2 text-2xl font-bold text-blue-700">{carregando ? "–" : artesPendentesPorDesigner[designer]}</p>
+                <p className="text-[11px] font-medium text-slate-500">pendentes de arte</p>
+              </div>
             ))}
           </div>
         </section>
