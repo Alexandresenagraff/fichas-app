@@ -29,6 +29,10 @@ function RelatoriosContent() {
   const [buscaFuncao, setBuscaFuncao] = useState<string>("todos");
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
+  const [mesRecebimento, setMesRecebimento] = useState(() => {
+    const hoje = new Date();
+    return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}`;
+  });
 
   // Menu States
 
@@ -230,6 +234,20 @@ function RelatoriosContent() {
             <p className="text-zinc-500 text-xs mt-1">Estatísticas e análise das fichas de produção em tempo real</p>
           </div>
         </div>
+
+        <section className="mb-6 rounded-2xl bg-zinc-900 p-4 text-white shadow-xl">
+          <h2 className="font-bold">Recebimentos por vendedor</h2>
+          <p className="mt-1 text-xs text-zinc-400">Valores registrados pela data em que foram recebidos.</p>
+          <label className="mt-3 block text-xs text-zinc-400">Mês do recebimento
+            <input type="month" value={mesRecebimento} onChange={(e) => setMesRecebimento(e.target.value)} className="mt-1 block rounded-lg bg-black p-2 text-white" />
+          </label>
+          <div className="mt-3 space-y-2 text-sm">
+            {VENDEDORES.map((vendedor) => {
+              const total = fichas.filter((ficha) => ficha.vendedor === vendedor).flatMap((ficha) => ficha.pagamentos || []).filter((pagamento) => mesRecebimento && pagamento.data.startsWith(mesRecebimento + "-")).reduce((soma, pagamento) => soma + pagamento.valorCentavos, 0);
+              return <p key={vendedor} className="flex justify-between gap-4"><span>{vendedor}</span><strong>{(total / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong></p>;
+            })}
+          </div>
+        </section>
 
         {/* FILTERS */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-4 gap-4 shadow-xl">

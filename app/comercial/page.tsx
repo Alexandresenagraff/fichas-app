@@ -8,7 +8,7 @@ import ClientPdfLink from "../components/ClientPdfLink";
 import AdminNavigation from "../components/AdminNavigation";
 
 import app from "../../firebase/config";
-import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc, runTransaction } from "firebase/firestore";
 
 import {
   formatarDataHora,
@@ -23,6 +23,12 @@ import {
 import { DashboardSkeleton } from "../components/Skeleton";
 
 const db = getFirestore(app);
+
+function centavos(valor: string) {
+  if (!/^\d+(?:[,.]\d{1,2})?$/.test(valor.trim())) return NaN;
+  return Math.round(Number(valor.replace(",", ".")) * 100);
+}
+const moeda = (valor: number) => (valor / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 function ComercialContent() {
   const searchParams = useSearchParams();
@@ -44,6 +50,13 @@ function ComercialContent() {
   const [designer, setDesigner] = useState("");
   const [pedido, setPedido] = useState("");
   const [entrega, setEntrega] = useState("");
+  const [valorTotal, setValorTotal] = useState("");
+  const [entrada, setEntrada] = useState("");
+  const [dataEntrada, setDataEntrada] = useState("");
+  const [pagamentoFicha, setPagamentoFicha] = useState<Ficha | null>(null);
+  const [valorPagamento, setValorPagamento] = useState("");
+  const [dataPagamento, setDataPagamento] = useState("");
+  const [salvandoPagamento, setSalvandoPagamento] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -116,6 +129,13 @@ function ComercialContent() {
       return;
     }
 
+    const total = valorTotal ? centavos(valorTotal) : 0;
+    const recebido = entrada ? centavos(entrada) : 0;
+    if (!Number.isSafeInteger(total) || total < 0 || !Number.isSafeInteger(recebido) || recebido < 0 || recebido > total || (recebido > 0 && !dataEntrada)) {
+      alert("Confira os valores e a data da entrada. A entrada não pode superar o valor total.");
+      return;
+    }
+
     try {
       await addDoc(collection(db, "fichas"), {
         cliente,
@@ -125,6 +145,8 @@ function ComercialContent() {
         designer,
         pedido,
         entrega,
+        ...(valorTotal ? { valorTotalCentavos: total } : {}),
+        pagamentos: recebido > 0 ? [{ valorCentavos: recebido, data: dataEntrada }] : [],
         pdfLink: "",
         venda: true,
         vendaData: formatarDataHora(),
@@ -156,11 +178,34 @@ function ComercialContent() {
       setDesigner("");
       setPedido("");
       setEntrega("");
+      setValorTotal(""); setEntrada(""); setDataEntrada("");
       setModalAberto(false);
     } catch (error) {
       console.error(error);
       alert("Erro ao salvar");
     }
+  }
+
+  async function registrarPagamento() {
+    const valor = centavos(valorPagamento);
+    if (!pagamentoFicha?.id || !Number.isSafeInteger(valor) || valor <= 0 || !dataPagamento || salvandoPagamento) {
+      alert("Informe um valor positivo e a data do recebimento."); return;
+    }
+    setSalvandoPagamento(true);
+    try {
+      await runTransaction(db, async (transaction) => {
+        const ref = doc(db, "fichas", pagamentoFicha.id!);
+        const snapshot = await transaction.get(ref);
+        if (!snapshot.exists()) throw new Error("Pedido não encontrado");
+        const ficha = snapshot.data() as Ficha;
+        const pagamentos = ficha.pagamentos || [];
+        const recebido = pagamentos.reduce((soma, pagamento) => soma + pagamento.valorCentavos, 0);
+        if (ficha.valorTotalCentavos == null || recebido + valor > ficha.valorTotalCentavos) throw new Error("O pagamento supera o saldo restante.");
+        transaction.update(ref, { pagamentos: [...pagamentos, { valorCentavos: valor, data: dataPagamento }] });
+      });
+      setPagamentoFicha(null); setValorPagamento(""); setDataPagamento("");
+    } catch (error) { alert(error instanceof Error ? error.message : "Erro ao registrar pagamento"); }
+    finally { setSalvandoPagamento(false); }
   }
 
   async function solicitarAlteracao(ficha: Ficha) {
@@ -250,7 +295,7 @@ function ComercialContent() {
     return pedidosDoVendedor.filter((ficha) => {
       const matchBusca =
         !termo || (ficha.cliente || "").toLowerCase().includes(termo);
-      const matchEtapa = etapaDaFicha(ficha) === abaAtiva;
+      const matchEtapa = Boolean(termo) || etapaDaFicha(ficha) === abaAtiva;
       return matchBusca && matchEtapa;
     });
   }, [pedidosDoVendedor, busca, abaAtiva]);
@@ -406,6 +451,15 @@ function ComercialContent() {
                   </p>
                 )}
 
+                {ficha.valorTotalCentavos != null && (() => {
+                  const recebido = (ficha.pagamentos || []).reduce((soma, pagamento) => soma + pagamento.valorCentavos, 0);
+                  return <div className="mt-3 rounded-xl bg-zinc-900 p-3 text-xs text-zinc-300 space-y-1">
+                    <p>Total: {moeda(ficha.valorTotalCentavos!)}</p><p>Recebido: {moeda(recebido)}</p><p>Restante: {moeda(ficha.valorTotalCentavos! - recebido)}</p>
+                    {(ficha.pagamentos || []).map((pagamento, index) => <p key={index}>{pagamento.data.split("-").reverse().join("/")} — {moeda(pagamento.valorCentavos)}</p>)}
+                    {recebido < ficha.valorTotalCentavos! && <button className="mt-2 rounded-lg bg-blue-600 px-3 py-2 font-bold text-white" onClick={() => setPagamentoFicha(ficha)}>Registrar pagamento</button>}
+                  </div>;
+                })()}
+
                 {ficha.historicoAprovacao && ficha.historicoAprovacao.length > 0 && (
                   <div className="bg-black/50 border border-zinc-900 rounded-xl p-3.5 mt-3 mb-3 space-y-2 max-h-40 overflow-y-auto scrollbar-thin">
                     {ficha.historicoAprovacao.map((item, index) => (
@@ -554,6 +608,11 @@ function ComercialContent() {
                 />
               </div>
 
+              <div className="space-y-2 text-xs text-zinc-300">
+                <label className="block">Valor total do pedido (R$)<input type="text" inputMode="decimal" value={valorTotal} onChange={(e) => setValorTotal(e.target.value)} placeholder="Ex.: 1000,00" className="mt-1 w-full rounded-xl bg-black p-3 text-white" /></label>
+                <label className="block">Entrada recebida (R$), opcional<input type="text" inputMode="decimal" value={entrada} onChange={(e) => setEntrada(e.target.value)} placeholder="Ex.: 500,00" className="mt-1 w-full rounded-xl bg-black p-3 text-white" /></label>
+                {entrada && <label className="block">Data do recebimento<input type="date" value={dataEntrada} onChange={(e) => setDataEntrada(e.target.value)} className="mt-1 w-full rounded-xl bg-black p-3 text-white" /></label>}
+              </div>
               <button
                 onClick={salvarFicha}
                 className="w-full bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl p-3 text-xs font-bold text-white shadow-lg cursor-pointer"
@@ -564,6 +623,13 @@ function ComercialContent() {
           </div>
         </div>
       )}
+
+      {pagamentoFicha && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setPagamentoFicha(null)}><div className="w-full max-w-sm space-y-3 rounded-2xl bg-zinc-900 p-5 text-white" onClick={(e) => e.stopPropagation()}>
+        <h2 className="font-bold">Registrar pagamento — {pagamentoFicha.cliente}</h2>
+        <label className="block text-xs">Valor recebido (R$)<input type="text" inputMode="decimal" value={valorPagamento} onChange={(e) => setValorPagamento(e.target.value)} placeholder="Ex.: 500,00" className="mt-1 w-full rounded-xl bg-black p-3" /></label>
+        <label className="block text-xs">Data do recebimento<input type="date" value={dataPagamento} onChange={(e) => setDataPagamento(e.target.value)} className="mt-1 w-full rounded-xl bg-black p-3" /></label>
+        <div className="flex gap-2"><button disabled={salvandoPagamento} onClick={registrarPagamento} className="rounded-xl bg-blue-600 px-4 py-3 text-sm">Salvar pagamento</button><button onClick={() => setPagamentoFicha(null)} className="px-3 text-sm">Cancelar</button></div>
+      </div></div>}
 
       {/* MODAL SOLICITAR ALTERAÇÃO */}
       {modalAlteracao && fichaAlteracao && (
