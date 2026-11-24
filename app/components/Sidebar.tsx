@@ -58,6 +58,10 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <button onClick={onClose} className="rounded-xl p-2 text-slate-500 transition hover:bg-slate-200 hover:text-slate-900" title="Fechar menu"><X size={20} /></button>
         </header>
 
+        <button onClick={() => navegar("/")} className="mb-4 flex w-full items-center gap-3 rounded-2xl border border-blue-100 bg-blue-50 px-4 py-3 text-left text-sm font-bold text-blue-700 transition hover:bg-blue-100">
+          <House size={18} /> Acessar área do cliente
+        </button>
+
         <section className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
           <p className="px-2 pb-2 pt-1 text-[10px] font-bold tracking-[0.15em] text-slate-400">SETORES</p>
           {grupos.map(({ id, label, Icon, items }) => {
