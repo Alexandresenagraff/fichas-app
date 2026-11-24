@@ -91,8 +91,8 @@ export default function Inicio() {
           <div className="mt-3 grid grid-cols-2 gap-2 sm:mt-4 sm:gap-3 lg:grid-cols-4">
             {DESIGNERS.map((designer) => (
               <div key={designer} className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50 px-2 py-2 sm:px-4 sm:py-3">
-                <p className="truncate text-center text-xs font-bold tracking-wide text-slate-700">{designer}</p>
-                <p className="mt-1 text-xs font-semibold text-slate-600 sm:mt-2 sm:text-sm">
+                <p className="truncate text-center text-sm font-bold tracking-wide text-slate-700">{designer}</p>
+                <p className="mt-1 text-sm font-bold text-slate-700 sm:mt-2 sm:text-base">
                   Arte à CRIAR <span className="font-bold text-blue-700">— {carregando ? "–" : artesPendentesPorDesigner[designer].total}</span>
                 </p>
                 <p className="mt-1 text-xs font-semibold text-slate-600 sm:text-sm">
