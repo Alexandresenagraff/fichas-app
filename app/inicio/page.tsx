@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
-import { AlertTriangle, ArrowRight, CheckCircle2, Clock3, ListTodo } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock3, ListTodo } from "lucide-react";
 import { collection, getFirestore, onSnapshot } from "firebase/firestore";
 import app from "../../firebase/config";
 import AdminNavigation from "../components/AdminNavigation";
@@ -18,7 +17,6 @@ function normalizarDesigner(nome?: string) {
 }
 
 export default function Inicio() {
-  const router = useRouter();
   const [fichas, setFichas] = useState<Ficha[]>([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -84,35 +82,6 @@ export default function Inicio() {
               <p className="mt-1 text-xs font-semibold">{label}</p>
             </div>
           ))}
-        </section>
-
-        <section className="mt-4 rounded-3xl border border-slate-200 bg-white p-3 shadow-sm sm:mt-6 sm:p-5">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-base font-bold">Acessos rápidos</h2>
-              <p className="mt-1 text-sm text-slate-500">Use os mesmos recursos que já fazem parte do fluxo.</p>
-            </div>
-            <ListTodo className="text-blue-600" size={22} />
-          </div>
-          <div className="mt-3 grid gap-2 sm:mt-4 sm:grid-cols-3 sm:gap-3">
-            {[
-              { label: "Ver pedidos", description: "Lista, busca e status", href: "/fichas" },
-              { label: "Ver pendências", description: "Itens que exigem atenção", href: "/pendencias" },
-              { label: "Ir para Comercial", description: "Pedidos e aprovação", href: "/comercial" },
-            ].map((atalho) => (
-              <button
-                key={atalho.href}
-                onClick={() => router.push(atalho.href)}
-                className="flex min-h-12 items-center justify-between rounded-2xl border border-slate-200 px-3 py-2 text-left transition hover:border-blue-200 hover:bg-blue-50 active:scale-[0.99] sm:p-4"
-              >
-                <span>
-                  <span className="block text-sm font-bold text-slate-800">{atalho.label}</span>
-                  <span className="mt-1 block text-xs text-slate-500">{atalho.description}</span>
-                </span>
-                <ArrowRight size={17} className="text-blue-600" />
-              </button>
-            ))}
-          </div>
         </section>
 
         <section className="mt-4 rounded-3xl border border-slate-200 bg-white p-3 shadow-sm sm:mt-6 sm:p-5" aria-label="Distribuição de artes pendentes por designer">

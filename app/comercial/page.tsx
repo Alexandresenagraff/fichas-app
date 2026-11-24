@@ -523,7 +523,7 @@ function ComercialContent() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-xl font-extrabold tracking-tight">NOVO PEDIDO</h2>
+              <h2 className="text-xl font-extrabold tracking-tight text-white">NOVO PEDIDO</h2>
               <button
                 onClick={() => setModalAberto(false)}
                 className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
