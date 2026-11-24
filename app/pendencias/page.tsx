@@ -5,6 +5,7 @@ import { AlertTriangle, ArrowLeft, Clock3, FileWarning, Menu, Palette, Shirt, Us
 import { collection, getFirestore, onSnapshot } from "firebase/firestore";
 import app from "../../firebase/config";
 import Sidebar from "../components/Sidebar";
+import AdminNavigation from "../components/AdminNavigation";
 import ClientPdfLink from "../components/ClientPdfLink";
 import { categoriaDaFicha, etapaDaFicha, Ficha } from "../lib/helpers";
 
@@ -88,7 +89,7 @@ function PendenciasPage() {
   }, [fichas, filtroAtivo]);
 
   return (
-    <main className="min-h-screen bg-black px-4 pb-10 pt-20 text-white sm:px-6">
+    <main className="min-h-screen bg-black px-4 pb-28 pt-20 text-white sm:px-6">
       <button
         onClick={() => setMenuAberto(true)}
         className="fixed right-4 top-4 z-30 rounded-xl border border-zinc-700 bg-zinc-900 p-2 text-zinc-300 shadow-lg transition hover:text-white"
@@ -167,6 +168,7 @@ function PendenciasPage() {
           )}
         </section>
       </div>
+      <AdminNavigation />
     </main>
   );
 }

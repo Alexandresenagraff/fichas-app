@@ -14,6 +14,7 @@ import {
   ETAPAS,
 } from "../lib/helpers";
 import { RelatoriosSkeleton } from "../components/Skeleton";
+import AdminNavigation from "../components/AdminNavigation";
 import ClientPdfLink from "../components/ClientPdfLink";
 
 const db = getFirestore(app);
@@ -565,6 +566,7 @@ function RelatoriosContent() {
           </>
         )}
       </div>
+      <AdminNavigation />
     </main>
   );
 }
