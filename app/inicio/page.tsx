@@ -46,11 +46,16 @@ export default function Inicio() {
   }), [fichas]);
 
   const artesPendentesPorDesigner = useMemo(() => {
-    return DESIGNERS.reduce<Record<string, number>>((contagens, designer) => {
+    return DESIGNERS.reduce<Record<string, { total: number; urgentes: number }>>((contagens, designer) => {
       const designerNormalizado = normalizarDesigner(designer);
-      contagens[designer] = fichas.filter(
+      const artesPendentes = fichas.filter(
         (ficha) => normalizarDesigner(ficha.designer) === designerNormalizado && !ficha.arte
-      ).length;
+      );
+
+      contagens[designer] = {
+        total: artesPendentes.length,
+        urgentes: artesPendentes.filter((ficha) => categoriaDaFicha(ficha) === "urgentes").length,
+      };
       return contagens;
     }, {});
   }, [fichas]);
@@ -122,8 +127,12 @@ export default function Inicio() {
             {DESIGNERS.map((designer) => (
               <div key={designer} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
                 <p className="truncate text-xs font-bold tracking-wide text-slate-700">{designer}</p>
-                <p className="mt-2 text-2xl font-bold text-blue-700">{carregando ? "–" : artesPendentesPorDesigner[designer]}</p>
-                <p className="text-[11px] font-medium text-slate-500">pendentes de arte</p>
+                <p className="mt-2 text-sm font-semibold text-slate-600">
+                  Arte à CRIAR <span className="font-bold text-blue-700">— {carregando ? "–" : artesPendentesPorDesigner[designer].total}</span>
+                </p>
+                <p className="mt-1 text-sm font-semibold text-slate-600">
+                  URGENTES ⚠ <span className="font-bold text-orange-600">— {carregando ? "–" : artesPendentesPorDesigner[designer].urgentes}</span>
+                </p>
               </div>
             ))}
           </div>

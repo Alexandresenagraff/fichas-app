@@ -13,7 +13,6 @@ import {
   DESIGNERS,
   ETAPAS,
 } from "../lib/helpers";
-import AdminNavigation from "../components/AdminNavigation";
 import { RelatoriosSkeleton } from "../components/Skeleton";
 import ClientPdfLink from "../components/ClientPdfLink";
 
