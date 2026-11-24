@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, ClipboardList, House, ListTodo, Menu } from "lucide-react";
+import { ClipboardList, House, ListTodo, Menu } from "lucide-react";
 import Sidebar from "./Sidebar";
 
 const primaryItems = [
   { label: "Início", href: "/inicio", Icon: House },
   { label: "Pedidos", href: "/fichas", Icon: ClipboardList },
   { label: "Pendências", href: "/pendencias", Icon: ListTodo },
-  { label: "Relatórios", href: "/relatorios", Icon: BarChart3 },
 ];
 
 export default function AdminNavigation() {
@@ -23,7 +22,7 @@ export default function AdminNavigation() {
         aria-label="Navegação administrativa principal"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-2 pt-1 shadow-[0_-10px_30px_rgba(15,23,42,0.10)] backdrop-blur-xl [padding-bottom:max(0.25rem,env(safe-area-inset-bottom))] sm:pt-2 sm:[padding-bottom:max(0.5rem,env(safe-area-inset-bottom))]"
       >
-        <div className="mx-auto grid max-w-2xl grid-cols-5 gap-1">
+        <div className="mx-auto grid max-w-2xl grid-cols-4 gap-1">
           {primaryItems.map(({ label, href, Icon }) => {
             const ativo = pathname === href;
             return (

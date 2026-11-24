@@ -219,7 +219,7 @@ function RelatoriosContent() {
       {/* MENU HAMBÚRGUER */}
       <div className="max-w-4xl mx-auto">
         {/* HEADER */}
-        <div className="flex items-center gap-4 mb-8 mt-2">
+        <div className="flex items-center gap-4 mb-4 mt-2">
           <button
             onClick={() => router.push("/fichas")}
             className="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 active:scale-95 transition-all duration-150 text-zinc-300 hover:text-white"
@@ -235,7 +235,7 @@ function RelatoriosContent() {
           </div>
         </div>
 
-        <section className="mb-6 rounded-2xl bg-zinc-900 p-4 text-white shadow-xl">
+        <section className="mb-3 rounded-2xl bg-zinc-900 p-4 text-white shadow-xl">
           <h2 className="font-bold">Recebimentos por vendedor</h2>
           <p className="mt-1 text-xs text-zinc-400">Valores registrados pela data em que foram recebidos.</p>
           <label className="mt-3 block text-xs text-zinc-400">Mês do recebimento
@@ -250,7 +250,7 @@ function RelatoriosContent() {
         </section>
 
         {/* FILTERS */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-4 gap-4 shadow-xl">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-3 grid grid-cols-1 sm:grid-cols-4 gap-3 shadow-xl">
           <div>
             <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Vendedor</label>
             <select
@@ -319,7 +319,7 @@ function RelatoriosContent() {
           </div>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4 shadow-xl">
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-3 grid grid-cols-1 sm:grid-cols-3 gap-3 shadow-xl">
           <div>
             <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Data início</label>
             <input
@@ -361,7 +361,7 @@ function RelatoriosContent() {
         ) : (
           <>
             {/* KPI CARDS */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-3">
               <div className="bg-zinc-900/40 border border-zinc-900 rounded-2xl p-4 text-center shadow-md transition hover:border-zinc-800">
                 <p className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase mb-1 flex items-center justify-center gap-1">
                   <BarChart3 size={11} className="text-zinc-500" /> Geral
@@ -404,7 +404,7 @@ function RelatoriosContent() {
             </div>
 
             {/* PIPELINE / STAGES DISTRIBUTION */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-8 shadow-xl">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-3 shadow-xl">
               <h2 className="text-sm font-bold text-white mb-5 uppercase tracking-wider border-b border-zinc-800 pb-3 flex items-center gap-2">
                 <TrendingUp size={16} className="text-indigo-400" /> Distribuição no Fluxo de Produção (Fichas Ativas)
               </h2>
@@ -434,7 +434,7 @@ function RelatoriosContent() {
             </div>
 
             {/* SELLER AND DESIGNER METRICS */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
               {/* BY SELLER */}
               <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
                 <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider border-b border-zinc-800 pb-2 flex items-center gap-2">
