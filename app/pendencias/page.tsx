@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, ArrowLeft, Clock3, FileWarning, Menu, Palette, Shirt, UserRoundX } from "lucide-react";
+import { AlertTriangle, ArrowLeft, Clock3, FileWarning, Palette, Shirt, UserRoundX } from "lucide-react";
 import { collection, getFirestore, onSnapshot } from "firebase/firestore";
 import app from "../../firebase/config";
-import Sidebar from "../components/Sidebar";
 import AdminNavigation from "../components/AdminNavigation";
 import ClientPdfLink from "../components/ClientPdfLink";
 import { categoriaDaFicha, etapaDaFicha, Ficha } from "../lib/helpers";
@@ -54,7 +53,6 @@ function possuiPendencia(ficha: Ficha, tipo: TipoPendencia): boolean {
 function PendenciasPage() {
   const [fichas, setFichas] = useState<Ficha[]>([]);
   const [carregando, setCarregando] = useState(true);
-  const [menuAberto, setMenuAberto] = useState(false);
   const [filtroAtivo, setFiltroAtivo] = useState<TipoPendencia | null>(null);
 
   useEffect(() => {
@@ -90,15 +88,6 @@ function PendenciasPage() {
 
   return (
     <main className="min-h-screen bg-black px-4 pb-28 pt-20 text-white sm:px-6">
-      <button
-        onClick={() => setMenuAberto(true)}
-        className="fixed right-4 top-4 z-30 rounded-xl border border-zinc-700 bg-zinc-900 p-2 text-zinc-300 shadow-lg transition hover:text-white"
-        title="Abrir menu"
-      >
-        <Menu size={20} />
-      </button>
-      <Sidebar isOpen={menuAberto} onClose={() => setMenuAberto(false)} />
-
       <div className="mx-auto max-w-6xl">
         <button
           onClick={() => window.history.back()}
