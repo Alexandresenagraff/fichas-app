@@ -5,6 +5,7 @@ import { AlertTriangle, CheckCircle2, Clock3, ListTodo } from "lucide-react";
 import { collection, getFirestore, onSnapshot } from "firebase/firestore";
 import app from "../../firebase/config";
 import AdminNavigation from "../components/AdminNavigation";
+import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 import { categoriaDaFicha, DESIGNERS, Ficha } from "../lib/helpers";
 
 const db = getFirestore(app);
@@ -68,10 +69,7 @@ export default function Inicio() {
   return (
     <main className="min-h-screen bg-slate-800 pb-28 text-slate-900">
       <div className="mx-auto max-w-5xl px-3 pb-6 pt-4 sm:px-6 sm:pt-7">
-        <header className="rounded-3xl bg-gradient-to-br from-blue-800 via-blue-700 to-sky-600 p-4 text-white shadow-lg shadow-blue-950/20 sm:p-6">
-          <h1 className="text-center text-3xl font-bold tracking-tight sm:text-4xl">SENAGRAFF</h1>
-          <p className="mt-2 text-center text-[10px] font-bold tracking-[0.12em] text-blue-100 sm:text-xs">DISTRIBUIÇÃO E ACOMPANHAMENTO DE PEDIDOS</p>
-        </header>
+        <CabecalhoSenagraff />
 
         <section className="mt-3 grid grid-cols-2 gap-2 sm:mt-5 sm:gap-3 lg:grid-cols-4" aria-label="Resumo dos pedidos">
           {indicadores.map(({ label, value, Icon, className }) => (

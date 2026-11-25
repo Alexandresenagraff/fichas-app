@@ -5,6 +5,7 @@ import { AlertTriangle, ArrowLeft, Clock3, FileWarning, Palette, Shirt, UserRoun
 import { collection, getFirestore, onSnapshot } from "firebase/firestore";
 import app from "../../firebase/config";
 import AdminNavigation from "../components/AdminNavigation";
+import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 import ClientPdfLink from "../components/ClientPdfLink";
 import { categoriaDaFicha, etapaDaFicha, Ficha } from "../lib/helpers";
 
@@ -87,7 +88,8 @@ function PendenciasPage() {
   }, [fichas, filtroAtivo]);
 
   return (
-    <main className="min-h-screen bg-black px-3 pb-28 pt-4 text-white sm:px-6 sm:pt-20">
+    <main className="min-h-screen bg-black px-3 pb-28 pt-4 text-white sm:px-6 sm:pt-7">
+      <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff /></div>
       <div className="mx-auto max-w-6xl">
         <button
           onClick={() => window.history.back()}

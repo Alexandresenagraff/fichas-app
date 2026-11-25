@@ -7,6 +7,7 @@ import { RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus } from "lucide-rea
 import app from "../../firebase/config";
 import { atribuicaoDoCostureiro, formatarDataHora, categoriaDaFicha, etapaDaFicha, Ficha, type Costureiro, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
 import AdminNavigation from "../components/AdminNavigation";
+import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 import StatusToggle from "../components/StatusToggle";
 import { CardSkeleton } from "../components/Skeleton";
 import ClientPdfLink from "../components/ClientPdfLink";
@@ -289,8 +290,9 @@ function HomeContent() {
   return (
     <main className="min-h-screen bg-slate-900 p-3 pb-28 text-white relative">
 
+      <div className="mx-auto max-w-5xl pt-1 sm:px-3 sm:pt-4"><CabecalhoSenagraff /></div>
       <div className="max-w-md mx-auto">
-        <div className="flex items-center justify-between mt-12 mb-4 px-1">
+        <div className="flex items-center justify-between mt-5 mb-4 px-1">
           <h1 className="text-2xl font-extrabold tracking-tight text-white">PEDIDOS</h1>
           <button
             onClick={() => window.location.href = "/comercial"}
