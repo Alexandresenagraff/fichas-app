@@ -331,12 +331,6 @@ function ComercialContent() {
             <div className="order-2 sm:order-none">
               <NotificationBell />
             </div>
-            <button
-              onClick={() => setModalAberto(true)}
-              className="order-1 sm:order-none bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-250 rounded-xl px-4 py-2 text-xs font-bold text-white flex items-center gap-1.5 shadow-lg cursor-pointer"
-            >
-              <Plus size={14} /> NOVO PEDIDO
-            </button>
           </div>
         </div>
 
@@ -674,6 +668,15 @@ function ComercialContent() {
           </div>
         </div>
       )}
+      <button
+        type="button"
+        onClick={() => setModalAberto(true)}
+        aria-label="Criar novo pedido"
+        title="Novo pedido"
+        className="fixed right-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-30 flex h-14 w-14 items-center justify-center rounded-full bg-blue-700 text-white shadow-lg transition hover:scale-105 hover:bg-blue-800 active:scale-95"
+      >
+        <Plus size={28} aria-hidden="true" />
+      </button>
       <AdminNavigation />
     </main>
   );
