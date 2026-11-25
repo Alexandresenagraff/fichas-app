@@ -9,7 +9,7 @@ import AdminNavigation from "../components/AdminNavigation";
 import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 
 import app from "../../firebase/config";
-import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc, runTransaction } from "firebase/firestore";
+import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc, runTransaction, setDoc } from "firebase/firestore";
 
 import {
   formatarDataHora,
@@ -43,6 +43,37 @@ function ComercialContent() {
   const [carregando, setCarregando] = useState(true);
   const [abaAtiva, setAbaAtiva] = useState<Etapa>("arteParaCriar");
   const [contadorAberto, setContadorAberto] = useState(false);
+  const [financeiroAberto, setFinanceiroAberto] = useState(false);
+  const [vendedorFinanceiro, setVendedorFinanceiro] = useState(vendedorParam);
+  const [mesFinanceiro, setMesFinanceiro] = useState(() => { const hoje = new Date(); return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}`; });
+  const [meta, setMeta] = useState("");
+  const [metaSalva, setMetaSalva] = useState<number | null>(null);
+  const [erroMeta, setErroMeta] = useState("");
+  const [salvandoMeta, setSalvandoMeta] = useState(false);
+  const vendedorDaMeta = vendedorParam || vendedorFinanceiro;
+
+  useEffect(() => {
+    if (!vendedorDaMeta || !/^\d{4}-\d{2}$/.test(mesFinanceiro)) return;
+    return onSnapshot(doc(db, "metas_comerciais", `${encodeURIComponent(vendedorDaMeta)}_${mesFinanceiro}`), (snapshot) => {
+      const valor = snapshot.exists() ? snapshot.data().valorCentavos : null;
+      setMetaSalva(typeof valor === "number" ? valor : null);
+      setMeta(typeof valor === "number" ? (valor / 100).toFixed(2).replace(".", ",") : "");
+      setErroMeta("");
+    }, () => { setMetaSalva(null); setMeta(""); setErroMeta("Não foi possível carregar a meta."); });
+  }, [vendedorDaMeta, mesFinanceiro]);
+
+  async function salvarMeta() {
+    const valor = centavos(meta);
+    if (!vendedorDaMeta || !/^\d{4}-\d{2}$/.test(mesFinanceiro) || !Number.isSafeInteger(valor) || valor <= 0) {
+      setErroMeta("Selecione vendedor e mês e informe uma meta maior que zero."); return;
+    }
+    setSalvandoMeta(true);
+    try {
+      await setDoc(doc(db, "metas_comerciais", `${encodeURIComponent(vendedorDaMeta)}_${mesFinanceiro}`), { vendedor: vendedorDaMeta, mes: mesFinanceiro, valorCentavos: valor });
+      setErroMeta("");
+    } catch { setErroMeta("Não foi possível salvar a meta. Tente novamente."); }
+    finally { setSalvandoMeta(false); }
+  }
   const [busca, setBusca] = useState("");
 
   const [cliente, setCliente] = useState("");
@@ -314,6 +345,15 @@ function ComercialContent() {
     );
   }, [pedidosDoVendedor]);
 
+  const vendasDoMes = pedidos.filter((ficha) => {
+    if (!vendedorDaMeta || ficha.vendedor !== vendedorDaMeta || ficha.valorTotalCentavos == null) return false;
+    const partes = ficha.vendaData?.split(" ")[0]?.split("/");
+    const dataLancamento = partes?.length === 3 ? `${partes[2]}-${partes[1]}-${partes[0]}` : "";
+    return (ficha.pedido || dataLancamento).startsWith(`${mesFinanceiro}-`);
+  });
+  const totalVendido = vendasDoMes.reduce((soma, ficha) => soma + (ficha.valorTotalCentavos || 0), 0);
+  const recebidoNoMes = pedidos.filter((ficha) => vendedorDaMeta && ficha.vendedor === vendedorDaMeta).flatMap((ficha) => ficha.pagamentos || []).filter((pagamento) => pagamento.data.startsWith(`${mesFinanceiro}-`)).reduce((soma, pagamento) => soma + pagamento.valorCentavos, 0);
+
   return (
     <main className="min-h-screen bg-slate-800 p-3 pb-28 text-white">
       <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff subtitulo="COMERCIAL" compacto /></div>
@@ -355,6 +395,26 @@ function ComercialContent() {
             </button>
           )}
         </div>
+
+        <section className="mb-3">
+          <button type="button" onClick={() => setFinanceiroAberto((aberto) => !aberto)} aria-expanded={financeiroAberto} aria-controls="contador-financeiro" className="flex min-h-11 w-full items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-left text-xs font-bold text-zinc-200">
+            <span>CONTADOR FINANCEIRO</span>{financeiroAberto ? <EyeOff size={17} aria-label="Recolher contador financeiro" /> : <Eye size={17} aria-label="Visualizar contador financeiro" />}
+          </button>
+          <div id="contador-financeiro" hidden={!financeiroAberto} className="mt-2 space-y-3 rounded-xl bg-zinc-900 p-3 text-xs text-zinc-200">
+            {!vendedorParam && <label className="block">Vendedor<select value={vendedorFinanceiro} onChange={(e) => setVendedorFinanceiro(e.target.value)} className="mt-1 w-full rounded-lg bg-black p-2 text-white"><option value="">Selecione o vendedor</option>{VENDEDORES.map((nome) => <option key={nome} value={nome}>{nome}</option>)}</select></label>}
+            <label className="block">Mês das vendas<input type="month" value={mesFinanceiro} onChange={(e) => setMesFinanceiro(e.target.value)} className="mt-1 block w-full max-w-60 rounded-lg bg-black p-2 text-white" /></label>
+            {vendedorDaMeta && <>
+              <p>Pedidos com valor: <strong>{vendasDoMes.length}</strong></p>
+              <p>Total vendido: <strong className="text-base text-white">{moeda(totalVendido)}</strong></p>
+              <p>Recebido no mês: <strong>{moeda(recebidoNoMes)}</strong></p>
+              <p className="text-zinc-400">Vendas pela data do pedido; sem data, pela data de lançamento. Recebimentos pela data do pagamento.</p>
+              <label className="block">Meta do mês (R$)<input type="text" inputMode="decimal" value={meta} onChange={(e) => setMeta(e.target.value)} placeholder="Ex.: 10000,00" className="mt-1 block w-full rounded-lg bg-black p-2 text-white" /></label>
+              <button type="button" disabled={salvandoMeta} onClick={salvarMeta} className="min-h-10 rounded-lg bg-blue-700 px-4 font-bold text-white disabled:opacity-50">{salvandoMeta ? "Salvando..." : "Salvar meta"}</button>
+              {erroMeta && <p role="alert" className="text-red-400">{erroMeta}</p>}
+              {metaSalva != null && !erroMeta && <p>Meta: <strong>{moeda(metaSalva)}</strong> · Atingido: <strong>{Math.round(totalVendido / metaSalva * 100)}%</strong> · Falta: <strong>{moeda(Math.max(metaSalva - totalVendido, 0))}</strong></p>}
+            </>}
+          </div>
+        </section>
 
         {/* ABAS */}
         <section className="mb-5">
