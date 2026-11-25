@@ -293,7 +293,7 @@ function HomeContent() {
       <div className="mx-auto max-w-5xl pt-1 sm:px-3 sm:pt-4"><CabecalhoSenagraff /></div>
       <div className="max-w-md mx-auto">
         <div className="flex items-center justify-between mt-5 mb-4 px-1">
-          <h1 className="text-2xl font-extrabold tracking-tight text-white">PEDIDOS</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">ETAPAS DE PEDIDOS</h1>
           <button
             onClick={() => window.location.href = "/comercial"}
             className="bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl px-4 py-2 text-xs font-bold text-white flex items-center gap-1.5 shadow-lg"
