@@ -309,7 +309,7 @@ function ArteContent() {
 
   const secoes = useMemo(() => {
     return [
-      { id: "arteParaCriar" as const, label: "ARTE P/ CRIAR", lista: arteParaCriar, cor: "text-amber-400" },
+      { id: "arteParaCriar" as const, label: "À CRIAR", lista: arteParaCriar, cor: "text-amber-400" },
       { id: "alteracaoSolicitada" as const, label: "ALTERAÇÃO SOLICITADA", lista: alteracaoSolicitada, cor: "text-red-400" },
       { id: "aguardandoAprovacao" as const, label: "EXPORTANDO", lista: aguardandoAprovacao, cor: "text-yellow-400" },
     ];
@@ -627,12 +627,12 @@ function ArteContent() {
         )}
 
         {designerAtivo && (
-          <section className="bg-zinc-950 border border-zinc-900 rounded-2xl p-3.5 mb-4 shadow-lg">
-            <div className="flex items-center justify-between mb-3 px-0.5">
+          <section className="bg-zinc-950 border border-zinc-900 rounded-2xl p-3 mb-3 shadow-lg">
+            <div className="flex items-center justify-between mb-2 px-0.5">
               <p className="text-[10px] font-extrabold tracking-wider text-zinc-400">PAINEL GERAL</p>
               <span className="text-[10px] font-bold text-zinc-600">{designerAtivo}</span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-1.5">
               {painelGeral.map((situacao) => {
                 const ativa = situacaoPainelAtiva === situacao.id;
                 return (
@@ -643,7 +643,7 @@ function ArteContent() {
                         atual === situacao.id ? null : situacao.id
                       )
                     }
-                    className={`rounded-xl border px-3 py-2.5 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
+                    className={`rounded-xl border px-3 py-2 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                       ativa
                         ? "bg-zinc-800 border-zinc-700 text-white animate-pulse-once"
                         : "bg-zinc-900/80 border-zinc-800/80 hover:bg-zinc-850"
@@ -659,11 +659,23 @@ function ArteContent() {
                 );
               })}
             </div>
+            <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+              {secoes.filter((secao) => secao.id !== "arteParaCriar").map((secao) => {
+                const ativo = !situacaoPainelAtiva && secaoAtiva === secao.id;
+                return (
+                  <button key={secao.id} onClick={() => { setSituacaoPainelAtiva(null); setSecaoAtiva(secao.id); }}
+                    className={`rounded-xl border px-3 py-2 text-left transition-all ${ativo ? "bg-zinc-800 border-zinc-700 text-white" : "bg-zinc-900/80 border-zinc-800/80 text-zinc-400 hover:bg-zinc-850"}`}>
+                    <span className="block text-[9px] font-bold tracking-wide">{secao.label}</span>
+                    <span className={`block text-lg font-extrabold mt-0.5 ${ativo ? "text-white" : secao.cor}`}>{secao.lista.length}</span>
+                  </button>
+                );
+              })}
+            </div>
           </section>
         )}
 
         {/* ABAS */}
-        <div className="grid grid-cols-3 gap-2 mb-5">
+        {!designerAtivo && <div className="grid grid-cols-3 gap-2 mb-3">
           {secoes.map((secao) => {
             const ativo = secaoAtiva === secao.id;
             return (
@@ -686,7 +698,7 @@ function ArteContent() {
               </button>
             );
           })}
-        </div>
+        </div>}
 
         {/* LISTA */}
         <div className="space-y-3">
