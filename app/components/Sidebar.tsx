@@ -52,7 +52,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <>
       <button className="fixed inset-0 z-50 cursor-default bg-slate-950/40 backdrop-blur-[1px]" aria-label="Fechar menu" onClick={onClose} />
-      <aside role="dialog" aria-modal="true" aria-label="Menu administrativo" className="fixed inset-x-0 bottom-0 z-[60] max-h-[82vh] overflow-y-auto rounded-t-[2rem] bg-slate-50 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 text-slate-900 shadow-[0_-20px_50px_rgba(15,23,42,0.22)] animate-[slideUp_0.22s_ease-out] sm:inset-x-auto sm:bottom-4 sm:right-4 sm:w-[26rem] sm:rounded-3xl">
+      <aside role="dialog" aria-modal="true" aria-label="Menu administrativo" className="fixed inset-x-4 bottom-2 z-[60] mx-auto max-h-[82vh] max-w-sm overflow-y-auto rounded-3xl bg-slate-50/95 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 text-slate-900 shadow-[0_-20px_50px_rgba(15,23,42,0.22)] backdrop-blur-lg animate-[slideUp_0.22s_ease-out] sm:inset-x-auto sm:bottom-4 sm:right-4 sm:mx-0 sm:w-[26rem] sm:max-w-none sm:bg-slate-50">
         <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-slate-300 sm:hidden" />
         <header className="mb-4 flex items-center justify-between">
           <div><p className="text-[11px] font-bold tracking-[0.16em] text-blue-600">FICHAS</p><h2 className="text-lg font-bold">Menu do sistema</h2></div>
