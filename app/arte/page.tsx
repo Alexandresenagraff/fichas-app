@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Plus, Search, X, FileText, Check, Undo2 } from "lucide-react";
+import { ArrowLeft, Plus, Search, X, FileText, Check, Undo2, Eye, EyeOff } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 import ClientPdfLink from "../components/ClientPdfLink";
 import AdminNavigation from "../components/AdminNavigation";
@@ -81,6 +81,7 @@ function ArteContent() {
   const [anoSelecionado, setAnoSelecionado] = useState("todos");
   const [mesSelecionado, setMesSelecionado] = useState("todos");
   const [pdfLinks, setPdfLinks] = useState<Record<string, string>>({});
+  const [pedidosAbertos, setPedidosAbertos] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -318,12 +319,13 @@ function ArteContent() {
 
   function renderSecao(ficha: Ficha) {
     const etapa = etapaDaFicha(ficha);
+    const aberto = pedidosAbertos[ficha.id || ""] ?? (ficha.id === fichaIdParam);
 
     return (
       <div
         key={ficha.id}
         id={`ficha-${ficha.id}`}
-        className="bg-zinc-950 border border-zinc-900 rounded-2xl p-5 shadow-lg transition-all duration-200 hover:border-zinc-800/80"
+        className="bg-zinc-950 border border-zinc-900 rounded-2xl p-3 sm:p-4 shadow-lg transition-all duration-200 hover:border-zinc-800/80"
       >
         <div className="flex items-start justify-between mb-3 gap-3">
           <div className="flex-1 min-w-0">
@@ -355,6 +357,18 @@ function ArteContent() {
           )}
         </div>
 
+        {(ficha.pedido || ficha.entrega) && (
+          <p className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-zinc-400">
+            {ficha.pedido && <span>Pedido: <span className="text-white font-medium">{ficha.pedido.split("-").reverse().join("/")}</span></span>}
+            {ficha.pedido && ficha.entrega && <span aria-hidden="true">—</span>}
+            {ficha.entrega && <span>Entrega: <span className="text-white font-medium">{ficha.entrega.split("-").reverse().join("/")}</span></span>}
+          </p>
+        )}
+        <button type="button" aria-expanded={aberto} onClick={() => setPedidosAbertos((atual) => ({ ...atual, [ficha.id || ""]: !aberto }))} className="mb-2 flex min-h-10 w-full items-center justify-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-900 text-xs font-bold text-zinc-200 hover:bg-zinc-800">
+          {aberto ? <EyeOff size={14} /> : <Eye size={14} />} {aberto ? "RECOLHER" : "VISUALIZAR"}
+        </button>
+
+        {aberto && <>
         {ficha.designer && (
           <p className="text-xs text-zinc-400 mb-1">
             Designer: <span className="text-white font-medium">{ficha.designer}</span>
@@ -364,18 +378,6 @@ function ArteContent() {
         {ficha.vendedor && (
           <p className="text-xs text-zinc-400 mb-1">
             Vendedor: <span className="text-white font-medium">{ficha.vendedor}</span>
-          </p>
-        )}
-
-        {ficha.pedido && (
-          <p className="text-xs text-zinc-400 mb-1">
-            Data Pedido: <span className="text-white font-medium">{ficha.pedido.split("-").reverse().join("/")}</span>
-          </p>
-        )}
-
-        {ficha.entrega && (
-          <p className="text-xs text-zinc-400 mb-2">
-            Data Entrega: <span className="text-white font-medium">{ficha.entrega.split("-").reverse().join("/")}</span>
           </p>
         )}
 
@@ -433,7 +435,7 @@ function ArteContent() {
         )}
 
         {ficha.historicoAprovacao && ficha.historicoAprovacao.length > 0 && (
-          <div className="bg-black/50 border border-zinc-900 rounded-xl p-3 mb-4 space-y-2 max-h-40 overflow-y-auto scrollbar-thin">
+          <div className="bg-black/50 border border-zinc-900 rounded-xl p-2 mb-2 space-y-2 max-h-40 overflow-y-auto scrollbar-thin">
             {ficha.historicoAprovacao.map((item, index) => (
               <div key={index} className="text-xs border-l-2 border-zinc-700 pl-2.5">
                 <p className="text-[9px] text-zinc-500 mb-0.5">
@@ -445,7 +447,7 @@ function ArteContent() {
           </div>
         )}
 
-        <div className="mb-4">
+        <div className="mb-2">
           {ficha.pdfLink ? (
             <a
               href={ficha.pdfLink}
@@ -481,7 +483,7 @@ function ArteContent() {
         )}
 
         {(etapa === "aguardandoAprovacao" || etapa === "exportacao") && (
-          <div className="space-y-3.5 pt-1">
+          <div className="space-y-2 pt-1">
             {etapa === "aguardandoAprovacao" ? (
               <div className="text-xs text-yellow-400 bg-yellow-950/20 border border-yellow-900/50 rounded-xl p-3 text-center font-bold flex items-center justify-center gap-2">
                 <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
@@ -525,6 +527,7 @@ function ArteContent() {
             </button>
           </div>
         )}
+        </>}
       </div>
     );
   }
