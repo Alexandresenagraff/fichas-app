@@ -29,6 +29,13 @@ function centavos(valor: string) {
   if (!/^\d+(?:[,.]\d{1,2})?$/.test(valor.trim())) return NaN;
   return Math.round(Number(valor.replace(",", ".")) * 100);
 }
+function centavosMeta(valor: string) {
+  const texto = valor.trim();
+  if (/^\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?$/.test(texto)) {
+    return Math.round(Number(texto.replace(/\./g, "").replace(",", ".")) * 100);
+  }
+  return centavos(texto);
+}
 const moeda = (valor: number) => (valor / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 function ComercialContent() {
@@ -57,13 +64,13 @@ function ComercialContent() {
     return onSnapshot(doc(db, "metas_comerciais", `${encodeURIComponent(vendedorDaMeta)}_${mesFinanceiro}`), (snapshot) => {
       const valor = snapshot.exists() ? snapshot.data().valorCentavos : null;
       setMetaSalva(typeof valor === "number" ? valor : null);
-      setMeta(typeof valor === "number" ? (valor / 100).toFixed(2).replace(".", ",") : "");
+      setMeta(typeof valor === "number" ? (valor / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "");
       setErroMeta("");
     }, () => { setMetaSalva(null); setMeta(""); setErroMeta("Não foi possível carregar a meta."); });
   }, [vendedorDaMeta, mesFinanceiro]);
 
   async function salvarMeta() {
-    const valor = centavos(meta);
+    const valor = centavosMeta(meta);
     if (!vendedorDaMeta || !/^\d{4}-\d{2}$/.test(mesFinanceiro) || !Number.isSafeInteger(valor) || valor <= 0) {
       setErroMeta("Selecione vendedor e mês e informe uma meta maior que zero."); return;
     }
