@@ -608,7 +608,7 @@ function ComercialContent() {
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-2">
               <input
                 type="text"
                 placeholder="Nome do Cliente"
