@@ -545,7 +545,7 @@ function ArteContent() {
   }, [activeSectionList, fichasFiltradas, situacaoPainelAtiva]);
 
   return (
-    <main className="min-h-screen bg-slate-100 p-3 pb-28 text-slate-900">
+    <main className="min-h-screen bg-slate-800 p-3 pb-28 text-white">
       <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff subtitulo="DESIGNER" compacto /></div>
       <div className="max-w-md mx-auto">
         {/* HEADER */}
@@ -560,7 +560,7 @@ function ArteContent() {
             </button>
             <div>
               <h1 className="text-2xl font-bold tracking-tight">ARTE</h1>
-              <p className="text-zinc-500 text-xs mt-0.5">
+              <p className="text-slate-300 text-xs mt-0.5">
                 {designerAtivo ? `Designer: ${designerAtivo}` : "Aprovação de arte"}
               </p>
             </div>

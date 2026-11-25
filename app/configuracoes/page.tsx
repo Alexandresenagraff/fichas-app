@@ -27,7 +27,7 @@ export default function Configuracoes() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-100 p-4 pb-28 text-slate-900">
+    <main className="min-h-screen bg-slate-800 p-4 pb-28 text-white">
       <div className="max-w-xl mx-auto pt-2">
         <button
           onClick={() => router.back()}
@@ -39,7 +39,7 @@ export default function Configuracoes() {
 
         <div className="mt-7 mb-6">
           <h1 className="text-3xl font-extrabold tracking-tight">Configurações</h1>
-          <p className="text-zinc-500 text-xs mt-1">Preferências do sistema</p>
+          <p className="text-slate-300 text-xs mt-1">Preferências do sistema</p>
         </div>
 
         <section className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 shadow-xl">

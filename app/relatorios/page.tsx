@@ -215,7 +215,7 @@ function RelatoriosContent() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-100 p-3 sm:p-4 pb-28 text-slate-900 relative">
+    <main className="min-h-screen bg-slate-800 p-3 sm:p-4 pb-28 text-white relative">
       {/* MENU HAMBÚRGUER */}
       <div className="max-w-4xl mx-auto">
         {/* HEADER */}
@@ -231,7 +231,7 @@ function RelatoriosContent() {
             <h1 className="text-lg sm:text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
               Painel de Relatórios
             </h1>
-            <p className="text-zinc-500 text-xs mt-1">Estatísticas e análise das fichas de produção em tempo real</p>
+            <p className="text-slate-300 text-xs mt-1">Estatísticas e análise das fichas de produção em tempo real</p>
           </div>
         </div>
 

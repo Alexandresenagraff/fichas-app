@@ -119,7 +119,7 @@ function SectorDashboardContent({
   };
 
   return (
-    <main className="min-h-screen bg-slate-100 p-3 pb-28 text-slate-900">
+    <main className="min-h-screen bg-slate-800 p-3 pb-28 text-white">
       <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff subtitulo={title.split(" — ")[0]} compacto /></div>
       <div className="max-w-md mx-auto">
         {/* HEADER */}
@@ -134,7 +134,7 @@ function SectorDashboardContent({
             </button>
             <div>
               <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
-              <p className="text-zinc-500 text-xs">{description}</p>
+              <p className="text-slate-300 text-xs">{description}</p>
             </div>
           </div>
 

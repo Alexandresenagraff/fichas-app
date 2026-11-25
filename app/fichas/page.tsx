@@ -288,7 +288,7 @@ function HomeContent() {
   }, [resumoPedidos]);
 
   return (
-    <main className="min-h-screen bg-slate-900 p-3 pb-28 text-white relative">
+    <main className="min-h-screen bg-slate-800 p-3 pb-28 text-white relative">
 
       <div className="mx-auto max-w-5xl pt-1 sm:px-3 sm:pt-4"><CabecalhoSenagraff /></div>
       <div className="max-w-md mx-auto">

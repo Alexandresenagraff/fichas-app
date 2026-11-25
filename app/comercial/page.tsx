@@ -315,14 +315,14 @@ function ComercialContent() {
   }, [pedidosDoVendedor]);
 
   return (
-    <main className="min-h-screen bg-slate-100 p-3 pb-28 text-slate-900">
+    <main className="min-h-screen bg-slate-800 p-3 pb-28 text-white">
       <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff subtitulo="COMERCIAL" compacto /></div>
       <div className="max-w-md mx-auto">
         {/* HEADER */}
         <div className="flex items-center justify-between mt-5 mb-5">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">COMERCIAL</h1>
-            <p className="text-zinc-500 text-xs mt-0.5">
+            <p className="text-slate-300 text-xs mt-0.5">
               {vendedorParam
                 ? `Dashboard de ${vendedorParam}`
                 : "Acompanhamento de pedidos"}
@@ -383,7 +383,7 @@ function ComercialContent() {
             );
           })}
         </div>
-        {!contadorAberto && <p className="mt-1 px-1 text-[10px] text-zinc-500">Etapa selecionada: {ETAPAS.find((etapa) => etapa.id === abaAtiva)?.label}</p>}
+        {!contadorAberto && <p className="mt-1 px-1 text-[10px] text-slate-300">Etapa selecionada: {ETAPAS.find((etapa) => etapa.id === abaAtiva)?.label}</p>}
         </section>
 
         {/* LISTA */}

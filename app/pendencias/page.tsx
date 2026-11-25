@@ -88,7 +88,7 @@ function PendenciasPage() {
   }, [fichas, filtroAtivo]);
 
   return (
-    <main className="min-h-screen bg-black px-3 pb-28 pt-4 text-white sm:px-6 sm:pt-7">
+    <main className="min-h-screen bg-slate-800 px-3 pb-28 pt-4 text-white sm:px-6 sm:pt-7">
       <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff /></div>
       <div className="mx-auto max-w-6xl">
         <button
