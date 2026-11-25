@@ -362,21 +362,21 @@ function ComercialContent() {
         </div>
 
         {/* ABAS */}
-        <div className="grid grid-cols-3 gap-2 mb-5">
+        <div className="grid grid-cols-2 gap-2 mb-5">
           {ETAPAS.map((etapa) => {
             const ativo = abaAtiva === etapa.id;
             return (
               <button
                 key={etapa.id}
                 onClick={() => setAbaAtiva(etapa.id)}
-                className={`rounded-xl py-2 px-1 text-[9px] font-bold border transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
+                className={`flex min-h-11 items-center justify-center gap-1 rounded-xl py-2 px-2 text-[9px] font-bold border transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                   ativo 
                     ? "bg-zinc-800 border-zinc-700 text-white" 
                     : "bg-zinc-900 border-zinc-800/85 text-zinc-400 hover:bg-zinc-850 hover:text-zinc-300"
                 }`}
               >
-                <span className="block truncate">{etapa.label}</span>
-                <span className="block text-xs mt-0.5 text-zinc-500">
+                <span>{etapa.label}</span>
+                <span className={`shrink-0 text-xs ${ativo ? "text-white" : "text-zinc-500"}`}>
                   ({contagens[etapa.id]})
                 </span>
               </button>
