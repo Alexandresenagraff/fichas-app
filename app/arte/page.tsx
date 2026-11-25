@@ -78,6 +78,7 @@ function ArteContent() {
   const [busca, setBusca] = useState("");
   const [secaoAtiva, setSecaoAtiva] = useState<SecaoArte>("arteParaCriar");
   const [situacaoPainelAtiva, setSituacaoPainelAtiva] = useState<SituacaoPainelDesigner | null>(null);
+  const [contadorAberto, setContadorAberto] = useState(false);
   const [anoSelecionado, setAnoSelecionado] = useState("todos");
   const [mesSelecionado, setMesSelecionado] = useState("todos");
   const [pdfLinks, setPdfLinks] = useState<Record<string, string>>({});
@@ -632,11 +633,13 @@ function ArteContent() {
         )}
 
         {designerAtivo && (
-          <section className="bg-zinc-950 border border-zinc-900 rounded-2xl p-3 mb-3 shadow-lg">
-            <div className="flex items-center justify-between mb-2 px-0.5">
-              <p className="text-[10px] font-extrabold tracking-wider text-zinc-400">PAINEL GERAL</p>
-              <span className="text-[10px] font-bold text-zinc-600">{designerAtivo}</span>
-            </div>
+          <section className="mb-3">
+            <button type="button" onClick={() => setContadorAberto((aberto) => !aberto)} aria-expanded={contadorAberto} aria-controls="contador-geral-designer" className="flex min-h-11 w-full items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-left text-xs font-bold text-zinc-200">
+              <span>CONTADOR GERAL</span>
+              {contadorAberto ? <EyeOff size={17} aria-label="Recolher contador" /> : <Eye size={17} aria-label="Visualizar contador" />}
+            </button>
+            {!contadorAberto && <p className="mt-1 px-1 text-[10px] text-slate-300">Etapa selecionada: {situacaoPainelAtiva ? painelGeral.find((situacao) => situacao.id === situacaoPainelAtiva)?.label : secoes.find((secao) => secao.id === secaoAtiva)?.label}</p>}
+            <div id="contador-geral-designer" hidden={!contadorAberto} className="mt-2 rounded-xl border border-zinc-900 bg-zinc-950 p-2">
             <div className="grid grid-cols-2 gap-1">
               {painelGeral.map((situacao) => {
                 const ativa = situacaoPainelAtiva === situacao.id;
@@ -675,6 +678,7 @@ function ArteContent() {
                   </button>
                 );
               })}
+            </div>
             </div>
           </section>
         )}
