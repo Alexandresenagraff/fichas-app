@@ -215,7 +215,7 @@ function RelatoriosContent() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-100 p-4 pb-28 text-slate-900 relative">
+    <main className="min-h-screen bg-slate-100 p-3 sm:p-4 pb-28 text-slate-900 relative">
       {/* MENU HAMBÚRGUER */}
       <div className="max-w-4xl mx-auto">
         {/* HEADER */}
@@ -228,7 +228,7 @@ function RelatoriosContent() {
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
+            <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
               Painel de Relatórios
             </h1>
             <p className="text-zinc-500 text-xs mt-1">Estatísticas e análise das fichas de produção em tempo real</p>
@@ -250,8 +250,8 @@ function RelatoriosContent() {
         </section>
 
         {/* FILTERS */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-3 grid grid-cols-1 sm:grid-cols-4 gap-3 shadow-xl">
-          <div>
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-4 mb-3 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 shadow-xl">
+          <div className="min-w-0">
             <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Vendedor</label>
             <select
               value={buscaVendedor}
@@ -267,7 +267,7 @@ function RelatoriosContent() {
             </select>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Designer</label>
             <select
               value={buscaDesigner}
@@ -283,7 +283,7 @@ function RelatoriosContent() {
             </select>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Função</label>
             <select
               value={buscaFuncao}
@@ -303,7 +303,7 @@ function RelatoriosContent() {
             </select>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Status / Prazo</label>
             <select
               value={buscaStatus}
@@ -319,8 +319,8 @@ function RelatoriosContent() {
           </div>
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 mb-3 grid grid-cols-1 sm:grid-cols-3 gap-3 shadow-xl">
-          <div>
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-4 mb-3 grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 shadow-xl">
+          <div className="min-w-0">
             <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Data início</label>
             <input
               type="date"
@@ -330,7 +330,7 @@ function RelatoriosContent() {
             />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <label className="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Data fim</label>
             <input
               type="date"
@@ -340,7 +340,7 @@ function RelatoriosContent() {
             />
           </div>
 
-          <div className="flex items-end justify-end">
+          <div className="col-span-2 sm:col-span-1 flex items-end justify-end">
             <button
               type="button"
               onClick={() => {
@@ -361,7 +361,7 @@ function RelatoriosContent() {
         ) : (
           <>
             {/* KPI CARDS */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-3">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2 sm:gap-3 mb-3 [&>div]:p-2 sm:[&>div]:p-4 [&>div>p:nth-child(2)]:text-2xl sm:[&>div>p:nth-child(2)]:text-3xl">
               <div className="bg-zinc-900/40 border border-zinc-900 rounded-2xl p-4 text-center shadow-md transition hover:border-zinc-800">
                 <p className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase mb-1 flex items-center justify-center gap-1">
                   <BarChart3 size={11} className="text-zinc-500" /> Geral
@@ -404,15 +404,15 @@ function RelatoriosContent() {
             </div>
 
             {/* PIPELINE / STAGES DISTRIBUTION */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 mb-3 shadow-xl">
-              <h2 className="text-sm font-bold text-white mb-5 uppercase tracking-wider border-b border-zinc-800 pb-3 flex items-center gap-2">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 mb-3 shadow-xl">
+              <h2 className="text-xs sm:text-sm font-bold text-white mb-3 sm:mb-5 uppercase tracking-wider border-b border-zinc-800 pb-2 sm:pb-3 flex items-center gap-2">
                 <TrendingUp size={16} className="text-indigo-400" /> Distribuição no Fluxo de Produção (Fichas Ativas)
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-2 sm:space-y-4">
                 {Object.entries(metricas.estagiosCount).map(([id, count]) => {
                   const percent = metricas.totalAtivas > 0 ? (count / metricas.totalAtivas) * 100 : 0;
                   return (
-                    <div key={id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div key={id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
                       <div className="w-full sm:w-1/3 flex items-center justify-between sm:justify-start">
                         <span className="text-xs font-semibold text-zinc-300">{getEtapaLabel(id)}</span>
                       </div>
@@ -436,7 +436,7 @@ function RelatoriosContent() {
             {/* SELLER AND DESIGNER METRICS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
               {/* BY SELLER */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 shadow-xl">
                 <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider border-b border-zinc-800 pb-2 flex items-center gap-2">
                   <Users size={15} className="text-blue-400" /> Fichas por Vendedor
                 </h3>
@@ -466,7 +466,7 @@ function RelatoriosContent() {
               </div>
 
               {/* BY DESIGNER */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 shadow-xl">
                 <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider border-b border-zinc-800 pb-2 flex items-center gap-2">
                   <Palette size={15} className="text-indigo-400" /> Fichas por Designer
                 </h3>
@@ -497,11 +497,31 @@ function RelatoriosContent() {
             </div>
 
             {/* DETAILED LIST OF FILTERED ORDERS */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 shadow-xl">
               <h2 className="text-sm font-bold text-white mb-4 uppercase tracking-wider border-b border-zinc-800 pb-3">
                 Detalhamento dos Pedidos ({fichasFiltradas.length})
               </h2>
-              <div className="overflow-x-auto">
+              <div className="space-y-2 sm:hidden">
+                {fichasFiltradas.map((ficha) => {
+                  const categoria = categoriaDaFicha(ficha);
+                  const rotulos = { atrasados: "ATRASADO", urgentes: "URGENTE", noPrazo: "NO PRAZO", finalizados: "FINALIZADO" };
+                  const cores = { atrasados: "text-red-400", urgentes: "text-orange-400", noPrazo: "text-blue-400", finalizados: "text-green-400" };
+                  return <article key={ficha.id} className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-3 text-xs">
+                    <div className="flex flex-wrap items-start justify-between gap-1">
+                      <ClientPdfLink pdfLink={ficha.pdfLink} className="font-bold uppercase text-white break-words">{ficha.cliente}</ClientPdfLink>
+                      <span className={`font-bold ${cores[categoria]}`}>{rotulos[categoria]}</span>
+                    </div>
+                    <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-zinc-300">
+                      <div><dt className="text-zinc-500">Vendedor</dt><dd className="break-words">{ficha.vendedor || "N/A"}</dd></div>
+                      <div><dt className="text-zinc-500">Designer</dt><dd className="break-words">{ficha.designer || "N/A"}</dd></div>
+                      <div><dt className="text-zinc-500">Entrega</dt><dd>{ficha.entrega ? ficha.entrega.split("-").reverse().join("/") : "Não informada"}</dd></div>
+                      <div><dt className="text-zinc-500">Etapa atual</dt><dd>{ficha.entregaStatus ? "Finalizado" : getEtapaLabel(etapaDaFicha(ficha) || "")}</dd></div>
+                    </dl>
+                  </article>;
+                })}
+                {fichasFiltradas.length === 0 && <p className="py-4 text-center text-xs text-zinc-500">Nenhum pedido atende aos filtros selecionados.</p>}
+              </div>
+              <div className="hidden overflow-x-auto sm:block">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="border-b border-zinc-800 text-zinc-500 font-bold uppercase tracking-wider">
