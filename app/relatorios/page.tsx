@@ -239,7 +239,7 @@ function RelatoriosContent() {
           <h2 className="text-sm sm:text-base font-bold">Recebimentos por vendedor</h2>
           <p className="mt-1 text-xs text-zinc-400">Valores registrados pela data em que foram recebidos.</p>
           <label className="mt-3 block text-xs text-zinc-400">Mês do recebimento
-            <input type="month" value={mesRecebimento} onChange={(e) => setMesRecebimento(e.target.value)} className="mt-1 block rounded-lg bg-black p-2 text-white" />
+            <input type="month" value={mesRecebimento} onChange={(e) => setMesRecebimento(e.target.value)} className="mt-1 block w-full max-w-60 rounded-lg bg-black p-2 text-white" />
           </label>
           <div className="mt-2 sm:mt-3 space-y-1 sm:space-y-2 text-xs sm:text-sm">
             {VENDEDORES.map((vendedor) => {
@@ -416,14 +416,14 @@ function RelatoriosContent() {
                       <div className="w-2/5 sm:w-1/3 flex items-center justify-start">
                         <span className="text-[10px] sm:text-xs font-semibold text-zinc-300">{getEtapaLabel(id)}</span>
                       </div>
-                      <div className="flex-1 flex items-center gap-3">
+                      <div className="min-w-0 flex-1 flex items-center gap-2 sm:gap-3">
                         <div className="w-full bg-zinc-800/80 rounded-full h-2 overflow-hidden">
                           <div
                             className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-500 ease-out"
                             style={{ width: `${percent}%` }}
                           ></div>
                         </div>
-                        <span className="text-xs font-bold text-zinc-400 min-w-8 text-right">
+                        <span className="shrink-0 whitespace-nowrap text-xs font-bold text-zinc-400 min-w-8 text-right">
                           {count} <span className="text-[10px] text-zinc-500 font-normal">({Math.round(percent)}%)</span>
                         </span>
                       </div>
