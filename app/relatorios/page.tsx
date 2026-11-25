@@ -219,7 +219,7 @@ function RelatoriosContent() {
       {/* MENU HAMBÚRGUER */}
       <div className="max-w-4xl mx-auto">
         {/* HEADER */}
-        <div className="flex items-center gap-4 mb-4 mt-2">
+        <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4 mt-1 sm:mt-2">
           <button
             onClick={() => router.push("/fichas")}
             className="w-10 h-10 flex items-center justify-center rounded-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 active:scale-95 transition-all duration-150 text-zinc-300 hover:text-white"
@@ -228,20 +228,20 @@ function RelatoriosContent() {
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
+            <h1 className="text-lg sm:text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-500">
               Painel de Relatórios
             </h1>
             <p className="text-zinc-500 text-xs mt-1">Estatísticas e análise das fichas de produção em tempo real</p>
           </div>
         </div>
 
-        <section className="mb-3 rounded-2xl bg-zinc-900 p-4 text-white shadow-xl">
-          <h2 className="font-bold">Recebimentos por vendedor</h2>
+        <section className="mb-2 sm:mb-3 rounded-2xl bg-zinc-900 p-3 sm:p-4 text-white shadow-xl">
+          <h2 className="text-sm sm:text-base font-bold">Recebimentos por vendedor</h2>
           <p className="mt-1 text-xs text-zinc-400">Valores registrados pela data em que foram recebidos.</p>
           <label className="mt-3 block text-xs text-zinc-400">Mês do recebimento
             <input type="month" value={mesRecebimento} onChange={(e) => setMesRecebimento(e.target.value)} className="mt-1 block rounded-lg bg-black p-2 text-white" />
           </label>
-          <div className="mt-3 space-y-2 text-sm">
+          <div className="mt-2 sm:mt-3 space-y-1 sm:space-y-2 text-xs sm:text-sm">
             {VENDEDORES.map((vendedor) => {
               const total = fichas.filter((ficha) => ficha.vendedor === vendedor).flatMap((ficha) => ficha.pagamentos || []).filter((pagamento) => mesRecebimento && pagamento.data.startsWith(mesRecebimento + "-")).reduce((soma, pagamento) => soma + pagamento.valorCentavos, 0);
               return <p key={vendedor} className="flex justify-between gap-4"><span>{vendedor}</span><strong>{(total / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong></p>;
@@ -361,7 +361,7 @@ function RelatoriosContent() {
         ) : (
           <>
             {/* KPI CARDS */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-2 sm:gap-3 mb-3 [&>div]:p-2 sm:[&>div]:p-4 [&>div>p:nth-child(2)]:text-2xl sm:[&>div>p:nth-child(2)]:text-3xl">
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-2 sm:gap-3 mb-3 [&>div]:p-2 sm:[&>div]:p-4 [&>div>p:nth-child(2)]:text-xl sm:[&>div>p:nth-child(2)]:text-3xl">
               <div className="bg-zinc-900/40 border border-zinc-900 rounded-2xl p-4 text-center shadow-md transition hover:border-zinc-800">
                 <p className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase mb-1 flex items-center justify-center gap-1">
                   <BarChart3 size={11} className="text-zinc-500" /> Geral
@@ -394,7 +394,7 @@ function RelatoriosContent() {
                 <p className="text-[9px] text-zinc-500 mt-1 font-medium">Vencidas</p>
               </div>
 
-              <div className="bg-zinc-900/40 border border-zinc-900 rounded-2xl p-4 text-center shadow-md transition hover:border-zinc-800 col-span-2 md:col-span-1">
+              <div className="bg-zinc-900/40 border border-zinc-900 rounded-2xl p-4 text-center shadow-md transition hover:border-zinc-800">
                 <p className="text-[10px] text-orange-400 font-bold tracking-wider uppercase mb-1 flex items-center justify-center gap-1">
                   <AlertTriangle size={11} className="text-orange-400" /> Urgentes
                 </p>
@@ -412,9 +412,9 @@ function RelatoriosContent() {
                 {Object.entries(metricas.estagiosCount).map(([id, count]) => {
                   const percent = metricas.totalAtivas > 0 ? (count / metricas.totalAtivas) * 100 : 0;
                   return (
-                    <div key={id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2">
-                      <div className="w-full sm:w-1/3 flex items-center justify-between sm:justify-start">
-                        <span className="text-xs font-semibold text-zinc-300">{getEtapaLabel(id)}</span>
+                    <div key={id} className="flex items-center justify-between gap-2">
+                      <div className="w-2/5 sm:w-1/3 flex items-center justify-start">
+                        <span className="text-[10px] sm:text-xs font-semibold text-zinc-300">{getEtapaLabel(id)}</span>
                       </div>
                       <div className="flex-1 flex items-center gap-3">
                         <div className="w-full bg-zinc-800/80 rounded-full h-2 overflow-hidden">
@@ -437,10 +437,10 @@ function RelatoriosContent() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
               {/* BY SELLER */}
               <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 shadow-xl">
-                <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider border-b border-zinc-800 pb-2 flex items-center gap-2">
+                <h3 className="text-xs sm:text-sm font-bold text-white mb-2 sm:mb-4 uppercase tracking-wider border-b border-zinc-800 pb-2 flex items-center gap-2">
                   <Users size={15} className="text-blue-400" /> Fichas por Vendedor
                 </h3>
-                <div className="space-y-3.5">
+                <div className="space-y-2 sm:space-y-3.5">
                   {Object.entries(metricas.vendedoresCount)
                     .sort((a, b) => b[1] - a[1])
                     .map(([vendedor, count]) => {
@@ -467,10 +467,10 @@ function RelatoriosContent() {
 
               {/* BY DESIGNER */}
               <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 shadow-xl">
-                <h3 className="text-sm font-bold text-white mb-4 uppercase tracking-wider border-b border-zinc-800 pb-2 flex items-center gap-2">
+                <h3 className="text-xs sm:text-sm font-bold text-white mb-2 sm:mb-4 uppercase tracking-wider border-b border-zinc-800 pb-2 flex items-center gap-2">
                   <Palette size={15} className="text-indigo-400" /> Fichas por Designer
                 </h3>
-                <div className="space-y-3.5">
+                <div className="space-y-2 sm:space-y-3.5">
                   {Object.entries(metricas.designersCount)
                     .sort((a, b) => b[1] - a[1])
                     .map(([designer, count]) => {
@@ -498,7 +498,7 @@ function RelatoriosContent() {
 
             {/* DETAILED LIST OF FILTERED ORDERS */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 shadow-xl">
-              <h2 className="text-sm font-bold text-white mb-4 uppercase tracking-wider border-b border-zinc-800 pb-3">
+              <h2 className="text-xs sm:text-sm font-bold text-white mb-2 sm:mb-4 uppercase tracking-wider border-b border-zinc-800 pb-2 sm:pb-3">
                 Detalhamento dos Pedidos ({fichasFiltradas.length})
               </h2>
               <div className="space-y-2 sm:hidden">
@@ -506,7 +506,7 @@ function RelatoriosContent() {
                   const categoria = categoriaDaFicha(ficha);
                   const rotulos = { atrasados: "ATRASADO", urgentes: "URGENTE", noPrazo: "NO PRAZO", finalizados: "FINALIZADO" };
                   const cores = { atrasados: "text-red-400", urgentes: "text-orange-400", noPrazo: "text-blue-400", finalizados: "text-green-400" };
-                  return <article key={ficha.id} className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-3 text-xs">
+                  return <article key={ficha.id} className="rounded-xl border border-zinc-800 bg-zinc-950/40 p-2 text-xs">
                     <div className="flex flex-wrap items-start justify-between gap-1">
                       <ClientPdfLink pdfLink={ficha.pdfLink} className="font-bold uppercase text-white break-words">{ficha.cliente}</ClientPdfLink>
                       <span className={`font-bold ${cores[categoria]}`}>{rotulos[categoria]}</span>
