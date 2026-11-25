@@ -2,7 +2,8 @@
 
 import { useEffect, useState, Suspense, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, BarChart3, TrendingUp, Calendar, AlertTriangle, Users, Palette } from "lucide-react";
+import { ArrowLeft, BarChart3, TrendingUp, Calendar, AlertTriangle, Users, Palette, Eye, EyeOff } from "lucide-react";
+import type { ReactNode } from "react";
 import app from "../../firebase/config";
 import { getFirestore, collection, onSnapshot } from "firebase/firestore";
 import {
@@ -18,6 +19,17 @@ import AdminNavigation from "../components/AdminNavigation";
 import ClientPdfLink from "../components/ClientPdfLink";
 
 const db = getFirestore(app);
+
+function GavetaRelatorio({ titulo, children, className = "" }: { titulo: ReactNode; children: ReactNode; className?: string }) {
+  const [aberta, setAberta] = useState(false);
+  return <section className={`rounded-2xl border border-zinc-800 bg-zinc-900 p-3 text-white shadow-xl sm:p-4 ${className}`}>
+    <button type="button" onClick={() => setAberta((atual) => !atual)} aria-expanded={aberta} className="flex min-h-10 w-full items-center justify-between gap-3 text-left text-xs font-bold sm:text-sm">
+      <span className="flex items-center gap-2">{titulo}</span>
+      {aberta ? <EyeOff size={17} className="shrink-0" aria-label="Recolher" /> : <Eye size={17} className="shrink-0" aria-label="Visualizar" />}
+    </button>
+    <div hidden={!aberta} className="pt-2">{children}</div>
+  </section>;
+}
 
 function RelatoriosContent() {
   const router = useRouter();
@@ -235,8 +247,7 @@ function RelatoriosContent() {
           </div>
         </div>
 
-        <section className="mb-2 sm:mb-3 rounded-2xl bg-zinc-900 p-3 sm:p-4 text-white shadow-xl">
-          <h2 className="text-sm sm:text-base font-bold">Recebimentos por vendedor</h2>
+        <GavetaRelatorio titulo="Recebimentos por vendedor" className="mb-2 sm:mb-3">
           <p className="mt-1 text-xs text-zinc-400">Valores registrados pela data em que foram recebidos.</p>
           <label className="mt-3 block text-xs text-zinc-400">Mês do recebimento
             <input type="month" value={mesRecebimento} onChange={(e) => setMesRecebimento(e.target.value)} className="mt-1 block w-full max-w-60 rounded-lg bg-black p-2 text-white" />
@@ -247,7 +258,7 @@ function RelatoriosContent() {
               return <p key={vendedor} className="flex justify-between gap-4"><span>{vendedor}</span><strong>{(total / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong></p>;
             })}
           </div>
-        </section>
+        </GavetaRelatorio>
 
         {/* FILTERS */}
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-4 mb-3 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 shadow-xl">
@@ -404,10 +415,7 @@ function RelatoriosContent() {
             </div>
 
             {/* PIPELINE / STAGES DISTRIBUTION */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 mb-3 shadow-xl">
-              <h2 className="text-xs sm:text-sm font-bold text-white mb-3 sm:mb-5 uppercase tracking-wider border-b border-zinc-800 pb-2 sm:pb-3 flex items-center gap-2">
-                <TrendingUp size={16} className="text-indigo-400" /> Distribuição no Fluxo de Produção (Fichas Ativas)
-              </h2>
+            <GavetaRelatorio className="mb-3" titulo={<><TrendingUp size={16} className="shrink-0 text-indigo-400" /> Distribuição no Fluxo de Produção (Fichas Ativas)</>}>
               <div className="space-y-2 sm:space-y-4">
                 {Object.entries(metricas.estagiosCount).map(([id, count]) => {
                   const percent = metricas.totalAtivas > 0 ? (count / metricas.totalAtivas) * 100 : 0;
@@ -431,15 +439,12 @@ function RelatoriosContent() {
                   );
                 })}
               </div>
-            </div>
+            </GavetaRelatorio>
 
             {/* SELLER AND DESIGNER METRICS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
               {/* BY SELLER */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 shadow-xl">
-                <h3 className="text-xs sm:text-sm font-bold text-white mb-2 sm:mb-4 uppercase tracking-wider border-b border-zinc-800 pb-2 flex items-center gap-2">
-                  <Users size={15} className="text-blue-400" /> Fichas por Vendedor
-                </h3>
+              <GavetaRelatorio titulo={<><Users size={15} className="text-blue-400" /> Fichas por Vendedor</>}>
                 <div className="space-y-2 sm:space-y-3.5">
                   {Object.entries(metricas.vendedoresCount)
                     .sort((a, b) => b[1] - a[1])
@@ -463,13 +468,10 @@ function RelatoriosContent() {
                     })}
                   {metricas.totalGeral === 0 && <p className="text-xs text-zinc-500 text-center py-4">Nenhum dado disponível</p>}
                 </div>
-              </div>
+              </GavetaRelatorio>
 
               {/* BY DESIGNER */}
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 shadow-xl">
-                <h3 className="text-xs sm:text-sm font-bold text-white mb-2 sm:mb-4 uppercase tracking-wider border-b border-zinc-800 pb-2 flex items-center gap-2">
-                  <Palette size={15} className="text-indigo-400" /> Fichas por Designer
-                </h3>
+              <GavetaRelatorio titulo={<><Palette size={15} className="text-indigo-400" /> Fichas por Designer</>}>
                 <div className="space-y-2 sm:space-y-3.5">
                   {Object.entries(metricas.designersCount)
                     .sort((a, b) => b[1] - a[1])
@@ -493,14 +495,11 @@ function RelatoriosContent() {
                     })}
                   {metricas.totalGeral === 0 && <p className="text-xs text-zinc-500 text-center py-4">Nenhum dado disponível</p>}
                 </div>
-              </div>
+              </GavetaRelatorio>
             </div>
 
             {/* DETAILED LIST OF FILTERED ORDERS */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3 sm:p-6 shadow-xl">
-              <h2 className="text-xs sm:text-sm font-bold text-white mb-2 sm:mb-4 uppercase tracking-wider border-b border-zinc-800 pb-2 sm:pb-3">
-                Detalhamento dos Pedidos ({fichasFiltradas.length})
-              </h2>
+            <GavetaRelatorio titulo={`Detalhamento dos Pedidos (${fichasFiltradas.length})`}>
               <div className="space-y-2 sm:hidden">
                 {fichasFiltradas.map((ficha) => {
                   const categoria = categoriaDaFicha(ficha);
@@ -600,7 +599,7 @@ function RelatoriosContent() {
                   </tbody>
                 </table>
               </div>
-            </div>
+            </GavetaRelatorio>
           </>
         )}
       </div>
