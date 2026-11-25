@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Plus, Search, X, Calendar, User } from "lucide-react";
+import { Plus, Search, X, Calendar, User, Eye, EyeOff } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 import ClientPdfLink from "../components/ClientPdfLink";
 import AdminNavigation from "../components/AdminNavigation";
@@ -42,6 +42,7 @@ function ComercialContent() {
   const [pedidos, setPedidos] = useState<Ficha[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [abaAtiva, setAbaAtiva] = useState<Etapa>("arteParaCriar");
+  const [contadorAberto, setContadorAberto] = useState(false);
   const [busca, setBusca] = useState("");
 
   const [cliente, setCliente] = useState("");
@@ -356,7 +357,12 @@ function ComercialContent() {
         </div>
 
         {/* ABAS */}
-        <div className="grid grid-cols-2 gap-2 mb-5">
+        <section className="mb-5">
+        <button type="button" onClick={() => setContadorAberto((aberto) => !aberto)} aria-expanded={contadorAberto} aria-controls="contador-geral-comercial" className="flex min-h-11 w-full items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-left text-xs font-bold text-zinc-200">
+          <span>CONTADOR GERAL</span>
+          {contadorAberto ? <EyeOff size={17} aria-label="Recolher contador" /> : <Eye size={17} aria-label="Visualizar contador" />}
+        </button>
+        <div id="contador-geral-comercial" hidden={!contadorAberto} className={contadorAberto ? "mt-2 grid grid-cols-2 gap-2" : "hidden"}>
           {ETAPAS.map((etapa) => {
             const ativo = abaAtiva === etapa.id;
             return (
@@ -377,6 +383,8 @@ function ComercialContent() {
             );
           })}
         </div>
+        {!contadorAberto && <p className="mt-1 px-1 text-[10px] text-zinc-500">Etapa selecionada: {ETAPAS.find((etapa) => etapa.id === abaAtiva)?.label}</p>}
+        </section>
 
         {/* LISTA */}
         <div className="space-y-3">
