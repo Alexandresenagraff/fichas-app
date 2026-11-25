@@ -83,14 +83,14 @@ export default function Inicio() {
           ))}
         </section>
 
-        <section className="mt-4 rounded-3xl border border-slate-200 bg-white p-3 shadow-sm sm:mt-6 sm:p-5" aria-label="Distribuição de artes pendentes por designer">
+        <section className="mt-4 sm:mt-6" aria-label="Distribuição de artes pendentes por designer">
           <div className="relative flex items-center justify-center px-7">
-            <h2 className="text-center text-base font-bold">DISTRIBUIÇÃO DE PEDIDOS - DESIGNERS</h2>
+            <h2 className="text-center text-base font-bold text-white">DISTRIBUIÇÃO DE PEDIDOS - DESIGNERS</h2>
             <ListTodo className="absolute right-0 shrink-0 text-blue-600" size={22} />
           </div>
           <div className="mt-3 grid gap-2 sm:mt-4 sm:grid-cols-2">
             {DESIGNERS.map((designer) => (
-              <div key={designer} className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 rounded-xl bg-slate-700 px-3 py-3 text-xs text-white sm:text-sm">
+              <div key={designer} className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 rounded-xl bg-slate-600 px-3 py-2 text-xs text-white sm:text-sm">
                 <span className="font-bold">{designer}:</span>
                 <span className="whitespace-nowrap">À CRIAR <strong className="text-base font-extrabold sm:text-lg">{carregando ? "–" : String(artesPendentesPorDesigner[designer].total).padStart(2, "0")}</strong></span>
                 <span className="whitespace-nowrap text-slate-200">— (Urgentes {carregando ? "–" : String(artesPendentesPorDesigner[designer].urgentes).padStart(2, "0")})</span>
