@@ -112,15 +112,15 @@ function PendenciasPage() {
               <button
                 key={id}
                 onClick={() => setFiltroAtivo((atual) => (atual === id ? null : id))}
-                className={`min-h-16 rounded-2xl border p-3 sm:p-4 text-left transition-all ${
+                className={`flex min-h-12 items-center gap-2 rounded-2xl border px-3 py-2 text-left transition-all ${
                   ativo ? "border-blue-500/60 bg-blue-500/10" : "border-zinc-800 bg-zinc-900/70 hover:border-zinc-700 hover:bg-zinc-900"
                 }`}
               >
-                <span className={`mb-1 sm:mb-3 flex items-center gap-2 text-[11px] sm:text-xs font-bold ${cor}`}>
-                  <Icon size={15} />
+                <span className={`flex min-w-0 items-center gap-2 text-[11px] sm:text-xs font-bold ${cor}`}>
+                  <Icon size={15} className="shrink-0" />
                   {label}
                 </span>
-                <strong className="text-xl sm:text-2xl text-white">{contagens[id]}</strong>
+                <strong className="shrink-0 text-base text-white">{contagens[id]}</strong>
               </button>
             );
           })}
