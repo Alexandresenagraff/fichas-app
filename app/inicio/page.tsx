@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, CheckCircle2, Clock3, ListTodo } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Clock3, ListTodo, Plus } from "lucide-react";
+import Link from "next/link";
 import { collection, getFirestore, onSnapshot } from "firebase/firestore";
 import app from "../../firebase/config";
 import AdminNavigation from "../components/AdminNavigation";
@@ -97,6 +98,9 @@ export default function Inicio() {
           </div>
         </section>
       </div>
+      <Link href="/comercial?novo=1" aria-label="Criar novo pedido" title="Novo pedido" className="fixed right-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-30 flex h-14 w-14 items-center justify-center rounded-full bg-blue-700 text-white shadow-lg transition hover:scale-105 hover:bg-blue-800 active:scale-95">
+        <Plus size={28} aria-hidden="true" />
+      </Link>
       <AdminNavigation />
     </main>
   );

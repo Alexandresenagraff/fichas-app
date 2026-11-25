@@ -42,7 +42,7 @@ function ComercialContent() {
   const searchParams = useSearchParams();
   const vendedorParam = searchParams.get("vendedor") || "";
 
-  const [modalAberto, setModalAberto] = useState(false);
+  const [modalAberto, setModalAberto] = useState(() => searchParams.get("novo") === "1");
   const [modalAlteracao, setModalAlteracao] = useState(false);
   const [fichaAlteracao, setFichaAlteracao] = useState<Ficha | null>(null);
   const [mensagemAlteracao, setMensagemAlteracao] = useState("");
