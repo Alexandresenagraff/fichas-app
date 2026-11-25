@@ -88,16 +88,12 @@ export default function Inicio() {
             <h2 className="text-center text-base font-bold">DISTRIBUIÇÃO DE PEDIDOS - DESIGNERS</h2>
             <ListTodo className="absolute right-0 shrink-0 text-blue-600" size={22} />
           </div>
-          <div className="mt-3 grid grid-cols-2 gap-2 sm:mt-4 sm:gap-3 lg:grid-cols-4">
+          <div className="mt-3 grid gap-2 sm:mt-4 sm:grid-cols-2">
             {DESIGNERS.map((designer) => (
-              <div key={designer} className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50 px-2 py-2 sm:px-4 sm:py-3">
-                <p className="truncate text-center text-sm font-bold tracking-wide text-slate-700">{designer}</p>
-                <p className="mt-1 text-sm font-bold text-slate-700 sm:mt-2 sm:text-base">
-                  Arte à CRIAR <span className="font-bold text-blue-700">— {carregando ? "–" : artesPendentesPorDesigner[designer].total}</span>
-                </p>
-                <p className="mt-1 text-xs font-semibold text-slate-600 sm:text-sm">
-                  URGENTES ⚠ <span className="font-bold text-orange-600">— {carregando ? "–" : artesPendentesPorDesigner[designer].urgentes}</span>
-                </p>
+              <div key={designer} className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 rounded-xl bg-slate-700 px-3 py-3 text-xs text-white sm:text-sm">
+                <span className="font-bold">{designer}:</span>
+                <span className="whitespace-nowrap">À CRIAR <strong className="text-base font-extrabold sm:text-lg">{carregando ? "–" : String(artesPendentesPorDesigner[designer].total).padStart(2, "0")}</strong></span>
+                <span className="whitespace-nowrap text-slate-200">— (Urgentes {carregando ? "–" : String(artesPendentesPorDesigner[designer].urgentes).padStart(2, "0")})</span>
               </div>
             ))}
           </div>
