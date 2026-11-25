@@ -6,6 +6,7 @@ import { Plus, Search, X, Calendar, User } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 import ClientPdfLink from "../components/ClientPdfLink";
 import AdminNavigation from "../components/AdminNavigation";
+import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 
 import app from "../../firebase/config";
 import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc, runTransaction } from "firebase/firestore";
@@ -314,6 +315,7 @@ function ComercialContent() {
 
   return (
     <main className="min-h-screen bg-slate-100 p-3 pb-28 text-slate-900">
+      <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff subtitulo="COMERCIAL" compacto /></div>
       <div className="max-w-md mx-auto">
         {/* HEADER */}
         <div className="flex items-center justify-between mt-5 mb-5">
