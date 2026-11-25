@@ -29,7 +29,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const grupos = [
     { id: "comercial" as const, label: "Comercial", Icon: ShoppingBag, items: [{ label: "Visão geral", href: "/comercial" }, ...VENDEDORES.map((vendedor) => ({ label: vendedor, href: `/comercial?vendedor=${vendedor}` }))] },
     { id: "designers" as const, label: "Designers", Icon: Palette, items: [{ label: "Geral Arte", href: "/arte" }, ...DESIGNERS.map((designer) => ({ label: designer, href: `/arte?designer=${normalizarNome(designer)}` }))] },
-    { id: "costura" as const, label: "Costura", Icon: Shirt, items: [{ label: "Celina", href: "/costura?costureiro=celina" }, { label: "Paulo", href: "/costura?costureiro=paulo" }] },
   ];
   const setores = [
     { label: "Impressão", href: "/impressao", Icon: Printer },
@@ -38,6 +37,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     { label: "Conferência", href: "/conferencia", Icon: ClipboardCheck },
     { label: "Envio / Retirada", href: "/envio", Icon: Truck },
   ];
+  const costura = { id: "costura" as const, label: "Costura", Icon: Shirt, items: [{ label: "Celina", href: "/costura?costureiro=celina" }, { label: "Paulo", href: "/costura?costureiro=paulo" }] };
+  const menuSetores = [...grupos, ...setores.slice(0, 3), costura, ...setores.slice(3)];
   const administracao = [
     { label: "Início", href: "/inicio", Icon: House },
     { label: "Pedidos", href: "/fichas", Icon: ClipboardList },
@@ -64,7 +65,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
         <section className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
           <p className="px-2 pb-2 pt-1 text-[10px] font-bold tracking-[0.15em] text-slate-400">SETORES</p>
-          {grupos.map(({ id, label, Icon, items }) => {
+          {menuSetores.map((item) => {
+            if (!("items" in item)) {
+              const { label, href, Icon } = item;
+              return <button key={href} onClick={() => navegar(href)} className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${pathname === href ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50"}`}><Icon size={18} />{label}</button>;
+            }
+            const { id, label, Icon, items } = item;
             const aberto = grupoAberto === id;
             const rotaDoGrupo = id === "designers" ? "/arte" : `/${id}`;
             return <div key={id}>
@@ -74,7 +80,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               {aberto && <div className="mb-1 ml-5 border-l border-blue-100 pl-3">{items.map((item) => <button key={item.href} onClick={() => navegar(item.href)} className="block w-full rounded-lg px-2 py-2 text-left text-xs font-medium text-slate-500 transition hover:bg-blue-50 hover:text-blue-700">{item.label}</button>)}</div>}
             </div>;
           })}
-          {setores.map(({ label, href, Icon }) => <button key={href} onClick={() => navegar(href)} className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${pathname === href ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50"}`}><Icon size={18} />{label}</button>)}
         </section>
 
         <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
