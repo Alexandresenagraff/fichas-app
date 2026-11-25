@@ -543,7 +543,7 @@ function ArteContent() {
 
   return (
     <main className="min-h-screen bg-slate-100 p-3 pb-28 text-slate-900">
-      <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff subtitulo="DESIGNER" /></div>
+      <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff subtitulo="DESIGNER" compacto /></div>
       <div className="max-w-md mx-auto">
         {/* HEADER */}
         <div className="flex items-center justify-between mb-5 mt-2">
@@ -634,7 +634,7 @@ function ArteContent() {
               <p className="text-[10px] font-extrabold tracking-wider text-zinc-400">PAINEL GERAL</p>
               <span className="text-[10px] font-bold text-zinc-600">{designerAtivo}</span>
             </div>
-            <div className="grid grid-cols-2 gap-1.5">
+            <div className="grid grid-cols-2 gap-1">
               {painelGeral.map((situacao) => {
                 const ativa = situacaoPainelAtiva === situacao.id;
                 return (
@@ -645,30 +645,30 @@ function ArteContent() {
                         atual === situacao.id ? null : situacao.id
                       )
                     }
-                    className={`rounded-xl border px-3 py-2 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
+                    className={`flex min-h-11 items-center gap-2 rounded-xl border px-2 py-1 text-left transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                       ativa
                         ? "bg-zinc-800 border-zinc-700 text-white animate-pulse-once"
                         : "bg-zinc-900/80 border-zinc-800/80 hover:bg-zinc-850"
                     }`}
                   >
-                    <span className="block text-[9px] font-bold tracking-wide text-zinc-400 truncate">
+                    <span className="text-[9px] font-bold tracking-wide text-zinc-400">
                       {situacao.label}
                     </span>
-                    <span className={`block text-lg font-extrabold mt-0.5 ${ativa ? "text-white" : situacao.cor}`}>
+                    <span className={`text-base font-extrabold ${ativa ? "text-white" : situacao.cor}`}>
                       {situacao.quantidade}
                     </span>
                   </button>
                 );
               })}
             </div>
-            <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+            <div className="mt-1 grid grid-cols-2 gap-1">
               {secoes.filter((secao) => secao.id !== "arteParaCriar").map((secao) => {
                 const ativo = !situacaoPainelAtiva && secaoAtiva === secao.id;
                 return (
                   <button key={secao.id} onClick={() => { setSituacaoPainelAtiva(null); setSecaoAtiva(secao.id); }}
-                    className={`rounded-xl border px-3 py-2 text-left transition-all ${ativo ? "bg-zinc-800 border-zinc-700 text-white" : "bg-zinc-900/80 border-zinc-800/80 text-zinc-400 hover:bg-zinc-850"}`}>
-                    <span className="block text-[9px] font-bold tracking-wide">{secao.label}</span>
-                    <span className={`block text-lg font-extrabold mt-0.5 ${ativo ? "text-white" : secao.cor}`}>{secao.lista.length}</span>
+                    className={`flex min-h-11 items-center gap-2 rounded-xl border px-2 py-1 text-left transition-all ${ativo ? "bg-zinc-800 border-zinc-700 text-white" : "bg-zinc-900/80 border-zinc-800/80 text-zinc-400 hover:bg-zinc-850"}`}>
+                    <span className="text-[9px] font-bold tracking-wide">{secao.label}</span>
+                    <span className={`text-base font-extrabold ${ativo ? "text-white" : secao.cor}`}>{secao.lista.length}</span>
                   </button>
                 );
               })}
