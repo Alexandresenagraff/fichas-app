@@ -6,6 +6,7 @@ import { ArrowLeft, Plus, Search, X, FileText, Check, Undo2 } from "lucide-react
 import NotificationBell from "../components/NotificationBell";
 import ClientPdfLink from "../components/ClientPdfLink";
 import AdminNavigation from "../components/AdminNavigation";
+import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 
 import app from "../../firebase/config";
 import {
@@ -542,6 +543,7 @@ function ArteContent() {
 
   return (
     <main className="min-h-screen bg-slate-100 p-3 pb-28 text-slate-900">
+      <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff subtitulo="DESIGNER" /></div>
       <div className="max-w-md mx-auto">
         {/* HEADER */}
         <div className="flex items-center justify-between mb-5 mt-2">
