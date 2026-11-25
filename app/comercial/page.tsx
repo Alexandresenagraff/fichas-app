@@ -418,7 +418,12 @@ function ComercialContent() {
               <label className="block">Meta do mês (R$)<input type="text" inputMode="decimal" value={meta} onChange={(e) => setMeta(e.target.value)} placeholder="Ex.: 10000,00" className="mt-1 block w-full rounded-lg bg-black p-2 text-white" /></label>
               <button type="button" disabled={salvandoMeta} onClick={salvarMeta} className="min-h-10 rounded-lg bg-blue-700 px-4 font-bold text-white disabled:opacity-50">{salvandoMeta ? "Salvando..." : "Salvar meta"}</button>
               {erroMeta && <p role="alert" className="text-red-400">{erroMeta}</p>}
-              {metaSalva != null && !erroMeta && <p>Meta: <strong>{moeda(metaSalva)}</strong> · Atingido: <strong>{Math.round(totalVendido / metaSalva * 100)}%</strong> · Falta: <strong>{moeda(Math.max(metaSalva - totalVendido, 0))}</strong></p>}
+              {metaSalva != null && metaSalva > 0 && !erroMeta && <>
+                <p>Meta: <strong>{moeda(metaSalva)}</strong> · Atingido: <strong>{Math.round(totalVendido / metaSalva * 100)}%</strong> · Falta: <strong>{moeda(Math.max(metaSalva - totalVendido, 0))}</strong></p>
+                <div role="progressbar" aria-label="Progresso da meta de vendas" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.min(100, Math.round(totalVendido / metaSalva * 100))} className="h-2.5 overflow-hidden rounded-full bg-zinc-700">
+                  <div className="h-full rounded-full bg-blue-500 transition-all" style={{ width: `${Math.min(100, Math.max(0, totalVendido / metaSalva * 100))}%` }} />
+                </div>
+              </>}
             </>}
           </div>
         </section>

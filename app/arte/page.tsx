@@ -74,6 +74,9 @@ function ArteContent() {
   const searchParams = useSearchParams();
   const designerAtivo = searchParams.get("designer") || "";
   const [fichas, setFichas] = useState<Ficha[]>([]);
+  const [fichasFinanceiras, setFichasFinanceiras] = useState<Ficha[]>([]);
+  const [financeiroAberto, setFinanceiroAberto] = useState(false);
+  const [mesFinanceiro, setMesFinanceiro] = useState(() => { const hoje = new Date(); return `${hoje.getFullYear()}-${String(hoje.getMonth() + 1).padStart(2, "0")}`; });
   const [carregando, setCarregando] = useState(true);
   const [busca, setBusca] = useState("");
   const [secaoAtiva, setSecaoAtiva] = useState<SecaoArte>("arteParaCriar");
@@ -89,8 +92,10 @@ function ArteContent() {
       collection(db, "fichas"),
       (snapshot) => {
         const lista: Ficha[] = [];
+        const listaFinanceira: Ficha[] = [];
         snapshot.forEach((item) => {
           const dados = item.data() as Ficha;
+          if (dados.venda && dados.designer) listaFinanceira.push({ id: item.id, ...dados });
           if (
             dados.venda &&
             !dados.entregaStatus &&
@@ -107,6 +112,7 @@ function ArteContent() {
         });
 
         setFichas(lista);
+        setFichasFinanceiras(listaFinanceira);
         setCarregando(false);
       },
       (error) => {
@@ -270,6 +276,14 @@ function ArteContent() {
         ficha.designer?.toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === designerAtivo
     );
   }, [fichas, designerAtivo]);
+
+  const pedidosFinanceiros = fichasFinanceiras.filter((ficha) => {
+    if (!designerAtivo || normalizarTexto(ficha.designer) !== normalizarTexto(designerAtivo) || ficha.valorTotalCentavos == null) return false;
+    const partes = ficha.vendaData?.split(" ")[0]?.split("/");
+    const dataLancamento = partes?.length === 3 ? `${partes[2]}-${partes[1]}-${partes[0]}` : "";
+    return (ficha.pedido || dataLancamento).startsWith(`${mesFinanceiro}-`);
+  });
+  const totalFinanceiro = pedidosFinanceiros.reduce((soma, ficha) => soma + (ficha.valorTotalCentavos || 0), 0);
 
   const anosDisponiveis = useMemo(() => {
     return [...new Set(
@@ -600,6 +614,18 @@ function ArteContent() {
             </button>
           )}
         </div>
+
+        {designerAtivo && <section className="mb-3">
+          <button type="button" onClick={() => setFinanceiroAberto((aberto) => !aberto)} aria-expanded={financeiroAberto} aria-controls="financeiro-designer" className="flex min-h-11 w-full items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-left text-xs font-bold text-zinc-200">
+            <span>CONTADOR FINANCEIRO</span>{financeiroAberto ? <EyeOff size={17} aria-label="Recolher contador financeiro" /> : <Eye size={17} aria-label="Visualizar contador financeiro" />}
+          </button>
+          <div id="financeiro-designer" hidden={!financeiroAberto} className="mt-2 space-y-2 rounded-xl bg-zinc-900 p-3 text-xs text-zinc-200">
+            <label className="block">Mês dos pedidos<input type="month" value={mesFinanceiro} onChange={(event) => setMesFinanceiro(event.target.value)} className="mt-1 block w-full max-w-60 rounded-lg bg-black p-2 text-white" /></label>
+            <p>Pedidos com valor: <strong>{pedidosFinanceiros.length}</strong></p>
+            <p>Valor total dos pedidos: <strong className="text-base text-white">{(totalFinanceiro / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong></p>
+            <p className="text-zinc-400">Pela data do pedido; sem data, pela data de lançamento.</p>
+          </div>
+        </section>}
 
         {designerAtivo && (
           <div className="grid grid-cols-2 gap-2 mb-4">
