@@ -87,38 +87,38 @@ function PendenciasPage() {
   }, [fichas, filtroAtivo]);
 
   return (
-    <main className="min-h-screen bg-black px-4 pb-28 pt-20 text-white sm:px-6">
+    <main className="min-h-screen bg-black px-3 pb-28 pt-4 text-white sm:px-6 sm:pt-20">
       <div className="mx-auto max-w-6xl">
         <button
           onClick={() => window.history.back()}
-          className="mb-5 flex items-center gap-2 text-sm text-zinc-400 transition hover:text-white"
+          className="mb-3 sm:mb-5 flex min-h-10 items-center gap-2 text-sm text-zinc-400 transition hover:text-white"
         >
           <ArrowLeft size={16} />
           Voltar
         </button>
 
-        <header className="mb-6">
+        <header className="mb-4 sm:mb-6">
           <p className="text-xs font-bold tracking-widest text-blue-400">ADMINISTRAÇÃO</p>
-          <h1 className="mt-1 text-2xl font-bold">Painel de Pendências</h1>
-          <p className="mt-1 text-sm text-zinc-400">Acompanhe os pedidos que precisam de atenção, sem alterar o fluxo de produção.</p>
+          <h1 className="mt-1 text-xl sm:text-2xl font-bold">Painel de Pendências</h1>
+          <p className="mt-1 text-xs sm:text-sm text-zinc-400">Acompanhe os pedidos que precisam de atenção, sem alterar o fluxo de produção.</p>
         </header>
 
-        <section className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4" aria-label="Filtros de pendências">
+        <section className="mb-4 sm:mb-8 grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-3 lg:grid-cols-4" aria-label="Filtros de pendências">
           {pendencias.map(({ id, label, Icon, cor }) => {
             const ativo = filtroAtivo === id;
             return (
               <button
                 key={id}
                 onClick={() => setFiltroAtivo((atual) => (atual === id ? null : id))}
-                className={`rounded-2xl border p-4 text-left transition-all ${
+                className={`min-h-16 rounded-2xl border p-3 sm:p-4 text-left transition-all ${
                   ativo ? "border-blue-500/60 bg-blue-500/10" : "border-zinc-800 bg-zinc-900/70 hover:border-zinc-700 hover:bg-zinc-900"
                 }`}
               >
-                <span className={`mb-3 flex items-center gap-2 text-xs font-bold ${cor}`}>
+                <span className={`mb-1 sm:mb-3 flex items-center gap-2 text-[11px] sm:text-xs font-bold ${cor}`}>
                   <Icon size={15} />
                   {label}
                 </span>
-                <strong className="text-2xl text-white">{contagens[id]}</strong>
+                <strong className="text-xl sm:text-2xl text-white">{contagens[id]}</strong>
               </button>
             );
           })}
@@ -126,7 +126,7 @@ function PendenciasPage() {
 
         <section>
           <div className="mb-3 flex items-center justify-between gap-3">
-            <h2 className="text-base font-bold">{filtroAtivo ? pendencias.find((pendencia) => pendencia.id === filtroAtivo)?.label : "TODAS AS PENDÊNCIAS"}</h2>
+            <h2 className="text-sm sm:text-base font-bold">{filtroAtivo ? pendencias.find((pendencia) => pendencia.id === filtroAtivo)?.label : "TODAS AS PENDÊNCIAS"}</h2>
             {filtroAtivo && (
               <button onClick={() => setFiltroAtivo(null)} className="text-xs font-semibold text-blue-400 hover:text-blue-300">
                 Limpar filtro
@@ -141,11 +141,11 @@ function PendenciasPage() {
           ) : (
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {fichasExibidas.map((ficha) => (
-                <article key={ficha.id} className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4">
-                  <ClientPdfLink pdfLink={ficha.pdfLink} className="block truncate text-base font-bold text-white">
+                <article key={ficha.id} className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-3 sm:p-4">
+                  <ClientPdfLink pdfLink={ficha.pdfLink} className="block truncate text-sm sm:text-base font-bold text-white">
                     {ficha.cliente || "Cliente não informado"}
                   </ClientPdfLink>
-                  <div className="mt-3 space-y-1 text-xs text-zinc-400">
+                  <div className="mt-2 sm:mt-3 space-y-1 text-xs text-zinc-400">
                     {ficha.empresa && <p>Empresa: <span className="text-zinc-300">{ficha.empresa}</span></p>}
                     {ficha.pedido && <p>Pedido: <span className="text-zinc-300">{ficha.pedido}</span></p>}
                     {ficha.designer && <p>Designer: <span className="text-zinc-300">{ficha.designer}</span></p>}
