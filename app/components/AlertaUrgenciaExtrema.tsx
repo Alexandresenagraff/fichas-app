@@ -42,8 +42,8 @@ export default function AlertaUrgenciaExtrema() {
     if (Math.hypot(event.clientX - atual.inicioX, event.clientY - atual.inicioY) < 8 && !atual.moveu) return;
     atual.moveu = true;
     setPosicao({
-      x: Math.max(0, Math.min(window.innerWidth - 56, event.clientX - atual.deslocamentoX)),
-      y: Math.max(0, Math.min(window.innerHeight - 56, event.clientY - atual.deslocamentoY)),
+      x: Math.max(0, Math.min(window.innerWidth - 64, event.clientX - atual.deslocamentoX)),
+      y: Math.max(0, Math.min(window.innerHeight - 64, event.clientY - atual.deslocamentoY)),
     });
   }
 
@@ -59,8 +59,8 @@ export default function AlertaUrgenciaExtrema() {
       if (ignorarClique.current) { ignorarClique.current = false; return; }
       if (pedidos.length === 1 && pedidos[0].id) abrirPedido(pedidos[0].id);
       else setListaAberta(true);
-    }} style={posicao ? { left: posicao.x, top: posicao.y } : undefined} className={`fixed z-40 flex h-14 w-14 touch-none select-none items-center justify-center bg-transparent motion-safe:animate-pulse ${posicao ? "" : "bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4"}`}>
-      <Image src="/sirene-urgencia.png" alt="" width={56} height={56} unoptimized draggable={false} className="h-14 w-14 object-contain" />
+    }} style={posicao ? { left: posicao.x, top: posicao.y } : undefined} className={`fixed z-40 flex h-16 w-16 touch-none select-none items-center justify-center bg-transparent motion-safe:animate-pulse ${posicao ? "" : "bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4"}`}>
+      <Image src="/sirene-urgencia.png" alt="" width={64} height={64} unoptimized draggable={false} className="h-16 w-16 object-contain" />
       {pedidos.length > 1 && <span className="absolute -right-1 -top-1 rounded-full bg-white px-1.5 text-xs font-bold text-red-800">{pedidos.length}</span>}
     </button>
     {listaAberta && <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 p-4" onClick={() => setListaAberta(false)}>
