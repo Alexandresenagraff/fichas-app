@@ -359,7 +359,7 @@ function HomeContent() {
 
         {/* RESULTADOS */}
         {(busca || filtroAtivo) && (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {carregando ? (
               <div className="space-y-3">
                 <CardSkeleton />
@@ -373,12 +373,12 @@ function HomeContent() {
                   <div
                     key={ficha.id}
                     id={`ficha-${ficha.id}`}
-                    className="bg-zinc-950 border border-zinc-900 rounded-2xl p-4.5 shadow-xl transition-all duration-200 hover:border-zinc-800/80"
+                    className="bg-zinc-950 border border-zinc-900 rounded-2xl p-3 sm:p-4 shadow-xl transition-all duration-200 hover:border-zinc-800/80"
                   >
                     {/* TOPO */}
-                    <div className="mb-4">
+                    <div>
                       {/* NOME + LIXEIRA */}
-                      <div className="flex justify-between items-start gap-3 mb-3">
+                      <div className="flex justify-between items-start gap-3 mb-2">
                         {editandoId === ficha.id ? (
                           <input
                             type="text"
@@ -394,7 +394,7 @@ function HomeContent() {
                             >
                               {ficha.cliente}
                             </ClientPdfLink>
-                            <div className="flex flex-wrap gap-1.5 mt-1.5">
+                            <div className="flex flex-wrap gap-1.5">
                               {etapaDaFicha(ficha) === "aguardandoAprovacao" && (
                                 <span className="bg-yellow-500/10 border border-yellow-500/30 text-yellow-400 text-[10px] font-extrabold px-2 py-0.5 rounded-md inline-flex items-center gap-1">
                                   <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse"></span>
@@ -430,7 +430,7 @@ function HomeContent() {
                       </div>
 
                       {/* DATAS */}
-                      <div className="grid grid-cols-2 gap-4 mb-4">
+                      <div className="grid grid-cols-2 gap-4 mb-2">
                         <div>
                           <p className="text-zinc-500 text-[10px] font-bold tracking-wider">
                             PEDIDO:
@@ -474,7 +474,7 @@ function HomeContent() {
 
                       <button
                         onClick={() => alternarPedido(ficha.id || "")}
-                        className="w-full bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 active:scale-[0.99] transition-all duration-200 rounded-xl py-2.5 mb-4 text-xs font-semibold text-zinc-300 hover:text-white flex items-center justify-center gap-1.5"
+                        className="w-full min-h-10 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 active:scale-[0.99] transition-all duration-200 rounded-xl py-2 mb-2 text-xs font-semibold text-zinc-300 hover:text-white flex items-center justify-center gap-1.5"
                         aria-expanded={isAberto}
                         aria-controls={`detalhes-${ficha.id}`}
                       >
@@ -489,7 +489,7 @@ function HomeContent() {
                         )}
                       </button>
 
-                      <div className="mb-2 text-center text-xs font-semibold space-y-1">
+                      <div className={`text-center text-xs font-semibold space-y-0.5 ${isAberto ? "mb-2" : ""}`}>
                         <p className="text-lime-400 flex items-center justify-center gap-1.5">
                           <span className="w-1.5 h-1.5 bg-lime-400 rounded-full inline-block animate-pulse"></span>
                           {statusAtual(ficha).completed}
