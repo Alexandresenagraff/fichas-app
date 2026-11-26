@@ -617,9 +617,6 @@ function ComercialContent() {
           >
             <div className="flex items-center justify-between gap-2 mb-3">
               <h2 className="text-xl font-extrabold tracking-tight text-white">NOVO PEDIDO</h2>
-              <button type="button" onClick={() => setUrgenciaExtrema((ativa) => !ativa)} aria-pressed={urgenciaExtrema} aria-label="Marcar pedido como urgência extrema" title={urgenciaExtrema ? "Urgência extrema ativada" : "Marcar urgência extrema"} className={`ml-auto flex min-h-11 items-center justify-center gap-1 rounded-xl border px-2 text-[10px] font-bold transition ${urgenciaExtrema ? "border-red-400 bg-red-600 text-white" : "border-zinc-700 bg-zinc-800 text-zinc-300 hover:text-red-300"}`}>
-                <Siren size={19} /> {urgenciaExtrema ? "ATIVADA" : "URGÊNCIA"}
-              </button>
               <button
                 onClick={() => { setModalAberto(false); setUrgenciaExtrema(false); }}
                 className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
@@ -641,12 +638,12 @@ function ComercialContent() {
               <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Valor total do pedido (R$)</span><input type="text" inputMode="decimal" value={valorTotal} onChange={(e) => setValorTotal(e.target.value)} placeholder="Ex.: 1.000,00" className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none placeholder:text-zinc-600 focus:border-blue-400" /></label>
               <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Entrada recebida (R$), opcional</span><input type="text" inputMode="decimal" value={entrada} onChange={(e) => setEntrada(e.target.value)} placeholder="Ex.: 500,00" className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none placeholder:text-zinc-600 focus:border-blue-400" /></label>
               {entrada && <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Data do recebimento{centavos(entrada) > 0 ? " *" : ""}</span><input type="date" value={dataEntrada} onChange={(e) => setDataEntrada(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>}
-              <button
-                onClick={salvarFicha}
-                className="w-full bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl p-3 text-xs font-bold text-white shadow-lg cursor-pointer"
-              >
-                SALVAR
-              </button>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => setUrgenciaExtrema((ativa) => !ativa)} aria-pressed={urgenciaExtrema} aria-label={urgenciaExtrema ? "Urgência extrema ativada; toque para desativar" : "Ativar urgência extrema"} title={urgenciaExtrema ? "Urgência extrema ativada" : "Ativar urgência extrema"} className={`flex min-h-12 min-w-14 items-center justify-center gap-1 rounded-xl border px-3 text-white transition ${urgenciaExtrema ? "border-white bg-red-600 ring-2 ring-red-300" : "border-red-800 bg-red-900 hover:bg-red-800"}`}>
+                  <Siren size={21} aria-hidden="true" />{urgenciaExtrema && <span className="text-[10px] font-bold">ATIVA</span>}
+                </button>
+                <button onClick={salvarFicha} className="min-h-12 flex-1 rounded-xl bg-blue-600 p-3 text-xs font-bold text-white shadow-lg transition hover:bg-blue-700 active:scale-95">SALVAR</button>
+              </div>
             </div>
           </div>
         </div>
