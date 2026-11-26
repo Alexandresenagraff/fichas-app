@@ -67,10 +67,10 @@ export default function Inicio() {
   }, [fichas]);
 
   const indicadores = [
-    { label: "Em andamento", value: resumo.ativos, Icon: Clock3, className: "text-blue-700 bg-blue-50 border-blue-100" },
-    { label: "Urgentes", value: resumo.urgentes, Icon: AlertTriangle, className: "text-amber-700 bg-amber-50 border-amber-100" },
-    { label: "Atrasados", value: resumo.atrasados, Icon: AlertTriangle, className: "text-red-700 bg-red-50 border-red-100" },
-    { label: "Finalizados", value: resumo.finalizados, Icon: CheckCircle2, className: "text-emerald-700 bg-emerald-50 border-emerald-100" },
+    { label: "Em andamento", value: resumo.ativos, Icon: Clock3, className: "text-blue-300" },
+    { label: "Urgentes", value: resumo.urgentes, Icon: AlertTriangle, className: "text-amber-300" },
+    { label: "Atrasados", value: resumo.atrasados, Icon: AlertTriangle, className: "text-red-300" },
+    { label: "Finalizados", value: resumo.finalizados, Icon: CheckCircle2, className: "text-emerald-300" },
   ];
 
   return (
@@ -80,10 +80,10 @@ export default function Inicio() {
 
         <section className="mt-3 grid grid-cols-2 gap-2 sm:mt-5 sm:gap-3 lg:grid-cols-4" aria-label="Resumo dos pedidos">
           {indicadores.map(({ label, value, Icon, className }) => (
-            <div key={label} className={`rounded-2xl border p-3 shadow-sm sm:p-4 ${className}`}>
-              <Icon size={18} />
-              <p className="mt-1 text-xl font-bold sm:mt-4 sm:text-2xl">{carregando ? "–" : value}</p>
-              <p className="mt-1 text-xs font-semibold">{label}</p>
+            <div key={label} className="flex min-h-12 items-center gap-2 rounded-xl border border-slate-600 bg-slate-700 px-3 py-2">
+              <Icon size={16} className={`shrink-0 ${className}`} />
+              <span className="min-w-0 text-xs font-semibold text-slate-100">{label}</span>
+              <span className={`ml-auto text-base font-bold ${className}`}>{carregando ? "–" : value}</span>
             </div>
           ))}
         </section>
