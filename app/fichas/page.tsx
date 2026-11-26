@@ -474,7 +474,7 @@ function HomeContent() {
 
                       <button
                         onClick={() => alternarPedido(ficha.id || "")}
-                        className="w-full min-h-10 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 active:scale-[0.99] transition-all duration-200 rounded-xl py-2 mb-2 text-xs font-semibold text-zinc-300 hover:text-white flex items-center justify-center gap-1.5"
+                        className="w-full min-h-10 bg-sky-200 border border-sky-300 hover:bg-sky-300 active:scale-[0.99] transition-all duration-200 rounded-xl py-2 mb-2 text-xs font-semibold text-sky-950 flex items-center justify-center gap-1.5"
                         aria-expanded={isAberto}
                         aria-controls={`detalhes-${ficha.id}`}
                       >
