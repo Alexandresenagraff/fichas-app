@@ -1,0 +1,27 @@
+<section id="distribuicao-designers" data-viz-composition>
+  <div data-viz-container></div>
+  <script type="application/json" data-viz-chart>
+    {
+      "id": "distribuicao-designers",
+      "title": "Fila de artes por designer — exemplo",
+      "description": "Valores ilustrativos para mostrar como a distribuição ficaria em um gráfico circular.",
+      "height": 320,
+      "spec": {
+        "type": "pie",
+        "category": "designer",
+        "value": "pedidos",
+        "showLegend": true,
+        "centerValue": "10",
+        "centerLabel": "pedidos na fila",
+        "colors": { "Alexandre": "#e882a5", "Lázaro": "#49b992", "Edivan": "#53a8d6", "Paulão": "#94a3b8" }
+      },
+      "columns": ["designer", "pedidos"],
+      "rows": [["Alexandre", 4], ["Lázaro", 3], ["Edivan", 2], ["Paulão", 1]]
+    }
+  </script>
+</section>
+<script type="module">
+  import { mountChart } from "https://persistent.oaistatic.com/plugins/visualize/charts/1.8.1/element.js";
+  const root = document.getElementById("distribuicao-designers");
+  mountChart(root.querySelector("[data-viz-container]"), JSON.parse(root.querySelector("[data-viz-chart]").textContent));
+</script>
