@@ -14,7 +14,7 @@ const coresDesigner: Record<string, string> = {
   ALEXANDRE: "bg-rose-200 text-rose-950",
   "LÁZARO": "bg-emerald-200 text-emerald-950",
   EDIVAN: "bg-sky-200 text-sky-950",
-  "PAULÃO": "bg-slate-600 text-white",
+  "PAULÃO": "bg-slate-200 text-black",
 };
 
 function normalizarDesigner(nome?: string) {
