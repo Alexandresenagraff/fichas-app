@@ -96,7 +96,7 @@ export default function Inicio() {
           <div className="mt-3 grid gap-2 sm:mt-4 sm:grid-cols-2">
             {DESIGNERS.map((designer) => (
               <div key={designer} className="grid min-w-0 grid-cols-[minmax(0,1.1fr)_auto_minmax(0,1fr)_auto_minmax(0,1.1fr)] items-center text-white">
-                <span className={`flex min-h-10 items-center justify-center rounded-xl px-1 text-center text-[10px] font-bold sm:text-xs ${coresDesigner[designer] || "bg-slate-600 text-white"}`}>{designer}</span>
+                <span className={`flex min-h-10 min-w-0 items-center justify-center rounded-xl px-1 text-center text-[clamp(10px,3.1vw,14px)] font-extrabold leading-tight sm:text-sm ${coresDesigner[designer] || "bg-slate-600 text-white"}`}><span className="max-w-full break-words">{designer}</span></span>
                 <span aria-hidden="true" className="px-0.5 text-slate-300">–</span>
                 <span className={`flex min-h-10 items-center justify-center gap-1 rounded-xl px-1 text-[10px] font-semibold sm:text-xs ${coresDesigner[designer] || "bg-slate-600 text-white"}`}>À CRIAR <strong className="text-base font-extrabold sm:text-lg">{carregando ? "–" : String(artesPendentesPorDesigner[designer].total).padStart(2, "0")}</strong></span>
                 <span aria-hidden="true" className="px-0.5 text-slate-300">–</span>
