@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Plus, Search, X, Calendar, User, Eye, EyeOff } from "lucide-react";
+import { Plus, Search, X, Calendar, User, Eye, EyeOff, Siren } from "lucide-react";
 import NotificationBell from "../components/NotificationBell";
 import ClientPdfLink from "../components/ClientPdfLink";
 import AdminNavigation from "../components/AdminNavigation";
@@ -87,6 +87,7 @@ function ComercialContent() {
   const [designer, setDesigner] = useState("");
   const [pedido, setPedido] = useState("");
   const [entrega, setEntrega] = useState("");
+  const [urgenciaExtrema, setUrgenciaExtrema] = useState(false);
   const [valorTotal, setValorTotal] = useState("");
   const [entrada, setEntrada] = useState("");
   const [dataEntrada, setDataEntrada] = useState("");
@@ -122,7 +123,7 @@ function ComercialContent() {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         if (modalAlteracao) setModalAlteracao(false);
-        else if (modalAberto) setModalAberto(false);
+        else if (modalAberto) { setModalAberto(false); setUrgenciaExtrema(false); }
       }
     }
     window.addEventListener("keydown", handleKeyDown);
@@ -183,6 +184,7 @@ function ComercialContent() {
         designer,
         pedido,
         entrega,
+        urgenciaExtrema,
         ...(valorTotal ? { valorTotalCentavos: total } : {}),
         pagamentos: recebido > 0 ? [{ valorCentavos: recebido, data: dataEntrada }] : [],
         pdfLink: "",
@@ -216,6 +218,7 @@ function ComercialContent() {
       setDesigner("");
       setPedido("");
       setEntrega("");
+      setUrgenciaExtrema(false);
       setValorTotal(""); setEntrada(""); setDataEntrada("");
       setModalAberto(false);
     } catch (error) {
@@ -597,7 +600,7 @@ function ComercialContent() {
       {modalAberto && (
         <div
           className="fixed inset-0 bg-black/80 z-50 flex items-start justify-center p-3 overflow-y-auto"
-          onClick={() => setModalAberto(false)}
+          onClick={() => { setModalAberto(false); setUrgenciaExtrema(false); }}
         >
           <div
             className="bg-zinc-900 rounded-3xl shadow-2xl p-6 mt-10 border border-zinc-800/80 w-full max-w-md animate-[slideDown_0.2s_ease-out]"
@@ -605,8 +608,11 @@ function ComercialContent() {
           >
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-xl font-extrabold tracking-tight text-white">NOVO PEDIDO</h2>
+              <button type="button" onClick={() => setUrgenciaExtrema((ativa) => !ativa)} aria-pressed={urgenciaExtrema} aria-label="Marcar pedido como urgência extrema" title={urgenciaExtrema ? "Urgência extrema ativada" : "Marcar urgência extrema"} className={`ml-auto mr-3 flex h-11 w-11 items-center justify-center rounded-xl border transition ${urgenciaExtrema ? "border-red-400 bg-red-600 text-white" : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:text-red-300"}`}>
+                <Siren size={22} />
+              </button>
               <button
-                onClick={() => setModalAberto(false)}
+                onClick={() => { setModalAberto(false); setUrgenciaExtrema(false); }}
                 className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
               >
                 <X size={20} />

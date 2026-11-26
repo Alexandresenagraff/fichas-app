@@ -34,6 +34,7 @@ export interface Ficha {
   empresa?: string;
   email?: string;
   vendedor?: string;
+  urgenciaExtrema?: boolean;
   valorTotalCentavos?: number;
   pagamentos?: { valorCentavos: number; data: string }[];
   observacao?: string;

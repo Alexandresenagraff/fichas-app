@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ClipboardList, House, ListTodo, Menu, UserRound } from "lucide-react";
 import Sidebar from "./Sidebar";
+import AlertaUrgenciaExtrema from "./AlertaUrgenciaExtrema";
 
 const primaryItems = [
   { label: "Início", href: "/inicio", Icon: House },
@@ -19,6 +20,7 @@ export default function AdminNavigation() {
 
   return (
     <>
+      <AlertaUrgenciaExtrema />
       <nav
         aria-label="Navegação administrativa principal"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-slate-200 bg-white/95 px-2 pt-1 shadow-[0_-10px_30px_rgba(15,23,42,0.10)] backdrop-blur-xl [padding-bottom:max(0.25rem,env(safe-area-inset-bottom))] sm:pt-2 sm:[padding-bottom:max(0.5rem,env(safe-area-inset-bottom))]"

@@ -16,6 +16,7 @@ import {
   getFirestore,
   collection,
   getDocs,
+  onSnapshot,
   updateDoc,
   deleteDoc,
   doc,
@@ -99,13 +100,24 @@ function HomeContent() {
   }
 
   useEffect(() => {
-    // Carrega as fichas uma vez ao abrir a página.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    carregarResumoPedidos();
+    return onSnapshot(collection(db, "fichas"), (snapshot) => {
+      setResumoPedidos(snapshot.docs.map((item) => ({ ...item.data(), id: item.id }) as Ficha));
+      setCarregando(false);
+    }, (error) => {
+      console.error("Erro ao carregar fichas:", error);
+      setCarregando(false);
+    });
   }, []);
 
   const searchParams = useSearchParams();
   const fichaIdParam = searchParams.get("fichaId");
+
+  function limparFichaDirecionada() {
+    if (!fichaIdParam) return;
+    const url = new URL(window.location.href);
+    url.searchParams.delete("fichaId");
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+  }
 
   useEffect(() => {
     if (fichaIdParam && resumoPedidos.length > 0) {
@@ -131,6 +143,7 @@ function HomeContent() {
   // Optimized client-side filtering for fast query feedback and optimized DB reads
   const fichasFiltradas = useMemo(() => {
     const termo = busca.trim().toLowerCase();
+    if (fichaIdParam) return resumoPedidos.filter((ficha) => ficha.id === fichaIdParam);
     
     if (filtroAtivo) {
       return resumoPedidos.filter((ficha) => categoriaDaFicha(ficha) === filtroAtivo);
@@ -141,9 +154,10 @@ function HomeContent() {
     return resumoPedidos.filter((ficha) =>
       (ficha.cliente || "").toLowerCase().includes(termo)
     );
-  }, [busca, filtroAtivo, resumoPedidos]);
+  }, [busca, filtroAtivo, resumoPedidos, fichaIdParam]);
 
   function selecionarFiltro(filtro: FiltroPedidos) {
+    limparFichaDirecionada();
     if (filtroAtivo === filtro) {
       setFiltroAtivo(null);
       return;
@@ -315,6 +329,7 @@ function HomeContent() {
               placeholder={filtroAtivo ? `Filtro ativo: ${filtros.find(f => f.id === filtroAtivo)?.label}` : "🔎 Pesquisar Cliente"}
               value={busca}
               onChange={(e) => {
+                limparFichaDirecionada();
                 setBusca(e.target.value);
                 setFiltroAtivo(null);
               }}
@@ -327,6 +342,7 @@ function HomeContent() {
 
             <button
               onClick={() => {
+                limparFichaDirecionada();
                 setBusca("");
                 setFiltroAtivo(null);
                 carregarResumoPedidos();
@@ -358,7 +374,7 @@ function HomeContent() {
         </div>
 
         {/* RESULTADOS */}
-        {(busca || filtroAtivo) && (
+        {(busca || filtroAtivo || fichaIdParam) && (
           <div className="space-y-3">
             {carregando ? (
               <div className="space-y-3">
