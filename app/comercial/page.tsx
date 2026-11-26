@@ -385,12 +385,7 @@ function ComercialContent() {
         {/* HEADER */}
         <div className="flex items-center justify-between mt-5 mb-5">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">COMERCIAL</h1>
-            <p className="text-slate-300 text-xs mt-0.5">
-              {vendedorParam
-                ? `Dashboard de ${vendedorParam}`
-                : "Acompanhamento de pedidos"}
-            </p>
+            <h1 className="text-xl font-bold tracking-tight">{vendedorParam || "Acompanhamento de pedidos"}</h1>
           </div>
           <div className="flex items-center gap-2">
             <div className="order-2 sm:order-none">

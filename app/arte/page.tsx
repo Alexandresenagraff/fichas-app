@@ -574,10 +574,7 @@ function ArteContent() {
               <ArrowLeft size={18} />
             </button>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight">ARTE</h1>
-              <p className="text-slate-300 text-xs mt-0.5">
-                {designerAtivo ? `Designer: ${designerAtivo}` : "Aprovação de arte"}
-              </p>
+              <h1 className="text-xl font-bold tracking-tight">{designerAtivo || "Visão geral de arte"}</h1>
             </div>
           </div>
 
@@ -586,7 +583,7 @@ function ArteContent() {
               <NotificationBell />
             </div>
             <button
-              onClick={() => router.push("/fichas")}
+              onClick={() => router.push("/comercial?novo=1")}
               className="order-1 sm:order-none bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl px-4 py-2 text-xs font-bold text-white flex items-center gap-1 cursor-pointer"
             >
               <Plus size={13} /> Novo

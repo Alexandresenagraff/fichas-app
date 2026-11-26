@@ -100,7 +100,6 @@ function PendenciasPage() {
         </button>
 
         <header className="mb-4 sm:mb-6">
-          <p className="text-xs font-bold tracking-widest text-blue-400">ADMINISTRAÇÃO</p>
           <h1 className="mt-1 text-xl sm:text-2xl font-bold">Painel de Pendências</h1>
         </header>
 
