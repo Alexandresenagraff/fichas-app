@@ -612,13 +612,13 @@ function ComercialContent() {
           onClick={() => { setModalAberto(false); setUrgenciaExtrema(false); }}
         >
           <div
-            className="bg-zinc-900 rounded-3xl shadow-2xl p-6 mt-10 border border-zinc-800/80 w-full max-w-md animate-[slideDown_0.2s_ease-out]"
+            className="bg-zinc-900 rounded-3xl shadow-2xl p-4 sm:p-6 mt-4 sm:mt-10 border border-zinc-800/80 w-full max-w-md animate-[slideDown_0.2s_ease-out]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center justify-between gap-2 mb-3">
               <h2 className="text-xl font-extrabold tracking-tight text-white">NOVO PEDIDO</h2>
-              <button type="button" onClick={() => setUrgenciaExtrema((ativa) => !ativa)} aria-pressed={urgenciaExtrema} aria-label="Marcar pedido como urgência extrema" title={urgenciaExtrema ? "Urgência extrema ativada" : "Marcar urgência extrema"} className={`ml-auto mr-3 flex h-11 w-11 items-center justify-center rounded-xl border transition ${urgenciaExtrema ? "border-red-400 bg-red-600 text-white" : "border-zinc-700 bg-zinc-800 text-zinc-400 hover:text-red-300"}`}>
-                <Siren size={22} />
+              <button type="button" onClick={() => setUrgenciaExtrema((ativa) => !ativa)} aria-pressed={urgenciaExtrema} aria-label="Marcar pedido como urgência extrema" title={urgenciaExtrema ? "Urgência extrema ativada" : "Marcar urgência extrema"} className={`ml-auto flex min-h-11 items-center justify-center gap-1 rounded-xl border px-2 text-[10px] font-bold transition ${urgenciaExtrema ? "border-red-400 bg-red-600 text-white" : "border-zinc-700 bg-zinc-800 text-zinc-300 hover:text-red-300"}`}>
+                <Siren size={19} /> {urgenciaExtrema ? "ATIVADA" : "URGÊNCIA"}
               </button>
               <button
                 onClick={() => { setModalAberto(false); setUrgenciaExtrema(false); }}
@@ -629,86 +629,18 @@ function ComercialContent() {
             </div>
 
             <div className="space-y-2">
-              <input
-                type="text"
-                placeholder="Nome do Cliente"
-                value={cliente}
-                onChange={(e) => setCliente(e.target.value)}
-                className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 text-white"
-              />
-
-              <input
-                type="text"
-                placeholder="Email, Tel ou Cód cliente"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 text-white"
-              />
-
-              <select
-                value={vendedor}
-                onChange={(e) => setVendedor(e.target.value)}
-                className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs outline-none text-white focus:border-zinc-500"
-              >
-                <option value="">Selecione o Vendedor</option>
-                {VENDEDORES.map((nome) => (
-                  <option key={nome} value={nome}>
-                    {nome}
-                  </option>
-                ))}
-              </select>
-
-              <input
-                type="text"
-                placeholder="Observação"
-                value={observacao}
-                onChange={(e) => setObservacao(e.target.value)}
-                className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 text-white"
-              />
-
-              <select
-                value={designer}
-                onChange={(e) => setDesigner(e.target.value)}
-                className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs outline-none text-white focus:border-zinc-500"
-              >
-                <option value="">Selecione o Designer</option>
-                {DESIGNERS.map((nome) => (
-                  <option key={nome} value={nome}>
-                    {nome}
-                  </option>
-                ))}
-              </select>
-
-              <div>
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-1">Data do Pedido</label>
-                <input
-                  type="date"
-                  value={pedido}
-                  onChange={(e) => setPedido(e.target.value)}
-                  className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs text-white outline-none"
-                />
+              <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Nome do cliente *</span><input type="text" value={cliente} onChange={(e) => setCliente(e.target.value)} required className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>
+              <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">E-mail, telefone ou código do cliente</span><input type="text" value={email} onChange={(e) => setEmail(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>
+              <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Vendedor</span><select value={vendedor} onChange={(e) => setVendedor(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400"><option value="">Selecione o vendedor</option>{VENDEDORES.map((nome) => <option key={nome} value={nome}>{nome}</option>)}</select></label>
+              <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Observação</span><input type="text" value={observacao} onChange={(e) => setObservacao(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>
+              <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Designer</span><select value={designer} onChange={(e) => setDesigner(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400"><option value="">Selecione o designer</option>{DESIGNERS.map((nome) => <option key={nome} value={nome}>{nome}</option>)}</select></label>
+              <div className="grid grid-cols-2 gap-2">
+                <label className="relative block min-w-0"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Data do pedido</span><input type="date" value={pedido} onChange={(e) => setPedido(e.target.value)} className="h-12 min-w-0 w-full rounded-xl border border-zinc-700 bg-black px-2 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>
+                <label className="relative block min-w-0"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Data da entrega *</span><input type="date" value={entrega} onChange={(e) => { const valor = e.target.value.replace(/-(\d{2})-/, (match, mes) => mes === "00" ? "-01-" : match); setEntrega(valor); }} required className="h-12 min-w-0 w-full rounded-xl border border-zinc-700 bg-black px-2 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>
               </div>
-
-              <div>
-                <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider block mb-1">Data da Entrega *</label>
-                <input
-                  type="date"
-                  value={entrega}
-                  onChange={(e) => {
-                    const valor = e.target.value.replace(/-(\d{2})-/, (match, mes) => {
-                      return mes === "00" ? "-01-" : match;
-                    });
-                    setEntrega(valor);
-                  }}
-                  className="w-full bg-black border border-zinc-750 rounded-xl p-3 text-xs text-white outline-none"
-                />
-              </div>
-
-              <div className="space-y-2 text-xs text-zinc-300">
-                <label className="block">Valor total do pedido (R$)<input type="text" inputMode="decimal" value={valorTotal} onChange={(e) => setValorTotal(e.target.value)} placeholder="Ex.: 1000,00" className="mt-1 w-full rounded-xl bg-black p-3 text-white" /></label>
-                <label className="block">Entrada recebida (R$), opcional<input type="text" inputMode="decimal" value={entrada} onChange={(e) => setEntrada(e.target.value)} placeholder="Ex.: 500,00" className="mt-1 w-full rounded-xl bg-black p-3 text-white" /></label>
-                {entrada && <label className="block">Data do recebimento<input type="date" value={dataEntrada} onChange={(e) => setDataEntrada(e.target.value)} className="mt-1 w-full rounded-xl bg-black p-3 text-white" /></label>}
-              </div>
+              <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Valor total do pedido (R$)</span><input type="text" inputMode="decimal" value={valorTotal} onChange={(e) => setValorTotal(e.target.value)} placeholder="Ex.: 1.000,00" className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none placeholder:text-zinc-600 focus:border-blue-400" /></label>
+              <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Entrada recebida (R$), opcional</span><input type="text" inputMode="decimal" value={entrada} onChange={(e) => setEntrada(e.target.value)} placeholder="Ex.: 500,00" className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none placeholder:text-zinc-600 focus:border-blue-400" /></label>
+              {entrada && <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Data do recebimento{centavos(entrada) > 0 ? " *" : ""}</span><input type="date" value={dataEntrada} onChange={(e) => setDataEntrada(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>}
               <button
                 onClick={salvarFicha}
                 className="w-full bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all duration-200 rounded-xl p-3 text-xs font-bold text-white shadow-lg cursor-pointer"
