@@ -10,6 +10,12 @@ import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 import { categoriaDaFicha, DESIGNERS, Ficha } from "../lib/helpers";
 
 const db = getFirestore(app);
+const coresDesigner: Record<string, string> = {
+  ALEXANDRE: "bg-rose-200 text-rose-950",
+  "LÁZARO": "bg-emerald-200 text-emerald-950",
+  EDIVAN: "bg-sky-200 text-sky-950",
+  "PAULÃO": "bg-slate-600 text-white",
+};
 
 function normalizarDesigner(nome?: string) {
   return (nome || "")
@@ -90,11 +96,11 @@ export default function Inicio() {
           <div className="mt-3 grid gap-2 sm:mt-4 sm:grid-cols-2">
             {DESIGNERS.map((designer) => (
               <div key={designer} className="grid min-w-0 grid-cols-[minmax(0,1.1fr)_auto_minmax(0,1fr)_auto_minmax(0,1.1fr)] items-center text-white">
-                <span className="flex min-h-10 items-center justify-center rounded-xl bg-slate-600 px-1 text-center text-[10px] font-bold sm:text-xs">{designer}</span>
+                <span className={`flex min-h-10 items-center justify-center rounded-xl px-1 text-center text-[10px] font-bold sm:text-xs ${coresDesigner[designer] || "bg-slate-600 text-white"}`}>{designer}</span>
                 <span aria-hidden="true" className="px-0.5 text-slate-300">–</span>
-                <span className="flex min-h-10 items-center justify-center gap-1 rounded-xl bg-slate-600 px-1 text-[10px] font-semibold sm:text-xs">À CRIAR <strong className="text-base font-extrabold sm:text-lg">{carregando ? "–" : String(artesPendentesPorDesigner[designer].total).padStart(2, "0")}</strong></span>
+                <span className={`flex min-h-10 items-center justify-center gap-1 rounded-xl px-1 text-[10px] font-semibold sm:text-xs ${coresDesigner[designer] || "bg-slate-600 text-white"}`}>À CRIAR <strong className="text-base font-extrabold sm:text-lg">{carregando ? "–" : String(artesPendentesPorDesigner[designer].total).padStart(2, "0")}</strong></span>
                 <span aria-hidden="true" className="px-0.5 text-slate-300">–</span>
-                <span className="flex min-h-10 items-center justify-center gap-1 rounded-xl bg-slate-600 px-1 text-[10px] font-semibold sm:text-xs">URGENTES <strong className="text-base font-extrabold sm:text-lg">{carregando ? "–" : String(artesPendentesPorDesigner[designer].urgentes).padStart(2, "0")}</strong></span>
+                <span className={`flex min-h-10 items-center justify-center gap-1 rounded-xl px-1 text-[10px] font-semibold sm:text-xs ${coresDesigner[designer] || "bg-slate-600 text-white"}`}>URGENTES <strong className="text-base font-extrabold sm:text-lg">{carregando ? "–" : String(artesPendentesPorDesigner[designer].urgentes).padStart(2, "0")}</strong></span>
               </div>
             ))}
           </div>
