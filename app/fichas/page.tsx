@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus } from "lucide-react";
+import { RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus, AlertTriangle, Clock3, CheckCircle2 } from "lucide-react";
 
 import app from "../../firebase/config";
 import { atribuicaoDoCostureiro, formatarDataHora, categoriaDaFicha, etapaDaFicha, validarAlteracaoEtapa, porcentagemPedido, Ficha, type Costureiro, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
@@ -60,10 +60,10 @@ function campoData(campo: string): keyof Ficha | undefined {
 }
 
 const filtros = [
-  { id: "urgentes" as const, label: "URGENTES", cor: "amber" },
-  { id: "atrasados" as const, label: "ATRASADOS", cor: "red" },
-  { id: "noPrazo" as const, label: "NO PRAZO", cor: "blue" },
-  { id: "finalizados" as const, label: "FINALIZADOS", cor: "green" },
+  { id: "urgentes" as const, label: "Urgentes", Icon: AlertTriangle, cor: "text-amber-300" },
+  { id: "atrasados" as const, label: "Atrasados", Icon: AlertTriangle, cor: "text-red-300" },
+  { id: "noPrazo" as const, label: "No prazo", Icon: Clock3, cor: "text-blue-300" },
+  { id: "finalizados" as const, label: "Finalizados", Icon: CheckCircle2, cor: "text-emerald-300" },
 ];
 
 function HomeContent() {
@@ -341,29 +341,16 @@ function HomeContent() {
           <div className="mt-3 grid grid-cols-2 gap-2">
             {filtros.map((filtro) => {
               const ativo = filtroAtivo === filtro.id;
-              const estilo = {
-                amber: ativo
-                  ? "bg-amber-400 text-black border-amber-400"
-                  : "bg-amber-950/20 text-amber-400 border-amber-900/50 hover:bg-amber-950/40",
-                red: ativo
-                  ? "bg-red-500 text-white border-red-500"
-                  : "bg-red-950/20 text-red-400 border-red-900/50 hover:bg-red-950/40",
-                blue: ativo
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-blue-950/20 text-blue-400 border-blue-900/50 hover:bg-blue-950/40",
-                green: ativo
-                  ? "bg-green-600 text-white border-green-600"
-                  : "bg-green-950/20 text-green-400 border-green-900/50 hover:bg-green-950/40",
-              }[filtro.cor];
-
               return (
                 <button
                   key={filtro.id}
                   onClick={() => selecionarFiltro(filtro.id)}
                   aria-pressed={ativo}
-                  className={`rounded-xl px-3 py-2 text-[10px] font-bold border transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${estilo}`}
+                  className={`flex min-h-12 items-center gap-2 rounded-xl border bg-slate-700 px-3 py-2 text-left transition hover:bg-slate-600 active:scale-[0.98] ${ativo ? "border-blue-300 ring-2 ring-blue-300" : "border-slate-600"}`}
                 >
-                  {filtro.label} ({contagens[filtro.id]})
+                  <filtro.Icon size={16} className={`shrink-0 ${filtro.cor}`} />
+                  <span className="min-w-0 text-xs font-semibold text-slate-100">{filtro.label}</span>
+                  <span className={`ml-auto text-base font-bold ${filtro.cor}`}>{contagens[filtro.id]}</span>
                 </button>
               );
             })}
