@@ -88,9 +88,9 @@ function PendenciasPage() {
   }, [fichas, filtroAtivo]);
 
   return (
-    <main className="min-h-screen bg-slate-800 px-3 pb-28 pt-4 text-white sm:px-6 sm:pt-7">
-      <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff /></div>
-      <div className="mx-auto max-w-6xl">
+    <main className="min-h-screen bg-slate-800 pb-28 text-white">
+      <CabecalhoSenagraff />
+      <div className="relative mx-auto max-w-6xl px-3 sm:px-6">
         <button
           onClick={() => window.history.back()}
           className="mb-3 sm:mb-5 flex min-h-10 items-center gap-2 text-sm text-zinc-400 transition hover:text-white"

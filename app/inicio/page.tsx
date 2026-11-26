@@ -6,6 +6,7 @@ import Link from "next/link";
 import { collection, getFirestore, onSnapshot } from "firebase/firestore";
 import app from "../../firebase/config";
 import AdminNavigation from "../components/AdminNavigation";
+import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 import { categoriaDaFicha, DESIGNERS, Ficha } from "../lib/helpers";
 
 const db = getFirestore(app);
@@ -68,11 +69,8 @@ export default function Inicio() {
 
   return (
     <main className="min-h-screen bg-slate-800 pb-28 text-slate-900">
-      <header className="bg-gradient-to-b from-blue-700 from-40% via-blue-800 via-65% to-slate-800 px-4 pb-14 pt-6 text-center text-white sm:pb-16 sm:pt-8">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">SENAGRAFF</h1>
-        <p className="mt-2 text-[10px] font-bold tracking-[0.12em] text-blue-100 sm:text-xs">DISTRIBUIÇÃO E ACOMPANHAMENTO DE PEDIDOS</p>
-      </header>
-      <div className="mx-auto max-w-5xl px-3 pb-6 sm:px-6">
+      <CabecalhoSenagraff />
+      <div className="relative mx-auto max-w-5xl px-3 pb-6 sm:px-6">
 
         <section className="mt-3 grid grid-cols-2 gap-2 sm:mt-5 sm:gap-3 lg:grid-cols-4" aria-label="Resumo dos pedidos">
           {indicadores.map(({ label, value, Icon, className }) => (

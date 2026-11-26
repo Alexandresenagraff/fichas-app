@@ -560,9 +560,9 @@ function ArteContent() {
   }, [activeSectionList, fichasFiltradas, situacaoPainelAtiva]);
 
   return (
-    <main className="min-h-screen bg-slate-800 p-3 pb-28 text-white">
-      <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff subtitulo="DESIGNER" compacto /></div>
-      <div className="max-w-md mx-auto">
+    <main className="min-h-screen bg-slate-800 pb-28 text-white">
+      <CabecalhoSenagraff subtitulo="DESIGNER" compacto />
+      <div className="relative max-w-md mx-auto px-3">
         {/* HEADER */}
         <div className="flex items-center justify-between mb-5 mt-2">
           <div className="flex items-center gap-3">

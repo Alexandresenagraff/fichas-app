@@ -362,9 +362,9 @@ function ComercialContent() {
   const recebidoNoMes = pedidos.filter((ficha) => vendedorDaMeta && ficha.vendedor === vendedorDaMeta).flatMap((ficha) => ficha.pagamentos || []).filter((pagamento) => pagamento.data.startsWith(`${mesFinanceiro}-`)).reduce((soma, pagamento) => soma + pagamento.valorCentavos, 0);
 
   return (
-    <main className="min-h-screen bg-slate-800 p-3 pb-28 text-white">
-      <div className="mx-auto mb-4 max-w-5xl"><CabecalhoSenagraff subtitulo="COMERCIAL" compacto /></div>
-      <div className="max-w-md mx-auto">
+    <main className="min-h-screen bg-slate-800 pb-28 text-white">
+      <CabecalhoSenagraff subtitulo="COMERCIAL" compacto />
+      <div className="relative max-w-md mx-auto px-3">
         {/* HEADER */}
         <div className="flex items-center justify-between mt-5 mb-5">
           <div>

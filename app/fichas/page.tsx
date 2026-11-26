@@ -288,10 +288,10 @@ function HomeContent() {
   }, [resumoPedidos]);
 
   return (
-    <main className="min-h-screen bg-slate-800 p-3 pb-28 text-white relative">
+    <main className="min-h-screen bg-slate-800 pb-28 text-white relative">
 
-      <div className="mx-auto max-w-5xl pt-1 sm:px-3 sm:pt-4"><CabecalhoSenagraff /></div>
-      <div className="max-w-md mx-auto">
+      <CabecalhoSenagraff />
+      <div className="relative max-w-md mx-auto px-3">
         <div className="flex items-center justify-between mt-5 mb-4 px-1">
           <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">ETAPAS DE PEDIDOS</h1>
           <button
