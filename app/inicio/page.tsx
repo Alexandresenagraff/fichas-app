@@ -55,7 +55,7 @@ export default function Inicio() {
     return DESIGNERS.reduce<Record<string, { total: number; urgentes: number }>>((contagens, designer) => {
       const designerNormalizado = normalizarDesigner(designer);
       const artesPendentes = fichas.filter(
-        (ficha) => normalizarDesigner(ficha.designer) === designerNormalizado && !ficha.arte
+        (ficha) => normalizarDesigner(ficha.designer) === designerNormalizado && !ficha.exportacao && !ficha.entregaStatus
       );
 
       contagens[designer] = {
