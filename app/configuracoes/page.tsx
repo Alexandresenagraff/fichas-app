@@ -7,12 +7,14 @@ import {
   areNotificationSoundsEnabled,
   primeNotificationSounds,
   setNotificationSoundsEnabled,
+  tocarSireneExtrema,
 } from "../lib/notificationSounds";
 import AdminNavigation from "../components/AdminNavigation";
 
 export default function Configuracoes() {
   const router = useRouter();
   const [sonsAtivados, setSonsAtivados] = useState(true);
+  const [resultadoTeste, setResultadoTeste] = useState("");
 
   useEffect(() => {
     // Lê uma preferência que só existe no navegador.
@@ -69,6 +71,12 @@ export default function Configuracoes() {
               Desativado
             </button>
           </div>
+          <button type="button" onClick={async () => {
+            if (!sonsAtivados) { setResultadoTeste("Ative os sons antes de testar."); return; }
+            const tocou = await tocarSireneExtrema("teste", false);
+            setResultadoTeste(tocou ? "Teste iniciado. Confira o volume do aparelho." : "O navegador não permitiu reproduzir o som.");
+          }} className="mt-3 min-h-11 w-full rounded-xl border border-blue-500/40 bg-blue-500/10 px-4 py-2 text-xs font-bold text-blue-200 hover:bg-blue-500/20">Testar som da sirene</button>
+          {resultadoTeste && <p role="status" className="mt-2 text-xs text-zinc-300">{resultadoTeste}</p>}
         </section>
       </div>
       <AdminNavigation />

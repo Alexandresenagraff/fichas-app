@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import app from "../../firebase/config";
 import type { Ficha } from "../lib/helpers";
+import { prepararSireneExtrema, tocarSireneExtrema } from "../lib/notificationSounds";
 
 export default function AlertaUrgenciaExtrema() {
   const router = useRouter();
@@ -17,8 +18,26 @@ export default function AlertaUrgenciaExtrema() {
   const ignorarClique = useRef(false);
 
   useEffect(() => {
+    function prepararSom() { prepararSireneExtrema(); }
+    window.addEventListener("pointerdown", prepararSom);
+    window.addEventListener("keydown", prepararSom);
+    return () => {
+      window.removeEventListener("pointerdown", prepararSom);
+      window.removeEventListener("keydown", prepararSom);
+    };
+  }, []);
+
+  useEffect(() => {
     const consulta = query(collection(getFirestore(app), "fichas"), where("urgenciaExtrema", "==", true));
+    let carregamentoInicial = true;
     return onSnapshot(consulta, (snapshot) => {
+      if (!carregamentoInicial) {
+        snapshot.docChanges().forEach((alteracao) => {
+          const ficha = alteracao.doc.data() as Ficha;
+          if (alteracao.type === "added" && !ficha.conferencia && !ficha.entregaStatus) void tocarSireneExtrema(alteracao.doc.id);
+        });
+      }
+      carregamentoInicial = false;
       setPedidos(snapshot.docs.map((item) => ({ ...item.data(), id: item.id }) as Ficha).filter((ficha) => !ficha.conferencia && !ficha.entregaStatus));
     }, (error) => console.error("Erro ao carregar alertas de urgência extrema:", error));
   }, []);

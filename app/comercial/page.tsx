@@ -7,6 +7,7 @@ import NotificationBell from "../components/NotificationBell";
 import ClientPdfLink from "../components/ClientPdfLink";
 import AdminNavigation from "../components/AdminNavigation";
 import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
+import { prepararSireneExtrema, tocarSireneExtrema } from "../lib/notificationSounds";
 
 import app from "../../firebase/config";
 import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc, runTransaction, setDoc } from "firebase/firestore";
@@ -40,6 +41,7 @@ function ComercialContent() {
   const vendedorParam = searchParams.get("vendedor") || "";
 
   const [modalAberto, setModalAberto] = useState(() => searchParams.get("novo") === "1");
+  const [mensagemSalva, setMensagemSalva] = useState("");
   const [modalAlteracao, setModalAlteracao] = useState(false);
   const [fichaAlteracao, setFichaAlteracao] = useState<Ficha | null>(null);
   const [mensagemAlteracao, setMensagemAlteracao] = useState("");
@@ -176,7 +178,8 @@ function ComercialContent() {
     }
 
     try {
-      await addDoc(collection(db, "fichas"), {
+      if (urgenciaExtrema) prepararSireneExtrema();
+      const fichaCriada = await addDoc(collection(db, "fichas"), {
         cliente,
         email,
         vendedor,
@@ -210,7 +213,12 @@ function ComercialContent() {
         criadoEm: new Date(),
       });
 
-      alert("Ficha salva!");
+      if (urgenciaExtrema) {
+        void tocarSireneExtrema(fichaCriada.id);
+        setMensagemSalva("Ficha salva com urgência extrema!");
+      } else {
+        setMensagemSalva("Ficha salva!");
+      }
       setCliente("");
       setEmail("");
       setVendedor(vendedorParam); // Reset back to default seller parameter if present
@@ -373,6 +381,7 @@ function ComercialContent() {
     <main className="min-h-screen bg-slate-800 pb-28 text-white">
       <CabecalhoSenagraff subtitulo="COMERCIAL" compacto />
       <div className="relative max-w-md mx-auto px-3">
+        {mensagemSalva && <div role="status" className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-emerald-500/40 bg-emerald-950 px-3 py-2 text-xs text-emerald-100"><span>{mensagemSalva}</span><button type="button" onClick={() => setMensagemSalva("")} aria-label="Fechar aviso" className="p-1"><X size={16} /></button></div>}
         {/* HEADER */}
         <div className="flex items-center justify-between mt-5 mb-5">
           <div>

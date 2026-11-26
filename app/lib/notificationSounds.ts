@@ -131,6 +131,49 @@ export function primeNotificationSounds() {
   }).catch(() => undefined);
 }
 
+export function prepararSireneExtrema() {
+  if (typeof window === "undefined" || !areNotificationSoundsEnabled()) return;
+  try {
+    void getAudioContext()?.resume().catch(() => undefined);
+  } catch {
+    // Alguns navegadores não permitem áudio até uma interação do usuário.
+  }
+}
+
+export async function tocarSireneExtrema(fichaId: string, deduplicar = true): Promise<boolean> {
+  if (typeof window === "undefined" || !areNotificationSoundsEnabled()) return false;
+  try {
+    const context = getAudioContext();
+    if (!context) return false;
+    if (context.state !== "running") await context.resume();
+    if (context.state !== "running") return false;
+    if (deduplicar && !savePlayedNotificationId(`${fichaId}:urgencia-extrema`)) return false;
+
+    const inicio = context.currentTime;
+    const oscillator = context.createOscillator();
+    const ganho = context.createGain();
+    oscillator.type = "triangle";
+    oscillator.frequency.setValueAtTime(700, inicio);
+    oscillator.frequency.linearRampToValueAtTime(1050, inicio + 0.375);
+    oscillator.frequency.linearRampToValueAtTime(700, inicio + 0.75);
+    oscillator.frequency.linearRampToValueAtTime(1050, inicio + 1.125);
+    oscillator.frequency.linearRampToValueAtTime(700, inicio + 1.5);
+    ganho.gain.setValueAtTime(0.0001, inicio);
+    ganho.gain.exponentialRampToValueAtTime(0.2, inicio + 0.04);
+    ganho.gain.setValueAtTime(0.2, inicio + 1.4);
+    ganho.gain.exponentialRampToValueAtTime(0.0001, inicio + 1.5);
+    oscillator.connect(ganho);
+    ganho.connect(context.destination);
+    oscillator.start(inicio);
+    oscillator.stop(inicio + 1.5);
+    oscillator.onended = () => { oscillator.disconnect(); ganho.disconnect(); };
+    return true;
+  } catch (error) {
+    console.error("Não foi possível reproduzir a sirene:", error);
+    return false;
+  }
+}
+
 export function playNotificationSound({ type, notificationId, designer }: NotificationSoundEvent) {
   if (typeof window === "undefined" || !areNotificationSoundsEnabled()) return;
   if (!savePlayedNotificationId(notificationId)) return;
