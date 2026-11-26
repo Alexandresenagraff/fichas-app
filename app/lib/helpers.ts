@@ -198,7 +198,7 @@ export interface EtapaConfig {
 }
 
 export const ETAPAS: EtapaConfig[] = [
-  { id: "arteParaCriar", label: "ARTE P/ CRIAR", ativo: "bg-blue-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
+  { id: "arteParaCriar", label: "À CRIAR", ativo: "bg-blue-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
   { id: "aguardandoAprovacao", label: "AGUARDANDO APROVAÇÃO", ativo: "bg-yellow-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
   { id: "alteracaoSolicitada", label: "ALTERAÇÃO SOLICITADA", ativo: "bg-red-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },
   { id: "exportacao", label: "EXPORTAÇÃO", ativo: "bg-indigo-500 text-white", inativo: "bg-zinc-800 text-zinc-400 hover:bg-zinc-700" },

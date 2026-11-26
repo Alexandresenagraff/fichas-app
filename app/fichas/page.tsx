@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus, AlertTriangle, Clock3, CheckCircle2 } from "lucide-react";
+import { RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus, AlertTriangle, Clock3, CheckCircle2, Search } from "lucide-react";
 
 import app from "../../firebase/config";
 import { atribuicaoDoCostureiro, formatarDataHora, categoriaDaFicha, etapaDaFicha, validarAlteracaoEtapa, porcentagemPedido, Ficha, type Costureiro, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
@@ -323,20 +323,22 @@ function HomeContent() {
 
         {/* PESQUISA */}
         <div className="bg-zinc-900 border border-zinc-800/80 rounded-2xl shadow-xl p-4 mb-5">
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <Search size={16} className="ml-1 shrink-0 text-zinc-500" />
             <input
               type="text"
-              placeholder={filtroAtivo ? `Filtro ativo: ${filtros.find(f => f.id === filtroAtivo)?.label}` : "🔎 Pesquisar Cliente"}
+              aria-label="Pesquisar cliente"
+              placeholder={filtroAtivo ? `Filtro ativo: ${filtros.find(f => f.id === filtroAtivo)?.label}` : "Pesquisar cliente"}
               value={busca}
               onChange={(e) => {
                 limparFichaDirecionada();
                 setBusca(e.target.value);
                 setFiltroAtivo(null);
               }}
-              className={`flex-1 bg-black border rounded-xl p-3 text-xs text-white placeholder-zinc-500 outline-none transition-all ${
+              className={`min-w-0 flex-1 bg-transparent px-1 py-2 text-sm text-white placeholder-zinc-500 outline-none transition-all ${
                 filtroAtivo
-                  ? "border-blue-500 placeholder-blue-300 focus:ring-1 focus:ring-blue-500"
-                  : "border-zinc-700 focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500"
+                  ? "placeholder-blue-300"
+                  : ""
               }`}
             />
 

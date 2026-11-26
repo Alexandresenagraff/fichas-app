@@ -22,12 +22,12 @@ const db = getFirestore(app);
 
 function GavetaRelatorio({ titulo, children, className = "" }: { titulo: ReactNode; children: ReactNode; className?: string }) {
   const [aberta, setAberta] = useState(false);
-  return <section className={`rounded-2xl border border-zinc-800 bg-zinc-900 p-3 text-white shadow-xl sm:p-4 ${className}`}>
-    <button type="button" onClick={() => setAberta((atual) => !atual)} aria-expanded={aberta} className="flex min-h-10 w-full items-center justify-between gap-3 text-left text-xs font-bold sm:text-sm">
+  return <section className={`rounded-xl border border-zinc-800 bg-zinc-900 text-zinc-200 ${className}`}>
+    <button type="button" onClick={() => setAberta((atual) => !atual)} aria-expanded={aberta} className="flex min-h-11 w-full items-center justify-between gap-3 px-3 text-left text-xs font-bold">
       <span className="flex items-center gap-2">{titulo}</span>
       {aberta ? <EyeOff size={17} className="shrink-0" aria-label="Recolher" /> : <Eye size={17} className="shrink-0" aria-label="Visualizar" />}
     </button>
-    <div hidden={!aberta} className="pt-2">{children}</div>
+    <div hidden={!aberta} className="px-3 pb-3 pt-2">{children}</div>
   </section>;
 }
 

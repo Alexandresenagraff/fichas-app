@@ -379,7 +379,7 @@ function ArteContent() {
             {ficha.entrega && <span>Entrega: <span className="text-white font-medium">{ficha.entrega.split("-").reverse().join("/")}</span></span>}
           </p>
         )}
-        <button type="button" aria-expanded={aberto} onClick={() => setPedidosAbertos((atual) => ({ ...atual, [ficha.id || ""]: !aberto }))} className="mb-2 flex min-h-10 w-full items-center justify-center gap-1.5 rounded-xl border border-zinc-800 bg-zinc-900 text-xs font-bold text-zinc-200 hover:bg-zinc-800">
+        <button type="button" aria-expanded={aberto} onClick={() => setPedidosAbertos((atual) => ({ ...atual, [ficha.id || ""]: !aberto }))} className="mb-2 flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-sky-300/30 bg-sky-300/20 text-xs font-semibold text-sky-100 transition hover:bg-sky-300/30 active:scale-[0.99]">
           {aberto ? <EyeOff size={14} /> : <Eye size={14} />} {aberto ? "RECOLHER" : "VISUALIZAR"}
         </button>
 
