@@ -26,15 +26,12 @@ import { DashboardSkeleton } from "../components/Skeleton";
 const db = getFirestore(app);
 
 function centavos(valor: string) {
-  if (!/^\d+(?:[,.]\d{1,2})?$/.test(valor.trim())) return NaN;
-  return Math.round(Number(valor.replace(",", ".")) * 100);
-}
-function centavosMeta(valor: string) {
   const texto = valor.trim();
   if (/^\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?$/.test(texto)) {
     return Math.round(Number(texto.replace(/\./g, "").replace(",", ".")) * 100);
   }
-  return centavos(texto);
+  if (!/^\d+(?:[,.]\d{1,2})?$/.test(texto)) return NaN;
+  return Math.round(Number(texto.replace(",", ".")) * 100);
 }
 const moeda = (valor: number) => (valor / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
@@ -70,7 +67,7 @@ function ComercialContent() {
   }, [vendedorDaMeta, mesFinanceiro]);
 
   async function salvarMeta() {
-    const valor = centavosMeta(meta);
+    const valor = centavos(meta);
     if (!vendedorDaMeta || !/^\d{4}-\d{2}$/.test(mesFinanceiro) || !Number.isSafeInteger(valor) || valor <= 0) {
       setErroMeta("Selecione vendedor e mês e informe uma meta maior que zero."); return;
     }
@@ -97,6 +94,7 @@ function ComercialContent() {
   const [valorPagamento, setValorPagamento] = useState("");
   const [dataPagamento, setDataPagamento] = useState("");
   const [salvandoPagamento, setSalvandoPagamento] = useState(false);
+  const [pagamentoEditado, setPagamentoEditado] = useState<{ indice: number; valorCentavos: number; data: string } | null>(null);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -231,6 +229,7 @@ function ComercialContent() {
     if (!pagamentoFicha?.id || !Number.isSafeInteger(valor) || valor <= 0 || !dataPagamento || salvandoPagamento) {
       alert("Informe um valor positivo e a data do recebimento."); return;
     }
+    if (pagamentoEditado && !window.confirm(`Confirmar alteração do pagamento para ${moeda(valor)} em ${dataPagamento.split("-").reverse().join("/")}?`)) return;
     setSalvandoPagamento(true);
     try {
       await runTransaction(db, async (transaction) => {
@@ -239,11 +238,17 @@ function ComercialContent() {
         if (!snapshot.exists()) throw new Error("Pedido não encontrado");
         const ficha = snapshot.data() as Ficha;
         const pagamentos = ficha.pagamentos || [];
-        const recebido = pagamentos.reduce((soma, pagamento) => soma + pagamento.valorCentavos, 0);
+        if (pagamentoEditado) {
+          const original = pagamentos[pagamentoEditado.indice];
+          if (!original || original.valorCentavos !== pagamentoEditado.valorCentavos || original.data !== pagamentoEditado.data) throw new Error("Este pagamento foi alterado. Feche a janela e tente novamente.");
+        }
+        const recebido = pagamentos.reduce((soma, pagamento, indice) => soma + (indice === pagamentoEditado?.indice ? 0 : pagamento.valorCentavos), 0);
         if (ficha.valorTotalCentavos == null || recebido + valor > ficha.valorTotalCentavos) throw new Error("O pagamento supera o saldo restante.");
-        transaction.update(ref, { pagamentos: [...pagamentos, { valorCentavos: valor, data: dataPagamento }] });
+        const atualizado = { valorCentavos: valor, data: dataPagamento };
+        const novosPagamentos = pagamentoEditado ? pagamentos.map((pagamento, indice) => indice === pagamentoEditado.indice ? atualizado : pagamento) : [...pagamentos, atualizado];
+        transaction.update(ref, { pagamentos: novosPagamentos });
       });
-      setPagamentoFicha(null); setValorPagamento(""); setDataPagamento("");
+      setPagamentoFicha(null); setPagamentoEditado(null); setValorPagamento(""); setDataPagamento("");
     } catch (error) { alert(error instanceof Error ? error.message : "Erro ao registrar pagamento"); }
     finally { setSalvandoPagamento(false); }
   }
@@ -531,8 +536,8 @@ function ComercialContent() {
                   const recebido = (ficha.pagamentos || []).reduce((soma, pagamento) => soma + pagamento.valorCentavos, 0);
                   return <div className="mt-3 rounded-xl bg-zinc-900 p-3 text-xs text-zinc-300 space-y-1">
                     <p>Total: {moeda(ficha.valorTotalCentavos!)}</p><p>Recebido: {moeda(recebido)}</p><p>Restante: {moeda(ficha.valorTotalCentavos! - recebido)}</p>
-                    {(ficha.pagamentos || []).map((pagamento, index) => <p key={index}>{pagamento.data.split("-").reverse().join("/")} — {moeda(pagamento.valorCentavos)}</p>)}
-                    {recebido < ficha.valorTotalCentavos! && <button className="mt-2 rounded-lg bg-blue-600 px-3 py-2 font-bold text-white" onClick={() => setPagamentoFicha(ficha)}>Registrar pagamento</button>}
+                    {(ficha.pagamentos || []).map((pagamento, index) => <div key={index} className="flex flex-wrap items-center justify-between gap-2"><span>{pagamento.data.split("-").reverse().join("/")} — {moeda(pagamento.valorCentavos)}</span><button type="button" className="rounded-lg px-2 py-1 font-semibold text-blue-300 hover:bg-zinc-800" onClick={() => { setPagamentoFicha(ficha); setPagamentoEditado({ indice: index, ...pagamento }); setValorPagamento((pagamento.valorCentavos / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })); setDataPagamento(pagamento.data); }}>Corrigir</button></div>)}
+                    {recebido < ficha.valorTotalCentavos! && <button className="mt-2 rounded-lg bg-blue-600 px-3 py-2 font-bold text-white" onClick={() => { setPagamentoFicha(ficha); setPagamentoEditado(null); setValorPagamento(""); setDataPagamento(""); }}>Registrar pagamento</button>}
                   </div>;
                 })()}
 
@@ -701,7 +706,7 @@ function ComercialContent() {
       )}
 
       {pagamentoFicha && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4" onClick={() => setPagamentoFicha(null)}><div className="w-full max-w-sm space-y-3 rounded-2xl bg-zinc-900 p-5 text-white" onClick={(e) => e.stopPropagation()}>
-        <h2 className="font-bold">Registrar pagamento — {pagamentoFicha.cliente}</h2>
+        <h2 className="font-bold">{pagamentoEditado ? "Corrigir pagamento" : "Registrar pagamento"} — {pagamentoFicha.cliente}</h2>
         <label className="block text-xs">Valor recebido (R$)<input type="text" inputMode="decimal" value={valorPagamento} onChange={(e) => setValorPagamento(e.target.value)} placeholder="Ex.: 500,00" className="mt-1 w-full rounded-xl bg-black p-3" /></label>
         <label className="block text-xs">Data do recebimento<input type="date" value={dataPagamento} onChange={(e) => setDataPagamento(e.target.value)} className="mt-1 w-full rounded-xl bg-black p-3" /></label>
         <div className="flex gap-2"><button disabled={salvandoPagamento} onClick={registrarPagamento} className="rounded-xl bg-blue-600 px-4 py-3 text-sm">Salvar pagamento</button><button onClick={() => setPagamentoFicha(null)} className="px-3 text-sm">Cancelar</button></div>

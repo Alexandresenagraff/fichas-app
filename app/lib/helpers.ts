@@ -105,6 +105,36 @@ export function etapaDaFicha(ficha: Ficha): Etapa | null {
   return "arteParaCriar";
 }
 
+export function validarAlteracaoEtapa(ficha: Ficha, campo: keyof Ficha, ativar: boolean): string | null {
+  const etapas: Array<{ campo: keyof Ficha; nome: string; requisito?: keyof Ficha; requisitoNome?: string }> = [
+    { campo: "venda", nome: "venda" },
+    { campo: "arte", nome: "arte", requisito: "venda", requisitoNome: "a venda" },
+    { campo: "arteAprovada", nome: "aprovação da arte", requisito: "arte", requisitoNome: "a arte" },
+    { campo: "exportacao", nome: "exportação", requisito: "arteAprovada", requisitoNome: "a aprovação da arte" },
+    { campo: "impressao", nome: "impressão", requisito: "exportacao", requisitoNome: "a exportação" },
+    { campo: "prensa", nome: "prensa", requisito: "impressao", requisitoNome: "a impressão" },
+    { campo: "corte", nome: "corte", requisito: "prensa", requisitoNome: "a prensa" },
+    { campo: "costura", nome: "envio para costura", requisito: "corte", requisitoNome: "o corte" },
+    { campo: "costuraConcluida", nome: "costura concluída", requisito: "corte", requisitoNome: "o corte" },
+    { campo: "conferencia", nome: "conferência", requisito: "costuraConcluida", requisitoNome: "a conclusão da costura" },
+    { campo: "entregaStatus", nome: "entrega", requisito: "conferencia", requisitoNome: "a conferência" },
+  ];
+  const indice = etapas.findIndex((etapa) => etapa.campo === campo);
+  if (indice < 0) {
+    if (ativar && (campo === "envio" || campo === "retirada") && !ficha.entregaStatus) return "Conclua a entrega antes de selecionar envio ou retirada.";
+    return null;
+  }
+  const etapa = etapas[indice];
+  if (ativar && etapa.requisito && !ficha[etapa.requisito]) return `Conclua ${etapa.requisitoNome} antes de marcar ${etapa.nome}.`;
+  if (ativar && campo === "arte" && ficha.alteracaoSolicitada) return "Conclua a alteração solicitada na área do designer antes de avançar.";
+  if (!ativar) {
+    const posteriores = etapas.slice(indice + 1).filter((item) => !(campo === "costura" && item.campo === "costuraConcluida" && !ficha.costura));
+    const posterior = posteriores.find((item) => Boolean(ficha[item.campo]));
+    if (posterior) return `Não é possível desfazer ${etapa.nome} enquanto ${posterior.nome} estiver concluída. Desfaça as etapas posteriores primeiro.`;
+  }
+  return null;
+}
+
 export type CategoriaPedido = "urgentes" | "atrasados" | "noPrazo" | "finalizados";
 
 export function categoriaDaFicha(ficha: Ficha): CategoriaPedido {

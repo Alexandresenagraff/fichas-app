@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus } from "lucide-react";
 
 import app from "../../firebase/config";
-import { atribuicaoDoCostureiro, formatarDataHora, categoriaDaFicha, etapaDaFicha, Ficha, type Costureiro, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
+import { atribuicaoDoCostureiro, formatarDataHora, categoriaDaFicha, etapaDaFicha, validarAlteracaoEtapa, Ficha, type Costureiro, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
 import AdminNavigation from "../components/AdminNavigation";
 import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 import StatusToggle from "../components/StatusToggle";
@@ -19,6 +19,7 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  runTransaction,
 } from "firebase/firestore";
 
 const db = getFirestore(app);
@@ -151,18 +152,13 @@ function HomeContent() {
   }
 
   async function alterarStatus(id: string, campo: keyof Ficha, valorAtual: boolean) {
-    const ficha = resumoPedidos.find((p) => p.id === id);
-    if (campo === "exportacao" && !valorAtual) {
-      if (ficha && !ficha.arteAprovada) {
-        alert("A arte precisa ser aprovada pelo comercial antes de ir para exportação!");
-        return;
-      }
-    }
-
     try {
       const fichaRef = doc(db, "fichas", id);
       const campoDataHora = campoData(String(campo));
       const atualizacao: Partial<Ficha> = { [campo]: !valorAtual };
+      if (campo === "entregaStatus" && valorAtual) Object.assign(atualizacao, { envio: false, retirada: false });
+      if (campo === "envio" && !valorAtual) Object.assign(atualizacao, { retirada: false });
+      if (campo === "retirada" && !valorAtual) Object.assign(atualizacao, { envio: false });
       
       if (campoDataHora) {
         Object.assign(atualizacao, {
@@ -170,22 +166,29 @@ function HomeContent() {
         });
       }
       
-      await updateDoc(fichaRef, atualizacao);
+      await runTransaction(db, async (transaction) => {
+        const snapshot = await transaction.get(fichaRef);
+        if (!snapshot.exists()) throw new Error("Pedido não encontrado.");
+        const atual = snapshot.data() as Ficha;
+        if (Boolean(atual[campo]) !== valorAtual) throw new Error("A etapa foi alterada em outra tela. Atualize a lista e tente novamente.");
+        const erro = validarAlteracaoEtapa(atual, campo, !valorAtual);
+        if (erro) throw new Error(erro);
+        transaction.update(fichaRef, atualizacao);
+      });
 
       setResumoPedidos((prev) =>
         prev.map((item) =>
           item.id === id
             ? { 
                 ...item, 
-                [campo]: !valorAtual, 
-                ...(campoDataHora ? { [campoDataHora]: atualizacao[campoDataHora as keyof Ficha] } : {}) 
+                ...atualizacao,
               }
             : item
         )
       );
     } catch (error) {
       console.error(error);
-      alert("Erro ao atualizar");
+      alert(error instanceof Error ? error.message : "Erro ao atualizar");
     }
   }
 
