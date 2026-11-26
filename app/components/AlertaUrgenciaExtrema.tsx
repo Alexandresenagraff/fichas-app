@@ -55,7 +55,7 @@ export default function AlertaUrgenciaExtrema() {
   if (pedidos.length === 0) return null;
 
   return <>
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-30 shadow-[inset_0_0_50px_8px_rgba(239,68,68,0.25)] motion-safe:animate-pulse" />
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-30 shadow-[inset_0_0_75px_18px_rgba(239,35,45,0.55)] motion-safe:animate-pulse" />
     <button type="button" aria-label={`${pedidos.length} ${pedidos.length === 1 ? "pedido com urgência extrema" : "pedidos com urgência extrema"}. Toque para visualizar ou arraste para mover.`} title="Pedidos com urgência extrema" onPointerDown={iniciarArrasto} onPointerMove={mover} onPointerUp={terminarArrasto} onPointerCancel={() => { ignorarClique.current = true; arrasto.current = null; }} onClick={() => {
       if (ignorarClique.current) { ignorarClique.current = false; return; }
       if (pedidos.length === 1 && pedidos[0].id) abrirPedido(pedidos[0].id);
