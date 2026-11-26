@@ -373,12 +373,12 @@ function HomeContent() {
                   <div
                     key={ficha.id}
                     id={`ficha-${ficha.id}`}
-                    className="bg-zinc-950 border border-zinc-900 rounded-2xl p-3 sm:p-4 shadow-xl transition-all duration-200 hover:border-zinc-800/80"
+                    className="bg-zinc-950 border border-zinc-900 rounded-2xl p-2.5 sm:p-4 shadow-xl transition-all duration-200 hover:border-zinc-800/80"
                   >
                     {/* TOPO */}
                     <div>
                       {/* NOME + LIXEIRA */}
-                      <div className="flex justify-between items-start gap-3 mb-2">
+                      <div className="flex justify-between items-start gap-3 mb-1.5 sm:mb-2">
                         {editandoId === ficha.id ? (
                           <input
                             type="text"
@@ -390,7 +390,7 @@ function HomeContent() {
                           <div className="flex-1 min-w-0">
                             <ClientPdfLink
                               pdfLink={ficha.pdfLink}
-                              className="text-xl font-extrabold break-words leading-tight uppercase text-white"
+                              className="text-lg sm:text-xl font-extrabold break-words leading-tight uppercase text-white"
                             >
                               {ficha.cliente}
                             </ClientPdfLink>
@@ -430,7 +430,7 @@ function HomeContent() {
                       </div>
 
                       {/* DATAS */}
-                      <div className="grid grid-cols-2 gap-4 mb-2">
+                      <div className="grid grid-cols-2 gap-3 mb-1.5 sm:mb-2">
                         <div>
                           <p className="text-zinc-500 text-[10px] font-bold tracking-wider">
                             PEDIDO:
@@ -474,7 +474,7 @@ function HomeContent() {
 
                       <button
                         onClick={() => alternarPedido(ficha.id || "")}
-                        className="w-full min-h-10 bg-sky-200 border border-sky-300 hover:bg-sky-300 active:scale-[0.99] transition-all duration-200 rounded-xl py-2 mb-2 text-xs font-semibold text-sky-950 flex items-center justify-center gap-1.5"
+                        className="w-full min-h-11 bg-sky-300/20 border border-sky-300/30 hover:bg-sky-300/30 active:scale-[0.99] transition-all duration-200 rounded-xl py-1.5 mb-1.5 text-xs font-semibold text-sky-100 flex items-center justify-center gap-1.5"
                         aria-expanded={isAberto}
                         aria-controls={`detalhes-${ficha.id}`}
                       >
