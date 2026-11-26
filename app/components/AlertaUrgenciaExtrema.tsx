@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { collection, getFirestore, onSnapshot, query, where } from "firebase/firestore";
-import { Siren, X } from "lucide-react";
+import { X } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import app from "../../firebase/config";
 import type { Ficha } from "../lib/helpers";
@@ -58,8 +59,8 @@ export default function AlertaUrgenciaExtrema() {
       if (ignorarClique.current) { ignorarClique.current = false; return; }
       if (pedidos.length === 1 && pedidos[0].id) abrirPedido(pedidos[0].id);
       else setListaAberta(true);
-    }} style={posicao ? { left: posicao.x, top: posicao.y } : undefined} className={`fixed z-40 flex h-14 w-14 touch-none select-none items-center justify-center rounded-full bg-red-600 text-white shadow-lg ring-2 ring-red-300 motion-safe:animate-pulse ${posicao ? "" : "bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4"}`}>
-      <Siren size={27} aria-hidden="true" />
+    }} style={posicao ? { left: posicao.x, top: posicao.y } : undefined} className={`fixed z-40 flex h-14 w-14 touch-none select-none items-center justify-center bg-transparent motion-safe:animate-pulse ${posicao ? "" : "bottom-[calc(5rem+env(safe-area-inset-bottom))] left-4"}`}>
+      <Image src="/sirene-urgencia.png" alt="" width={56} height={56} unoptimized draggable={false} className="h-14 w-14 object-contain" />
       {pedidos.length > 1 && <span className="absolute -right-1 -top-1 rounded-full bg-white px-1.5 text-xs font-bold text-red-800">{pedidos.length}</span>}
     </button>
     {listaAberta && <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 p-4" onClick={() => setListaAberta(false)}>
