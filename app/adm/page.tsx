@@ -10,7 +10,7 @@ export default function Adm() {
 
   function entrar() {
     if (senha === "123") {
-      router.push("/fichas");
+      router.push("/inicio");
     } else {
       alert("Senha incorreta");
     }
