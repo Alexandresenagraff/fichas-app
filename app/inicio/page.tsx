@@ -68,7 +68,7 @@ export default function Inicio() {
 
   return (
     <main className="min-h-screen bg-slate-800 pb-28 text-slate-900">
-      <header className="bg-gradient-to-b from-blue-700 from-40% via-blue-800 via-65% to-slate-800 px-4 pb-9 pt-6 text-center text-white sm:pb-12 sm:pt-8">
+      <header className="bg-gradient-to-b from-blue-700 from-40% via-blue-800 via-65% to-slate-800 px-4 pb-14 pt-6 text-center text-white sm:pb-16 sm:pt-8">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">SENAGRAFF</h1>
         <p className="mt-2 text-[10px] font-bold tracking-[0.12em] text-blue-100 sm:text-xs">DISTRIBUIÇÃO E ACOMPANHAMENTO DE PEDIDOS</p>
       </header>
