@@ -73,6 +73,11 @@ export interface Ficha {
 
 export type Costureiro = "paulo" | "celina";
 
+export function porcentagemPedido(ficha: Ficha): number {
+  const etapas = [ficha.venda, ficha.arte, ficha.exportacao, ficha.impressao, ficha.prensa, ficha.corte, ficha.costuraConcluida, ficha.conferencia, ficha.entregaStatus];
+  return Math.round((etapas.filter(Boolean).length / etapas.length) * 100);
+}
+
 export function atribuicaoDoCostureiro(costureiro: Costureiro) {
   return {
     costureiroPaulo: costureiro === "paulo",

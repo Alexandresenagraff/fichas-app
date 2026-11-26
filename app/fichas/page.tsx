@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { RotateCw, Pencil, Trash2, Save, X, Eye, EyeOff, Plus } from "lucide-react";
 
 import app from "../../firebase/config";
-import { atribuicaoDoCostureiro, formatarDataHora, categoriaDaFicha, etapaDaFicha, validarAlteracaoEtapa, Ficha, type Costureiro, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
+import { atribuicaoDoCostureiro, formatarDataHora, categoriaDaFicha, etapaDaFicha, validarAlteracaoEtapa, porcentagemPedido, Ficha, type Costureiro, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
 import AdminNavigation from "../components/AdminNavigation";
 import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 import StatusToggle from "../components/StatusToggle";
@@ -37,7 +37,9 @@ function statusAtual(ficha: Ficha): { completed: string; next: string; finalizad
   if (ficha.prensa) return { completed: "PRENSAGEM CONCLUÍDA", next: "AGUARDANDO CORTE" };
   if (ficha.impressao) return { completed: "IMPRESSO", next: "AGUARDANDO PRENSAGEM" };
   if (ficha.exportacao) return { completed: "EXPORTADO", next: "AGUARDANDO IMPRESSÃO" };
-  if (ficha.arte) return { completed: "ARTE CONCLUÍDA", next: "AGUARDANDO EXPORTAÇÃO" };
+  if (ficha.arteAprovada) return { completed: "ARTE APROVADA", next: "AGUARDANDO EXPORTAÇÃO" };
+  if (ficha.alteracaoSolicitada) return { completed: "ALTERAÇÃO SOLICITADA", next: "AGUARDANDO ALTERAÇÃO DA ARTE" };
+  if (ficha.arte) return { completed: "ARTE CONCLUÍDA", next: "AGUARDANDO APROVAÇÃO" };
   if (ficha.venda) return { completed: "VENDA REALIZADA", next: "AGUARDANDO ARTE" };
   return { completed: "AGUARDANDO VENDA", next: "" };
 }
@@ -616,20 +618,7 @@ function HomeContent() {
                       <div className="flex flex-col gap-2.5 border-t border-zinc-900 pt-4">
                         {/* BARRA DE PROGRESSO */}
                         {(() => {
-                          const etapas = [
-                            ficha.venda,
-                            ficha.arte,
-                            ficha.exportacao,
-                            ficha.impressao,
-                            ficha.prensa,
-                            ficha.corte,
-                            ficha.costura,
-                            ficha.costuraConcluida,
-                            ficha.conferencia,
-                            ficha.entregaStatus,
-                          ];
-                          const concluidas = etapas.filter(Boolean).length;
-                          const porcentagem = Math.round((concluidas / etapas.length) * 100);
+                          const porcentagem = porcentagemPedido(ficha);
 
                           return (
                             <div className="mb-2">

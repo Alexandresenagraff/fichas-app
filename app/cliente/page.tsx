@@ -12,7 +12,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { Ficha } from "../lib/helpers";
+import { Ficha, porcentagemPedido } from "../lib/helpers";
 import { DashboardSkeleton } from "../components/Skeleton";
 import ClientPdfLink from "../components/ClientPdfLink";
 
@@ -92,23 +92,6 @@ export default function Cliente() {
     } finally {
       setCarregando(false);
     }
-  }
-
-  function calcularPorcentagem(pedido: Ficha) {
-    const etapas = [
-      pedido.venda,
-      pedido.arte,
-      pedido.exportacao,
-      pedido.impressao,
-      pedido.prensa,
-      pedido.corte,
-      pedido.costuraConcluida,
-      pedido.conferencia,
-      pedido.entregaStatus,
-    ];
-
-    const concluidas = etapas.filter(Boolean).length;
-    return Math.round((concluidas / etapas.length) * 100);
   }
 
   useEffect(() => {
@@ -203,12 +186,12 @@ className="bg-zinc-200 border border-zinc-300 rounded-2xl p-5 sm:p-6 shadow-xs o
                       <div
                         className="h-full flex items-center justify-center font-extrabold text-[10px] text-white transition-all duration-500 ease-out"
                         style={{
-                          width: `${calcularPorcentagem(pedido)}%`,
+                          width: `${porcentagemPedido(pedido)}%`,
                           background: "linear-gradient(90deg, #eab308 0%, #22c55e 100%)",
                         }}
                       />
                       <div className="absolute inset-0 flex items-center justify-center text-zinc-700 font-extrabold text-[10px]">
-                        {calcularPorcentagem(pedido)}%
+                        {porcentagemPedido(pedido)}%
                       </div>
                     </div>
 
