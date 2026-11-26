@@ -89,10 +89,12 @@ export default function Inicio() {
           </div>
           <div className="mt-3 grid gap-2 sm:mt-4 sm:grid-cols-2">
             {DESIGNERS.map((designer) => (
-              <div key={designer} className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1 rounded-xl bg-slate-600 px-3 py-2 text-xs text-white sm:text-sm">
-                <span className="font-bold">{designer}:</span>
-                <span className="whitespace-nowrap">À CRIAR <strong className="text-base font-extrabold sm:text-lg">{carregando ? "–" : String(artesPendentesPorDesigner[designer].total).padStart(2, "0")}</strong></span>
-                <span className="whitespace-nowrap text-slate-200">— (Urgentes {carregando ? "–" : String(artesPendentesPorDesigner[designer].urgentes).padStart(2, "0")})</span>
+              <div key={designer} className="grid min-w-0 grid-cols-[minmax(0,1.1fr)_auto_minmax(0,1fr)_auto_minmax(0,1.1fr)] items-center text-white">
+                <span className="flex min-h-10 items-center justify-center rounded-xl bg-slate-600 px-1 text-center text-[10px] font-bold sm:text-xs">{designer}</span>
+                <span aria-hidden="true" className="px-0.5 text-slate-300">–</span>
+                <span className="flex min-h-10 items-center justify-center gap-1 rounded-xl bg-slate-600 px-1 text-[10px] font-semibold sm:text-xs">À CRIAR <strong className="text-base font-extrabold sm:text-lg">{carregando ? "–" : String(artesPendentesPorDesigner[designer].total).padStart(2, "0")}</strong></span>
+                <span aria-hidden="true" className="px-0.5 text-slate-300">–</span>
+                <span className="flex min-h-10 items-center justify-center gap-1 rounded-xl bg-slate-600 px-1 text-[10px] font-semibold sm:text-xs">URGENTES <strong className="text-base font-extrabold sm:text-lg">{carregando ? "–" : String(artesPendentesPorDesigner[designer].urgentes).padStart(2, "0")}</strong></span>
               </div>
             ))}
           </div>
