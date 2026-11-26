@@ -105,12 +105,12 @@ export default function Cliente() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-white text-black">
-      <CabecalhoSenagraff subtitulo="ÁREA CLIENTE VIP" compacto fundoClaro />
+    <main className="min-h-screen bg-slate-800 text-white">
+      <CabecalhoSenagraff subtitulo="ÁREA CLIENTE VIP" compacto />
       <div className="relative w-full max-w-2xl mx-auto">
-<div className="bg-gradient-to-br from-neutral-900 via-zinc-900 to-black px-4 py-8 relative shadow-lg text-white">          <button
+        <div className="px-4 pb-4 pt-6 relative text-white">          <button
             onClick={() => router.push("/")}
-            className="absolute top-4 left-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-all active:scale-90 text-white text-lg cursor-pointer"
+            className="absolute top-4 left-4 w-10 h-10 flex items-center justify-center rounded-full bg-zinc-900/80 hover:bg-zinc-800 transition-all active:scale-90 text-white text-lg cursor-pointer"
             title="Voltar"
           >
             <ArrowLeft size={18} />
@@ -156,20 +156,20 @@ export default function Cliente() {
             pedidos.map((pedido, index) => (
               <div
                 key={pedido.id || index}
-className="bg-zinc-200 border border-zinc-300 rounded-2xl p-5 sm:p-6 shadow-xs overflow-hidden transition hover:shadow-md duration-200"              >
+className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-xs overflow-hidden transition hover:shadow-md duration-200"              >
                 <ClientPdfLink
                   pdfLink={pedido.pdfLink}
-                  className="block text-lg font-bold mb-3 text-black break-words text-center border-b border-zinc-100 pb-2"
+                  className="block text-lg font-bold mb-3 text-white break-words text-center border-b border-zinc-700 pb-2"
                 >
                   {pedido.cliente} - Pedido {index + 1}
                 </ClientPdfLink>
 
-                <div className="mb-4 text-xs text-zinc-600 space-y-1">
+                <div className="mb-4 text-xs text-zinc-300 space-y-1">
                   <p>
-                    <strong className="text-zinc-800">Pedido:</strong> {pedido.pedido ? pedido.pedido.split("-").reverse().join("/") : "-"}
+                    <strong className="text-white">Pedido:</strong> {pedido.pedido ? pedido.pedido.split("-").reverse().join("/") : "-"}
                   </p>
                   <p>
-                    <strong className="text-zinc-800">Entrega prevista:</strong> {pedido.entrega ? pedido.entrega.split("-").reverse().join("/") : "-"}
+                    <strong className="text-white">Entrega prevista:</strong> {pedido.entrega ? pedido.entrega.split("-").reverse().join("/") : "-"}
                   </p>
                 </div>
 
@@ -245,7 +245,7 @@ className="bg-zinc-200 border border-zinc-300 rounded-2xl p-5 sm:p-6 shadow-xs o
             ))
           ) : (
             email && (
-              <div className="bg-zinc-50 border border-zinc-200 rounded-2xl p-6 text-center text-zinc-500 text-xs">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 text-center text-zinc-400 text-xs">
                 Nenhum pedido encontrado. Verifique os dados digitados e tente novamente.
               </div>
             )
