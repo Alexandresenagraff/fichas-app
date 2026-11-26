@@ -11,10 +11,10 @@ import { categoriaDaFicha, DESIGNERS, Ficha } from "../lib/helpers";
 
 const db = getFirestore(app);
 const coresDesigner: Record<string, string> = {
-  ALEXANDRE: "bg-rose-200 text-rose-950",
-  "LÁZARO": "bg-emerald-200 text-emerald-950",
-  EDIVAN: "bg-sky-200 text-sky-950",
-  "PAULÃO": "bg-slate-200 text-black",
+  ALEXANDRE: "bg-[#c9b4bc] text-rose-950",
+  "LÁZARO": "bg-[#b3c8be] text-emerald-950",
+  EDIVAN: "bg-[#b4c4ce] text-sky-950",
+  "PAULÃO": "bg-[#c5c9cf] text-black",
 };
 
 function normalizarDesigner(nome?: string) {
