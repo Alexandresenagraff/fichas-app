@@ -38,8 +38,8 @@ export default function DetalhesComanda({ valor, onChange, linhas, onLinhasChang
   }
 
   return <section className="@container rounded-xl border border-zinc-700 bg-zinc-900 text-zinc-200">
-    <button type="button" onClick={() => setAberto((atual) => !atual)} aria-expanded={aberto} className="flex min-h-11 w-full items-center justify-between gap-2 px-3 text-left text-xs font-bold">
-      <span>DETALHES DA COMANDA</span>{aberto ? <EyeOff size={17} aria-label="Recolher detalhes" /> : <Eye size={17} aria-label="Visualizar detalhes" />}
+    <button type="button" onClick={() => setAberto((atual) => !atual)} aria-expanded={aberto} className={`flex min-h-11 w-full items-center justify-between gap-2 rounded-xl px-3 text-left text-xs font-bold ${editavel ? "border border-sky-300/30 bg-sky-300/20 text-sky-100 hover:bg-sky-300/30" : ""}`}>
+      <span>{editavel ? "DESCREVER COMANDA" : "DETALHES DA COMANDA"}</span>{aberto ? <EyeOff size={17} aria-label="Recolher detalhes" /> : <Eye size={17} aria-label="Visualizar detalhes" />}
     </button>
     {aberto && <div className="space-y-2 border-t border-zinc-700 p-3">
       {!editavel && !possuiDados && <p className="text-xs text-zinc-400">Nenhum detalhe informado nesta comanda.</p>}
