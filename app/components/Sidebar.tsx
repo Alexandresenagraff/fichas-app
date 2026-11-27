@@ -54,7 +54,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <button onClick={onClose} className="rounded-xl p-2 text-white transition hover:bg-blue-700" title="Fechar menu" aria-label="Fechar menu"><X size={20} /></button>
         </header>
 
-        <section className="rounded-2xl border border-slate-200 bg-white/10 p-2 shadow-sm">
+        <section className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
           <p className="px-2 pb-2 pt-1 text-[10px] font-bold tracking-[0.15em] text-slate-400">SETORES</p>
           {menuSetores.map((item) => {
             if (!("items" in item)) {
@@ -73,7 +73,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           })}
         </section>
 
-        <section className="mt-4 rounded-2xl border border-slate-200 bg-white/10 p-2 shadow-sm">
+        <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
           <button type="button" onClick={() => setAdministracaoAberta((aberta) => !aberta)} aria-expanded={administracaoAberta} aria-controls="menu-administracao" className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${administracaoAberta ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50"}`}>
             <span className="flex items-center gap-3"><Settings size={18} />Administração</span>
             {administracaoAberta ? <ChevronDown size={17} /> : <ChevronRight size={17} />}
