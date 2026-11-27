@@ -84,6 +84,7 @@ function ArteContent() {
   const [secaoAtiva, setSecaoAtiva] = useState<SecaoArte>("arteParaCriar");
   const [situacaoPainelAtiva, setSituacaoPainelAtiva] = useState<SituacaoPainelDesigner | null>(null);
   const [contadorAberto, setContadorAberto] = useState(false);
+  const [filtrosAbertos, setFiltrosAbertos] = useState(false);
   const [anoSelecionado, setAnoSelecionado] = useState("todos");
   const [mesSelecionado, setMesSelecionado] = useState("todos");
   const [pdfLinks, setPdfLinks] = useState<Record<string, string>>({});
@@ -631,7 +632,12 @@ function ArteContent() {
         </section>}
 
         {designerAtivo && (
-          <div className="grid grid-cols-2 gap-2 mb-4">
+          <section className="mb-3">
+            <button type="button" onClick={() => setFiltrosAbertos((aberto) => !aberto)} aria-expanded={filtrosAbertos} aria-controls="filtros-pedidos-designer" className="flex min-h-11 w-full items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-left text-xs font-bold text-zinc-200">
+              <span>FILTRAR PEDIDOS{anoSelecionado !== "todos" && <span className="ml-2 font-normal text-sky-300">{mesSelecionado !== "todos" ? `${meses[Number(mesSelecionado) - 1]} / ` : ""}{anoSelecionado}</span>}</span>
+              {filtrosAbertos ? <EyeOff size={17} aria-label="Recolher filtros" /> : <Eye size={17} aria-label="Visualizar filtros" />}
+            </button>
+            <div id="filtros-pedidos-designer" hidden={!filtrosAbertos} className="mt-2 grid grid-cols-2 gap-2">
             <select
               value={anoSelecionado}
               onChange={(event) => {
@@ -658,7 +664,8 @@ function ArteContent() {
                 <option key={mes} value={index + 1}>{mes}</option>
               ))}
             </select>
-          </div>
+            </div>
+          </section>
         )}
 
         {designerAtivo && (
