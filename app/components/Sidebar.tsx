@@ -25,8 +25,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   }
 
   const grupos = [
-    { id: "comercial" as const, label: "Comercial", Icon: ShoppingBag, items: [{ label: "Visão geral", href: "/comercial" }, ...VENDEDORES.map((vendedor) => ({ label: vendedor, href: `/comercial?vendedor=${vendedor}` }))] },
-    { id: "designers" as const, label: "Designers", Icon: Palette, items: [{ label: "Geral Arte", href: "/arte" }, ...DESIGNERS.map((designer) => ({ label: designer, href: `/arte?designer=${normalizarNome(designer)}` }))] },
+    { id: "comercial" as const, label: "Comercial", Icon: ShoppingBag, items: VENDEDORES.map((vendedor) => ({ label: vendedor, href: `/comercial?vendedor=${vendedor}` })) },
+    { id: "designers" as const, label: "Designers", Icon: Palette, items: DESIGNERS.map((designer) => ({ label: designer, href: `/arte?designer=${normalizarNome(designer)}` })) },
   ];
   const setores = [
     { label: "Impressão", href: "/impressao", Icon: Printer },
