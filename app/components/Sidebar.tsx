@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { BarChart3, ChevronDown, ChevronRight, ClipboardCheck, ClipboardList, Database, Flame, House, Palette, Printer, Scissors, Settings, Shirt, ShoppingBag, Truck, Users, X } from "lucide-react";
+import { BarChart3, ChevronDown, ChevronRight, ClipboardCheck, Database, Flame, Palette, Printer, Scissors, Settings, Shirt, ShoppingBag, Truck, Users, X } from "lucide-react";
 import { DESIGNERS, VENDEDORES } from "../lib/helpers";
 
 interface SidebarProps {
@@ -39,9 +39,6 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const costura = { id: "costura" as const, label: "Costura", Icon: Shirt, items: [{ label: "Celina", href: "/costura?costureiro=celina" }, { label: "Paulo", href: "/costura?costureiro=paulo" }] };
   const menuSetores = [...grupos, ...setores.slice(0, 3), costura, ...setores.slice(3)];
   const administracao = [
-    { label: "Início", href: "/inicio", Icon: House },
-    { label: "Pedidos", href: "/fichas", Icon: ClipboardList },
-    { label: "Pendências", href: "/pendencias", Icon: ClipboardCheck },
     { label: "Relatórios", href: "/relatorios", Icon: BarChart3 },
     { label: "Configurações", href: "/configuracoes", Icon: Settings },
     { label: "Usuários (em breve)", Icon: Users },
@@ -51,13 +48,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <>
       <button className={`fixed inset-0 z-50 cursor-default bg-slate-950/40 backdrop-blur-[1px] transition-opacity duration-300 motion-reduce:transition-none ${isOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} aria-label="Fechar menu" onClick={onClose} tabIndex={isOpen ? 0 : -1} aria-hidden={!isOpen} />
-      <aside role="dialog" aria-modal="true" aria-label="Menu administrativo" aria-hidden={!isOpen} inert={!isOpen} className={`fixed bottom-2 right-2 z-[60] w-[min(78vw,19rem)] max-h-[75vh] overflow-y-auto rounded-3xl bg-slate-50/95 px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 text-slate-900 shadow-[0_-20px_50px_rgba(15,23,42,0.22)] backdrop-blur-lg transition-transform duration-300 ease-out motion-reduce:transition-none sm:bottom-4 sm:right-4 sm:w-[26rem] sm:max-h-[82vh] sm:bg-slate-50 sm:px-4 sm:pt-4 ${isOpen ? "translate-y-0" : "pointer-events-none translate-y-[110%]"}`}>
+      <aside role="dialog" aria-modal="true" aria-label="Menu administrativo" aria-hidden={!isOpen} inert={!isOpen} className={`fixed bottom-2 right-2 z-[60] w-[min(78vw,19rem)] max-h-[75vh] overflow-y-auto rounded-3xl bg-slate-50/80 px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 text-slate-900 shadow-[0_-20px_50px_rgba(15,23,42,0.22)] backdrop-blur-lg transition-transform duration-300 ease-out motion-reduce:transition-none sm:bottom-4 sm:right-4 sm:w-[26rem] sm:max-h-[82vh] sm:px-4 sm:pt-4 ${isOpen ? "translate-y-0" : "pointer-events-none translate-y-[110%]"}`}>
         <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-slate-300 sm:hidden" />
         <header className="mb-3 flex items-center justify-end rounded-xl bg-blue-600 px-2 py-1">
           <button onClick={onClose} className="rounded-xl p-2 text-white transition hover:bg-blue-700" title="Fechar menu" aria-label="Fechar menu"><X size={20} /></button>
         </header>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
+        <section className="rounded-2xl border border-slate-200 bg-white/10 p-2 shadow-sm">
           <p className="px-2 pb-2 pt-1 text-[10px] font-bold tracking-[0.15em] text-slate-400">SETORES</p>
           {menuSetores.map((item) => {
             if (!("items" in item)) {
@@ -76,7 +73,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           })}
         </section>
 
-        <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
+        <section className="mt-4 rounded-2xl border border-slate-200 bg-white/10 p-2 shadow-sm">
           <button type="button" onClick={() => setAdministracaoAberta((aberta) => !aberta)} aria-expanded={administracaoAberta} aria-controls="menu-administracao" className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${administracaoAberta ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50"}`}>
             <span className="flex items-center gap-3"><Settings size={18} />Administração</span>
             {administracaoAberta ? <ChevronDown size={17} /> : <ChevronRight size={17} />}
