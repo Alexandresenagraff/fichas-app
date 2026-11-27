@@ -9,6 +9,7 @@ import AdminNavigation from "../components/AdminNavigation";
 import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 import DetalhesComanda, { novaComanda } from "../components/DetalhesComanda";
 import { prepararSireneExtrema, tocarSireneExtrema } from "../lib/notificationSounds";
+import { processarItensComanda, valorEmCentavos, type ItemComandaRascunho } from "../lib/itensComanda";
 
 import app from "../../firebase/config";
 import { addDoc, collection, doc, getFirestore, onSnapshot, updateDoc, runTransaction, setDoc } from "firebase/firestore";
@@ -27,14 +28,7 @@ import { DashboardSkeleton } from "../components/Skeleton";
 
 const db = getFirestore(app);
 
-function centavos(valor: string) {
-  const texto = valor.trim();
-  if (/^\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?$/.test(texto)) {
-    return Math.round(Number(texto.replace(/\./g, "").replace(",", ".")) * 100);
-  }
-  if (!/^\d+(?:[,.]\d{1,2})?$/.test(texto)) return NaN;
-  return Math.round(Number(texto.replace(",", ".")) * 100);
-}
+const centavos = valorEmCentavos;
 const moeda = (valor: number) => (valor / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
 function ComercialContent() {
@@ -92,6 +86,8 @@ function ComercialContent() {
   const [entrega, setEntrega] = useState("");
   const [urgenciaExtrema, setUrgenciaExtrema] = useState(false);
   const [detalhesComanda, setDetalhesComanda] = useState(novaComanda);
+  const [linhasComanda, setLinhasComanda] = useState<ItemComandaRascunho[]>([]);
+  const [totalManual, setTotalManual] = useState(false);
   const [valorTotal, setValorTotal] = useState("");
   const [entrada, setEntrada] = useState("");
   const [dataEntrada, setDataEntrada] = useState("");
@@ -100,6 +96,22 @@ function ComercialContent() {
   const [dataPagamento, setDataPagamento] = useState("");
   const [salvandoPagamento, setSalvandoPagamento] = useState(false);
   const [pagamentoEditado, setPagamentoEditado] = useState<{ indice: number; valorCentavos: number; data: string } | null>(null);
+
+  function atualizarLinhasComanda(linhas: ItemComandaRascunho[]) {
+    setLinhasComanda(linhas);
+    if (!totalManual) {
+      const { soma } = processarItensComanda(linhas);
+      setValorTotal(soma === null ? "" : (soma / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    }
+  }
+
+  function usarSomaDosItens() {
+    const { soma } = processarItensComanda(linhasComanda);
+    if (soma === null) return;
+    if (totalManual && valorTotal && centavos(valorTotal) !== soma && !window.confirm("Substituir o valor final informado pela soma dos itens?")) return;
+    setValorTotal((soma / 100).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+    setTotalManual(false);
+  }
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -172,6 +184,8 @@ function ComercialContent() {
       return;
     }
 
+    const resultadoItens = processarItensComanda(linhasComanda);
+    if (resultadoItens.erro) { alert(resultadoItens.erro); return; }
     const total = valorTotal ? centavos(valorTotal) : 0;
     const recebido = entrada ? centavos(entrada) : 0;
     if (!Number.isSafeInteger(total) || total < 0 || !Number.isSafeInteger(recebido) || recebido < 0 || recebido > total || (recebido > 0 && !dataEntrada)) {
@@ -190,7 +204,7 @@ function ComercialContent() {
         pedido,
         entrega,
         urgenciaExtrema,
-        detalhesComanda,
+        detalhesComanda: { ...detalhesComanda, itens: resultadoItens.itens },
         ...(valorTotal ? { valorTotalCentavos: total } : {}),
         pagamentos: recebido > 0 ? [{ valorCentavos: recebido, data: dataEntrada }] : [],
         pdfLink: "",
@@ -231,6 +245,7 @@ function ComercialContent() {
       setEntrega("");
       setUrgenciaExtrema(false);
       setDetalhesComanda(novaComanda());
+      setLinhasComanda([]); setTotalManual(false);
       setValorTotal(""); setEntrada(""); setDataEntrada("");
       setModalAberto(false);
     } catch (error) {
@@ -543,7 +558,7 @@ function ComercialContent() {
                   </p>
                 )}
 
-                <div className="mt-2"><DetalhesComanda valor={ficha.detalhesComanda} /></div>
+                <div className="mt-2"><DetalhesComanda valor={ficha.detalhesComanda} mostrarValores /></div>
 
                 {ficha.valorTotalCentavos != null && (() => {
                   const recebido = (ficha.pagamentos || []).reduce((soma, pagamento) => soma + pagamento.valorCentavos, 0);
@@ -632,12 +647,13 @@ function ComercialContent() {
               <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Vendedor</span><select value={vendedor} onChange={(e) => setVendedor(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400"><option value="">Selecione o vendedor</option>{VENDEDORES.map((nome) => <option key={nome} value={nome}>{nome}</option>)}</select></label>
               <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Observação</span><input type="text" value={observacao} onChange={(e) => setObservacao(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>
               <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Designer</span><select value={designer} onChange={(e) => setDesigner(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400"><option value="">Selecione o designer</option>{DESIGNERS.map((nome) => <option key={nome} value={nome}>{nome}</option>)}</select></label>
-              <DetalhesComanda valor={detalhesComanda} onChange={setDetalhesComanda} />
+              <DetalhesComanda valor={detalhesComanda} onChange={setDetalhesComanda} linhas={linhasComanda} onLinhasChange={atualizarLinhasComanda} />
               <div className="grid grid-cols-2 gap-2">
                 <label className="relative block min-w-0"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Data do pedido</span><input type="date" value={pedido} onChange={(e) => setPedido(e.target.value)} className="h-12 min-w-0 w-full rounded-xl border border-zinc-700 bg-black px-2 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>
                 <label className="relative block min-w-0"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Data da entrega *</span><input type="date" value={entrega} onChange={(e) => { const valor = e.target.value.replace(/-(\d{2})-/, (match, mes) => mes === "00" ? "-01-" : match); setEntrega(valor); }} required className="h-12 min-w-0 w-full rounded-xl border border-zinc-700 bg-black px-2 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>
               </div>
-              <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Valor total do pedido (R$)</span><input type="text" inputMode="decimal" value={valorTotal} onChange={(e) => setValorTotal(e.target.value)} placeholder="Ex.: 1.000,00" className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none placeholder:text-zinc-600 focus:border-blue-400" /></label>
+              <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Valor total do pedido (R$)</span><input type="text" inputMode="decimal" value={valorTotal} onChange={(e) => { setValorTotal(e.target.value); setTotalManual(true); }} placeholder="Ex.: 1.000,00" className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none placeholder:text-zinc-600 focus:border-blue-400" /></label>
+              {linhasComanda.length > 0 && totalManual && <div className="text-xs text-zinc-400">Valor final mantido como informado. {processarItensComanda(linhasComanda).soma !== null && <button type="button" onClick={usarSomaDosItens} className="min-h-9 font-semibold text-blue-300 underline">Usar soma dos itens</button>}</div>}
               <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Entrada recebida (R$), opcional</span><input type="text" inputMode="decimal" value={entrada} onChange={(e) => setEntrada(e.target.value)} placeholder="Ex.: 500,00" className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none placeholder:text-zinc-600 focus:border-blue-400" /></label>
               {entrada && <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Data do recebimento{centavos(entrada) > 0 ? " *" : ""}</span><input type="date" value={dataEntrada} onChange={(e) => setDataEntrada(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>}
               <div className="flex gap-2">

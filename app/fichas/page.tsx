@@ -522,7 +522,7 @@ function HomeContent() {
 
                       {isAberto && (
                         <div id={`detalhes-${ficha.id}`} className="animate-[slideDown_0.2s_ease-out] border-t border-zinc-900 pt-4 space-y-3">
-                          <DetalhesComanda valor={ficha.detalhesComanda} />
+                          <DetalhesComanda valor={ficha.detalhesComanda} mostrarValores />
                           {/* IDENTIFICAÇÃO DO CLIENTE */}
                           <div>
                             <p className="text-zinc-500 text-[10px] font-bold tracking-wider">

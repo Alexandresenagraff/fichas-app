@@ -34,6 +34,13 @@ export interface DetalhesComanda {
   acabamentos: string[];
   golas: string[];
   outroTecido: string;
+  itens?: ItemComanda[];
+}
+
+export interface ItemComanda {
+  quantidade: number;
+  descricao: string;
+  valorUnitarioCentavos?: number;
 }
 
 export interface Ficha {
