@@ -61,26 +61,22 @@ export default function ListaVisual({ fichas }: { fichas: Ficha[] }) {
         </label>
         <p className="mt-1 text-[10px] text-zinc-400">Por data de entrega mais próxima. Limpe o mês para ver todos.</p>
         {lista.length === 0 ? <p className="py-3 text-zinc-400">Nenhum pedido neste período.</p> : (
-          <div className="mt-2 overflow-x-auto">
-          <ol className="min-w-[340px] divide-y divide-zinc-800">
+          <ol className="mt-2 divide-y divide-zinc-800">
             {lista.map((ficha, index) => {
               const categoria = categoriaDaFicha(ficha);
-              const alerta = !ficha.entregaStatus && ficha.urgenciaExtrema && !ficha.conferencia ? "🚨" : categoria === "atrasados" ? "ATRASADO" : categoria === "urgentes" ? "URGENTE" : "";
+              const alerta = !ficha.entregaStatus && ficha.urgenciaExtrema && !ficha.conferencia ? "🚨" : categoria === "atrasados" ? "ATRAS." : categoria === "urgentes" ? "URG." : "";
               const status = situacao(ficha);
-              return <li key={ficha.id} className="flex items-center gap-1.5 py-1.5">
-                <span className="shrink-0 text-zinc-500">{String(index + 1).padStart(2, "0")}</span>
-                <Link href={`/fichas?fichaId=${encodeURIComponent(ficha.id || "")}`} title={ficha.cliente || "Sem nome"} className="min-w-0 flex-1 truncate font-semibold text-white hover:underline">{ficha.cliente || "Sem nome"}</Link>
-                <span className="shrink-0 whitespace-nowrap text-[9px] text-zinc-400" aria-label={`Pedido ${dataCurta(dataPedido(ficha))}, entrega ${dataCurta(ficha.entrega)}`}>
+              return <li key={ficha.id} className="grid grid-cols-[1rem_minmax(0,1fr)_4rem_4.5rem_1.8rem] items-center gap-1 py-1.5">
+                <span className="text-zinc-500">{String(index + 1).padStart(2, "0")}</span>
+                <Link href={`/fichas?fichaId=${encodeURIComponent(ficha.id || "")}`} title={ficha.cliente || "Sem nome"} className="min-w-0 truncate font-semibold text-white hover:underline">{ficha.cliente || "Sem nome"}</Link>
+                <span className="whitespace-nowrap text-left text-[9px] text-zinc-400" aria-label={`Pedido ${dataCurta(dataPedido(ficha))}, entrega ${dataCurta(ficha.entrega)}`}>
                   {dataCurta(dataPedido(ficha))} - {dataCurta(ficha.entrega)}
                 </span>
-                <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-right text-[9px] font-semibold leading-tight sm:text-[10px]">
-                  <span className={corSituacao(status)}>{status}</span>
-                  {alerta && <span className={categoria === "atrasados" ? "text-red-400" : "text-amber-400"}>{alerta}</span>}
-                </span>
+                <span title={status} className={`min-w-0 truncate text-left text-[9px] font-semibold leading-tight ${corSituacao(status)}`}>{status}</span>
+                <span title={alerta === "URG." ? "Urgente" : alerta === "ATRAS." ? "Atrasado" : alerta === "🚨" ? "Urgência extrema" : undefined} className={`whitespace-nowrap text-left text-[9px] font-semibold ${categoria === "atrasados" ? "text-red-400" : "text-amber-400"}`}>{alerta}</span>
               </li>;
             })}
           </ol>
-          </div>
         )}
       </div>
     </section>
