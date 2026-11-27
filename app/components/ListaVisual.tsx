@@ -17,10 +17,26 @@ function situacao(ficha: Ficha) {
   }
 }
 
+function corSituacao(label: string) {
+  switch (label) {
+    case "À CRIAR": return "text-red-400";
+    case "APROVADO": return "text-emerald-400";
+    case "EM APROVAÇÃO": return "text-yellow-400";
+    case "ALTERAÇÃO SOLICITADA": return "text-orange-400";
+    case "FINALIZADO": return "text-emerald-400";
+    default: return "text-sky-300";
+  }
+}
+
 function dataPedido(ficha: Ficha) {
   if (ficha.pedido) return ficha.pedido;
   const partes = ficha.vendaData?.split(" ")[0]?.split("/");
   return partes?.length === 3 ? `${partes[2]}-${partes[1]}-${partes[0]}` : "";
+}
+
+function dataCurta(data?: string) {
+  const partes = data?.match(/^\d{4}-(\d{2})-(\d{2})/);
+  return partes ? `${partes[2]}/${partes[1]}` : "--/--";
 }
 
 export default function ListaVisual({ fichas }: { fichas: Ficha[] }) {
@@ -45,17 +61,26 @@ export default function ListaVisual({ fichas }: { fichas: Ficha[] }) {
         </label>
         <p className="mt-1 text-[10px] text-zinc-400">Por data de entrega mais próxima. Limpe o mês para ver todos.</p>
         {lista.length === 0 ? <p className="py-3 text-zinc-400">Nenhum pedido neste período.</p> : (
-          <ol className="mt-2 divide-y divide-zinc-800">
+          <div className="mt-2 overflow-x-auto">
+          <ol className="min-w-[340px] divide-y divide-zinc-800">
             {lista.map((ficha, index) => {
               const categoria = categoriaDaFicha(ficha);
               const alerta = !ficha.entregaStatus && ficha.urgenciaExtrema && !ficha.conferencia ? "🚨" : categoria === "atrasados" ? "ATRASADO" : categoria === "urgentes" ? "URGENTE" : "";
-              return <li key={ficha.id} className="flex items-center gap-2 py-2">
+              const status = situacao(ficha);
+              return <li key={ficha.id} className="flex items-center gap-1.5 py-1.5">
                 <span className="shrink-0 text-zinc-500">{String(index + 1).padStart(2, "0")}</span>
-                <Link href={`/fichas?fichaId=${encodeURIComponent(ficha.id || "")}`} className="min-w-0 flex-1 break-words font-semibold text-white hover:underline">{ficha.cliente || "Sem nome"}</Link>
-                <span className="max-w-[43%] shrink-0 text-right text-[10px] font-semibold leading-tight text-sky-300">{situacao(ficha)}{alerta && <span className="block text-amber-400">{alerta}</span>}</span>
+                <Link href={`/fichas?fichaId=${encodeURIComponent(ficha.id || "")}`} title={ficha.cliente || "Sem nome"} className="min-w-0 flex-1 truncate font-semibold text-white hover:underline">{ficha.cliente || "Sem nome"}</Link>
+                <span className="shrink-0 whitespace-nowrap text-[9px] text-zinc-400" aria-label={`Pedido ${dataCurta(dataPedido(ficha))}, entrega ${dataCurta(ficha.entrega)}`}>
+                  {dataCurta(dataPedido(ficha))} - {dataCurta(ficha.entrega)}
+                </span>
+                <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-right text-[9px] font-semibold leading-tight sm:text-[10px]">
+                  <span className={corSituacao(status)}>{status}</span>
+                  {alerta && <span className={categoria === "atrasados" ? "text-red-400" : "text-amber-400"}>{alerta}</span>}
+                </span>
               </li>;
             })}
           </ol>
+          </div>
         )}
       </div>
     </section>
