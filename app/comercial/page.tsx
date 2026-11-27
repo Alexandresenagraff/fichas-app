@@ -8,6 +8,7 @@ import ClientPdfLink from "../components/ClientPdfLink";
 import AdminNavigation from "../components/AdminNavigation";
 import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 import DetalhesComanda, { novaComanda } from "../components/DetalhesComanda";
+import ListaVisual from "../components/ListaVisual";
 import { prepararSireneExtrema, tocarSireneExtrema } from "../lib/notificationSounds";
 import { processarItensComanda, valorEmCentavos, type ItemComandaRascunho } from "../lib/itensComanda";
 
@@ -433,6 +434,8 @@ function ComercialContent() {
             </button>
           )}
         </div>
+
+        {vendedorParam && <ListaVisual fichas={pedidosDoVendedor} />}
 
         <section className="mb-3">
           <button type="button" onClick={() => setFinanceiroAberto((aberto) => !aberto)} aria-expanded={financeiroAberto} aria-controls="contador-financeiro" className="flex min-h-11 w-full items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-left text-xs font-bold text-zinc-200">

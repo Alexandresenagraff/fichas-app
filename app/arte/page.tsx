@@ -8,6 +8,7 @@ import ClientPdfLink from "../components/ClientPdfLink";
 import AdminNavigation from "../components/AdminNavigation";
 import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
 import DetalhesComanda from "../components/DetalhesComanda";
+import ListaVisual from "../components/ListaVisual";
 
 import app from "../../firebase/config";
 import {
@@ -614,6 +615,8 @@ function ArteContent() {
             </button>
           )}
         </div>
+
+        {designerAtivo && <ListaVisual fichas={fichasFinanceiras.filter((ficha) => normalizarTexto(ficha.designer) === normalizarTexto(designerAtivo))} />}
 
         {designerAtivo && <section className="mb-3">
           <button type="button" onClick={() => setFinanceiroAberto((aberto) => !aberto)} aria-expanded={financeiroAberto} aria-controls="financeiro-designer" className="flex min-h-11 w-full items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-left text-xs font-bold text-zinc-200">
