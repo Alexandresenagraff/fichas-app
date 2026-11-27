@@ -48,8 +48,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <>
       <button className={`fixed inset-0 z-50 cursor-default bg-slate-950/40 backdrop-blur-[1px] transition-opacity duration-300 motion-reduce:transition-none ${isOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} aria-label="Fechar menu" onClick={onClose} tabIndex={isOpen ? 0 : -1} aria-hidden={!isOpen} />
-      <aside role="dialog" aria-modal="true" aria-label="Menu administrativo" aria-hidden={!isOpen} inert={!isOpen} className={`fixed bottom-2 right-2 z-[60] w-[min(78vw,19rem)] max-h-[75vh] overflow-y-auto rounded-3xl bg-slate-50/20 px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 text-slate-900 transition-transform duration-300 ease-out motion-reduce:transition-none sm:bottom-4 sm:right-4 sm:w-[26rem] sm:max-h-[82vh] sm:px-4 sm:pt-2 ${isOpen ? "translate-y-0" : "pointer-events-none translate-y-[110%]"}`}>
-        <div className="mx-auto mb-1 h-1.5 w-10 rounded-full bg-slate-300 sm:hidden" />
+      <aside role="dialog" aria-modal="true" aria-label="Menu administrativo" aria-hidden={!isOpen} inert={!isOpen} className={`fixed bottom-0 left-0 z-[60] w-[min(78vw,19rem)] max-h-[75vh] overflow-y-auto rounded-tl-3xl bg-slate-50/20 px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2 text-slate-900 transition-transform duration-300 ease-out motion-reduce:transition-none sm:w-[26rem] sm:max-h-[82vh] sm:px-4 sm:pt-2 ${isOpen ? "translate-y-0" : "pointer-events-none translate-y-[110%]"}`}>
         <header className="mb-1 flex items-center justify-between px-2">
           <span className="text-lg font-bold tracking-wide text-white">SETORES</span>
           <button onClick={onClose} className="rounded-xl p-2 text-white transition hover:bg-white/10" title="Fechar menu" aria-label="Fechar menu"><X size={20} /></button>
