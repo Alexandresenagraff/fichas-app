@@ -18,6 +18,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [grupoAberto, setGrupoAberto] = useState<"comercial" | "designers" | "costura" | null>(null);
+  const [administracaoAberta, setAdministracaoAberta] = useState(false);
 
   function navegar(url: string) {
     onClose();
@@ -76,8 +77,13 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         </section>
 
         <section className="mt-4 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
-          <p className="px-2 pb-2 pt-1 text-[10px] font-bold tracking-[0.15em] text-slate-400">ADMINISTRAÇÃO</p>
-          {administracao.map(({ label, href, Icon }) => href ? <button key={href} onClick={() => navegar(href)} className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${pathname === href ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50"}`}><Icon size={18} />{label}</button> : <div key={label} className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-semibold text-slate-300"><Icon size={18} />{label}</div>)}
+          <button type="button" onClick={() => setAdministracaoAberta((aberta) => !aberta)} aria-expanded={administracaoAberta} aria-controls="menu-administracao" className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-semibold transition ${administracaoAberta ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50"}`}>
+            <span className="flex items-center gap-3"><Settings size={18} />Administração</span>
+            {administracaoAberta ? <ChevronDown size={17} /> : <ChevronRight size={17} />}
+          </button>
+          {administracaoAberta && <div id="menu-administracao" className="mb-1 ml-5 border-l border-blue-100 pl-3">
+            {administracao.map(({ label, href, Icon }) => href ? <button key={href} onClick={() => navegar(href)} className={`flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left text-xs font-medium transition ${pathname === href ? "bg-blue-50 text-blue-700" : "text-slate-500 hover:bg-blue-50 hover:text-blue-700"}`}><Icon size={16} />{label}</button> : <div key={label} className="flex items-center gap-3 rounded-xl px-2 py-2 text-xs font-medium text-slate-300"><Icon size={16} />{label}</div>)}
+          </div>}
         </section>
       </aside>
     </>

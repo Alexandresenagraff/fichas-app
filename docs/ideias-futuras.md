@@ -1,5 +1,19 @@
 # Ideias futuras — FICHAS
 
+## Acesso individual por senha
+
+Ideia para implementar futuramente, ainda sem alterar os acessos atuais:
+
+- Cada vendedor terá uma senha para acessar sua própria área.
+- Cada designer terá uma senha para acessar sua própria área.
+- Cada costureiro terá uma senha para acessar sua própria área.
+- A área de Administração também terá acesso protegido por senha.
+- Ao selecionar seu próprio nome no menu, a pessoa deverá informar sua senha pessoal antes de entrar; por exemplo, ao clicar em PALOMA, será solicitada a senha da Paloma.
+- Por enquanto, solicitar senha somente para esses acessos mencionados; não ampliar a exigência para outras áreas sem definição posterior.
+- Objetivo: evitar que uma pessoa consulte a área individual de outra sem autorização.
+- Antes de implementar, definir com o usuário as permissões da Administração, o acesso aos pedidos compartilhados no fluxo de produção e como criar ou recuperar senhas.
+- A proteção deve ser aplicada aos dados, não apenas escondendo opções no menu.
+
 ## Resultados Comerciais
 
 Criar uma segunda visão dentro de **Administração → Relatórios**, sem adicionar um novo item principal ao menu.
