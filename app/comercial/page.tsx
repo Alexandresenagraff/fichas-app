@@ -403,7 +403,7 @@ function ComercialContent() {
       <div className="relative max-w-md mx-auto px-3">
         {mensagemSalva && <div role="status" className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-emerald-500/40 bg-emerald-950 px-3 py-2 text-xs text-emerald-100"><span>{mensagemSalva}</span><button type="button" onClick={() => setMensagemSalva("")} aria-label="Fechar aviso" className="p-1"><X size={16} /></button></div>}
         {/* HEADER */}
-        <div className="flex items-center justify-between mt-5 mb-5">
+        <div className="flex items-center justify-between mt-5 mb-3">
           <div>
             <h1 className="text-xl font-bold tracking-tight">{vendedorParam || "Acompanhamento de pedidos"}</h1>
           </div>
@@ -415,7 +415,7 @@ function ComercialContent() {
         </div>
 
         {/* BUSCA */}
-        <div className="bg-zinc-900 border border-zinc-800/80 rounded-2xl p-3 mb-4 relative flex items-center gap-2">
+        <div className="bg-zinc-900 border border-zinc-800/80 rounded-2xl p-3 mb-2 relative flex items-center gap-2">
           <Search size={16} className="text-zinc-500 ml-1" />
           <input
             type="text"
@@ -435,9 +435,9 @@ function ComercialContent() {
           )}
         </div>
 
-        {vendedorParam && <ListaVisual fichas={pedidosDoVendedor} />}
+        {vendedorParam && <ListaVisual fichas={pedidosDoVendedor} className="mb-1.5" />}
 
-        <section className="mb-3">
+        <section className="mb-1.5">
           <button type="button" onClick={() => setFinanceiroAberto((aberto) => !aberto)} aria-expanded={financeiroAberto} aria-controls="contador-financeiro" className="flex min-h-11 w-full items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-left text-xs font-bold text-zinc-200">
             <span>CONTADOR FINANCEIRO</span>{financeiroAberto ? <EyeOff size={17} aria-label="Recolher contador financeiro" /> : <Eye size={17} aria-label="Visualizar contador financeiro" />}
           </button>

@@ -39,7 +39,7 @@ function dataCurta(data?: string) {
   return partes ? `${partes[2]}/${partes[1]}` : "--/--";
 }
 
-export default function ListaVisual({ fichas }: { fichas: Ficha[] }) {
+export default function ListaVisual({ fichas, className = "mb-3" }: { fichas: Ficha[]; className?: string }) {
   const [aberta, setAberta] = useState(false);
   const [mes, setMes] = useState(() => {
     const hoje = new Date();
@@ -51,7 +51,7 @@ export default function ListaVisual({ fichas }: { fichas: Ficha[] }) {
     .sort((a, b) => (a.entrega || "9999-99-99").localeCompare(b.entrega || "9999-99-99") || (a.cliente || "").localeCompare(b.cliente || "", "pt-BR")), [fichas, mes]);
 
   return (
-    <section className="mb-3">
+    <section className={className}>
       <button type="button" onClick={() => setAberta(!aberta)} aria-expanded={aberta} aria-controls={id} className="flex min-h-11 w-full items-center justify-between rounded-xl border border-zinc-800 bg-zinc-900 px-3 text-left text-xs font-bold text-zinc-200">
         <span>LISTA VISUAL</span>{aberta ? <EyeOff size={17} aria-hidden="true" /> : <Eye size={17} aria-hidden="true" />}
       </button>
