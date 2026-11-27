@@ -19,6 +19,7 @@ const grupos = [
 export default function DetalhesComanda({ valor, onChange, linhas, onLinhasChange, mostrarValores = false }: { valor?: DadosComanda; onChange?: (valor: DadosComanda) => void; linhas?: ItemComandaRascunho[]; onLinhasChange?: (linhas: ItemComandaRascunho[]) => void; mostrarValores?: boolean }) {
   const [aberto, setAberto] = useState(false);
   const [descricaoAberta, setDescricaoAberta] = useState(false);
+  const [modelagemAberta, setModelagemAberta] = useState(false);
   const dados = valor || novaComanda();
   const editavel = Boolean(onChange);
   const possuiDados = grupos.some(({ chave }) => (dados[chave] || []).length > 0) || Boolean(dados.outroTecido?.trim()) || Boolean(dados.itens?.length);
@@ -41,20 +42,8 @@ export default function DetalhesComanda({ valor, onChange, linhas, onLinhasChang
       <span>DETALHES DA COMANDA</span>{aberto ? <EyeOff size={17} aria-label="Recolher detalhes" /> : <Eye size={17} aria-label="Visualizar detalhes" />}
     </button>
     {aberto && <div className="space-y-2 border-t border-zinc-700 p-3">
-      {editavel && <p className="text-xs text-zinc-400">Marque todas as opções que se aplicam ao pedido.</p>}
-      {!editavel && !possuiDados ? <p className="text-xs text-zinc-400">Nenhum detalhe informado nesta comanda.</p> : <div className="grid grid-cols-2 gap-x-3 gap-y-2 @lg:grid-cols-4">
-        {grupos.map(({ chave, titulo, opcoes }) => <fieldset key={chave} className="min-w-0">
-          <legend className="mb-1 text-[10px] font-bold uppercase tracking-wide text-blue-300">{titulo}</legend>
-          {opcoes.map((opcao) => <label key={opcao} className={`flex min-h-8 items-center gap-2 text-xs ${editavel ? "cursor-pointer" : ""}`}>
-            <input type="checkbox" aria-label={opcao} checked={(dados[chave] || []).includes(opcao)} onChange={() => alternar(chave, opcao)} disabled={!editavel} className="h-4 w-4 shrink-0 accent-blue-500" />
-            <span className="min-w-0">{opcao === "Performance dry" ? "Perfor. Dry" : opcao === "PP algodão" ? "PP alg." : opcao}</span>
-          </label>)}
-          {chave === "tecidos" && (dados.tecidos || []).includes("Outro") && (editavel
-            ? <label className="mt-1 block text-xs text-zinc-400">Qual tecido?<input type="text" value={dados.outroTecido || ""} onChange={(event) => onChange?.({ ...dados, outroTecido: event.target.value })} className="mt-1 w-full rounded-lg border border-zinc-700 bg-black px-2 py-2 text-xs text-white" /></label>
-            : dados.outroTecido?.trim() && <p className="mt-1 break-words text-xs text-zinc-300">{dados.outroTecido}</p>)}
-        </fieldset>)}
-      </div>}
-      {editavel && onLinhasChange && <div className="border-t border-zinc-700 pt-2">
+      {!editavel && !possuiDados && <p className="text-xs text-zinc-400">Nenhum detalhe informado nesta comanda.</p>}
+      {editavel && onLinhasChange && <div>
         {!descricaoAberta && !(linhas || []).length ? <button type="button" onClick={adicionarLinha} className="flex min-h-10 items-center gap-1 text-xs font-bold text-blue-300"><Plus size={15} /> INSERIR DESCRIÇÃO</button> : <>
           <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-blue-300">Descrição dos itens</p>
           <div className="space-y-2">{(linhas || []).map((linha, indice) => <div key={linha.id} className="rounded-lg border border-zinc-700 bg-black/30 p-2">
@@ -70,10 +59,30 @@ export default function DetalhesComanda({ valor, onChange, linhas, onLinhasChang
           {resultado.soma !== null && <p className="text-xs text-zinc-300">Soma dos itens: <strong>{(resultado.soma / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</strong></p>}
         </>}
       </div>}
-      {!editavel && Boolean(dados.itens?.length) && <div className="border-t border-zinc-700 pt-2">
+      {!editavel && Boolean(dados.itens?.length) && <div>
         <p className="mb-2 text-[10px] font-bold uppercase tracking-wide text-blue-300">Descrição dos itens</p>
         <ul className="space-y-1">{dados.itens!.map((item, indice) => <li key={indice} className="rounded-lg bg-black/30 px-2 py-1.5 text-xs text-zinc-200"><span className="font-bold">{item.quantidade} × </span><span className="whitespace-pre-wrap break-words">{item.descricao}</span>{mostrarValores && item.valorUnitarioCentavos != null && <span className="block text-zinc-400">Unitário: {(item.valorUnitarioCentavos / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>}</li>)}</ul>
       </div>}
+      <section className="rounded-lg border border-zinc-700 bg-zinc-950/50">
+        <button type="button" onClick={() => setModelagemAberta((atual) => !atual)} aria-expanded={modelagemAberta} className="flex min-h-11 w-full items-center justify-between gap-2 px-3 text-left text-xs font-bold text-zinc-200">
+          <span>MODELAGEM, TECIDO E ACABAMENTO</span>{modelagemAberta ? <EyeOff size={16} aria-label="Recolher opções" /> : <Eye size={16} aria-label="Visualizar opções" />}
+        </button>
+        {modelagemAberta && <div className="border-t border-zinc-700 p-2">
+          {editavel && <p className="mb-2 text-xs text-zinc-400">Marque todas as opções que se aplicam ao pedido.</p>}
+          <div className="grid grid-cols-2 gap-x-2 gap-y-1 @lg:grid-cols-4">
+            {grupos.map(({ chave, titulo, opcoes }) => <fieldset key={chave} className="min-w-0">
+              <legend className="mb-1 text-[10px] font-bold uppercase tracking-wide text-blue-300">{titulo}</legend>
+              {opcoes.map((opcao) => <label key={opcao} className={`flex min-h-7 items-center gap-1.5 text-xs ${editavel ? "cursor-pointer" : ""}`}>
+                <input type="checkbox" aria-label={opcao} checked={(dados[chave] || []).includes(opcao)} onChange={() => alternar(chave, opcao)} disabled={!editavel} className="h-4 w-4 shrink-0 accent-blue-500" />
+                <span className="min-w-0">{opcao === "Performance dry" ? "Perfor. Dry" : opcao === "PP algodão" ? "PP alg." : opcao}</span>
+              </label>)}
+              {chave === "tecidos" && (dados.tecidos || []).includes("Outro") && (editavel
+                ? <label className="mt-1 block text-xs text-zinc-400">Qual tecido?<input type="text" value={dados.outroTecido || ""} onChange={(event) => onChange?.({ ...dados, outroTecido: event.target.value })} className="mt-1 w-full rounded-lg border border-zinc-700 bg-black px-2 py-2 text-xs text-white" /></label>
+                : dados.outroTecido?.trim() && <p className="mt-1 break-words text-xs text-zinc-300">{dados.outroTecido}</p>)}
+            </fieldset>)}
+          </div>
+        </div>}
+      </section>
     </div>}
   </section>;
 }
