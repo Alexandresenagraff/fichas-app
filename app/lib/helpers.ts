@@ -28,6 +28,14 @@ export interface Alteracao {
   respostaDesigner?: string;
 }
 
+export interface DetalhesComanda {
+  modelagens: string[];
+  tecidos: string[];
+  acabamentos: string[];
+  golas: string[];
+  outroTecido: string;
+}
+
 export interface Ficha {
   id?: string;
   cliente: string;
@@ -35,6 +43,7 @@ export interface Ficha {
   email?: string;
   vendedor?: string;
   urgenciaExtrema?: boolean;
+  detalhesComanda?: DetalhesComanda;
   valorTotalCentavos?: number;
   pagamentos?: { valorCentavos: number; data: string }[];
   observacao?: string;

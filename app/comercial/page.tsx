@@ -7,6 +7,7 @@ import NotificationBell from "../components/NotificationBell";
 import ClientPdfLink from "../components/ClientPdfLink";
 import AdminNavigation from "../components/AdminNavigation";
 import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
+import DetalhesComanda, { novaComanda } from "../components/DetalhesComanda";
 import { prepararSireneExtrema, tocarSireneExtrema } from "../lib/notificationSounds";
 
 import app from "../../firebase/config";
@@ -90,6 +91,7 @@ function ComercialContent() {
   const [pedido, setPedido] = useState("");
   const [entrega, setEntrega] = useState("");
   const [urgenciaExtrema, setUrgenciaExtrema] = useState(false);
+  const [detalhesComanda, setDetalhesComanda] = useState(novaComanda);
   const [valorTotal, setValorTotal] = useState("");
   const [entrada, setEntrada] = useState("");
   const [dataEntrada, setDataEntrada] = useState("");
@@ -188,6 +190,7 @@ function ComercialContent() {
         pedido,
         entrega,
         urgenciaExtrema,
+        detalhesComanda,
         ...(valorTotal ? { valorTotalCentavos: total } : {}),
         pagamentos: recebido > 0 ? [{ valorCentavos: recebido, data: dataEntrada }] : [],
         pdfLink: "",
@@ -227,6 +230,7 @@ function ComercialContent() {
       setPedido("");
       setEntrega("");
       setUrgenciaExtrema(false);
+      setDetalhesComanda(novaComanda());
       setValorTotal(""); setEntrada(""); setDataEntrada("");
       setModalAberto(false);
     } catch (error) {
@@ -539,6 +543,8 @@ function ComercialContent() {
                   </p>
                 )}
 
+                <div className="mt-2"><DetalhesComanda valor={ficha.detalhesComanda} /></div>
+
                 {ficha.valorTotalCentavos != null && (() => {
                   const recebido = (ficha.pagamentos || []).reduce((soma, pagamento) => soma + pagamento.valorCentavos, 0);
                   return <div className="mt-3 rounded-xl bg-zinc-900 p-3 text-xs text-zinc-300 space-y-1">
@@ -626,6 +632,7 @@ function ComercialContent() {
               <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Vendedor</span><select value={vendedor} onChange={(e) => setVendedor(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400"><option value="">Selecione o vendedor</option>{VENDEDORES.map((nome) => <option key={nome} value={nome}>{nome}</option>)}</select></label>
               <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Observação</span><input type="text" value={observacao} onChange={(e) => setObservacao(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>
               <label className="relative block"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Designer</span><select value={designer} onChange={(e) => setDesigner(e.target.value)} className="h-12 w-full rounded-xl border border-zinc-700 bg-black px-3 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400"><option value="">Selecione o designer</option>{DESIGNERS.map((nome) => <option key={nome} value={nome}>{nome}</option>)}</select></label>
+              <DetalhesComanda valor={detalhesComanda} onChange={setDetalhesComanda} />
               <div className="grid grid-cols-2 gap-2">
                 <label className="relative block min-w-0"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Data do pedido</span><input type="date" value={pedido} onChange={(e) => setPedido(e.target.value)} className="h-12 min-w-0 w-full rounded-xl border border-zinc-700 bg-black px-2 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>
                 <label className="relative block min-w-0"><span className="absolute left-3 top-1.5 text-[10px] font-semibold text-zinc-400">Data da entrega *</span><input type="date" value={entrega} onChange={(e) => { const valor = e.target.value.replace(/-(\d{2})-/, (match, mes) => mes === "00" ? "-01-" : match); setEntrega(valor); }} required className="h-12 min-w-0 w-full rounded-xl border border-zinc-700 bg-black px-2 pb-1 pt-5 text-xs text-white outline-none focus:border-blue-400" /></label>

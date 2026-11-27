@@ -7,6 +7,7 @@ import NotificationBell from "../components/NotificationBell";
 import ClientPdfLink from "../components/ClientPdfLink";
 import AdminNavigation from "../components/AdminNavigation";
 import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
+import DetalhesComanda from "../components/DetalhesComanda";
 
 import app from "../../firebase/config";
 import {
@@ -395,6 +396,8 @@ function ArteContent() {
             Vendedor: <span className="text-white font-medium">{ficha.vendedor}</span>
           </p>
         )}
+
+        <div className="mb-2"><DetalhesComanda valor={ficha.detalhesComanda} /></div>
 
         {ficha.observacao && (
           <div className="bg-zinc-900/60 rounded-xl p-2.5 mb-3 text-xs text-zinc-400 border border-zinc-800/40">

@@ -8,6 +8,7 @@ import app from "../../firebase/config";
 import { atribuicaoDoCostureiro, formatarDataHora, categoriaDaFicha, etapaDaFicha, validarAlteracaoEtapa, porcentagemPedido, Ficha, type Costureiro, CategoriaPedido as FiltroPedidos } from "../lib/helpers";
 import AdminNavigation from "../components/AdminNavigation";
 import CabecalhoSenagraff from "../components/CabecalhoSenagraff";
+import DetalhesComanda from "../components/DetalhesComanda";
 import StatusToggle from "../components/StatusToggle";
 import { CardSkeleton } from "../components/Skeleton";
 import ClientPdfLink from "../components/ClientPdfLink";
@@ -521,6 +522,7 @@ function HomeContent() {
 
                       {isAberto && (
                         <div id={`detalhes-${ficha.id}`} className="animate-[slideDown_0.2s_ease-out] border-t border-zinc-900 pt-4 space-y-3">
+                          <DetalhesComanda valor={ficha.detalhesComanda} />
                           {/* IDENTIFICAÇÃO DO CLIENTE */}
                           <div>
                             <p className="text-zinc-500 text-[10px] font-bold tracking-wider">
